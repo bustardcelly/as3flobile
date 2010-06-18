@@ -1,0 +1,11 @@
+./.actionScriptProperties
+./.flexLibProperties
+./.project
+./.settings/*
+
+./.DS_STORE
+
+./bin/as3flobile.swc
+
+bin-debug
+bin-debug/*

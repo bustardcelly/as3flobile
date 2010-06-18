@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<project name="as3couchdb" basedir="." default="build-project">
+	
+	<!-- as3flobile is a library of components intended to be used in mobile browsers	-->
+	<!-- and applications targeting the Flash Platform.									-->
+	
+	<!-- Property file. -->
+	<property file="build.properties" />
+	
+	<!-- Clean previously built standalone library based on version. 					-->
+	<!-- The following parameters need to be passed when invoking this target: 			-->
+	<!-- [lib.name] 	- The name of the generated library SWC.						-->
+	<!-- [lib.bin.dir]	- The output directory for the generated SWC.					-->
+	<target name="clean" description="Cleans any previously build library related to projectname-version">
+		<echo>[CLEAN] Cleaning ${lib.bin.dir}/${lib.name}.swc</echo>
+		<delete file="${lib.bin.dir}/${lib}.swc" />
+		<echo>[CLEAN] Successfully cleaned ${lib.bin.dir}/${lib.name}.swc</echo>
+	</target>
+	
+	<!-- Parameterized target call for generating either standalone or external SWC. 	-->
+	<!-- The following parameters need to be passed when invoking this target: 			-->
+	<!-- [lib.name] 	- The name of the generated library SWC.						-->
+	<!-- [lib.bin.dir]	- The output directory for the generated SWC.					-->
+	<!-- [config]		- The configuration to use for compilation.						-->
+	<target name="lib" description="Generates the library SWC based on parameters.">
+		<!-- Clean first -->
+		<antcall target="clean">
+			<param name="lib.name" value="${lib.name}" />
+			<param name="lib.bin.dir" value="${lib.bin.dir}" />
+		</antcall>
+		<!-- Compile against config -->
+		<echo>[EXEC] Compiling ${lib.name}.swc</echo>
+		<exec executable="${compc.loc}" dir="${basedir}">
+			<arg line="+playerglobal.lib.dir=${playerglobal.lib.dir}" />
+			<arg line="+lib.bin.dir=${lib.bin.dir}" />
+			<arg line="+lib.name=${lib.name}" />
+			<arg line="+src.dir=${src.dir}" />
+			<arg line="-load-config+=${config}" />
+		</exec>
+		<echo>[EXEC] Finished compiling ${lib.name}.swc. ${lib.name}.swc can be found in ${lib.bin.dir}/.</echo>
+	</target>
+	
+	<!-- Build the standalone library swc. DEFAULT -->
+	<target name="standalone" description="Generates the standalone library SWC.">
+		<antcall target="lib">
+			<param name="lib.name" value="${library.name}" />
+			<param name="lib.bin.dir" value="${bin.dir}" />
+			<param name="config" value="${config.loc}" />
+		</antcall>
+	</target>
+		
+	<!-- Clean documents directory. -->
+	<target name="clean-doc" description="Cleans the document directory.">
+		<echo>[CLEAN] Cleaning ${doc.dir}</echo>
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${doc.dir}" includes="**/*" />
+		</delete>
+		<echo>[CLEAN] Successfully cleaned ${doc.dir}</echo>
+	</target>
+	
+	<!-- Create the ASDocs for the library project. -->
+	<target name="doc" depends="clean-doc" description="Creates the ASDoc files for the library project.">
+		<exec executable="${asdoc.loc}" spawn="no">
+			<arg line="-library-path+=${air.lib.dir}" />
+			<arg line="-source-path ${src.dir}" />
+			<arg line="-doc-sources ${src.dir} " />
+			<arg line="-output ${doc.dir}" />
+			<arg line="-window-title 'AS3Flobile Library - ${library.name}' "/>
+		</exec>
+	</target>
+	
+	<!-- DEFAULT. Runs all tasks to build standard and external SWCs and optimized SWFs as well as project docs. -->
+	<target name="build-project" description="Runs all tasks to generate SWC, SWF and doc files.">
+		<antcall target="standalone" />
+		<antcall target="doc" />
+	</target>
+	
+</project>
