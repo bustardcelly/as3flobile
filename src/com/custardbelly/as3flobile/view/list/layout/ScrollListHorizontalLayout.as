@@ -144,12 +144,15 @@ package com.custardbelly.as3flobile.view.list.layout
 			while( i < length )
 			{
 				renderer = renderers[i];
+				renderer.lock();
+				renderer.useVariableHeight = false;
+				renderer.useVariableWidth = _useVariableWidth;
 				renderer.width = _itemWidth;
 				renderer.height = rect.height;
-				renderer.useVariableWidth = _useVariableWidth;
 				// Supply data only if determining variable width.
 				if( _useVariableWidth && data != null && data.length > i )
 					renderer.data = data[i];
+				renderer.unlock();
 				
 				( renderer as DisplayObject ).x = xpos;
 				( renderer as DisplayObject ).y = 0;

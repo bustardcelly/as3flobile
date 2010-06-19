@@ -35,6 +35,15 @@ package com.custardbelly.as3flobile.view.list.renderer
 	public interface IScrollListRenderer extends IEventDispatcher
 	{
 		/**
+		 * Locks the renderer from performing any updates based on property changes.
+		 */
+		function lock():void;
+		/**
+		 * Frees the renderer from a locked state to perform updates based on property changes.
+		 */
+		function unlock():void;
+		
+		/**
 		 * Accessor/Modifier for the width dimension of this instance. 
 		 * @return Number
 		 */

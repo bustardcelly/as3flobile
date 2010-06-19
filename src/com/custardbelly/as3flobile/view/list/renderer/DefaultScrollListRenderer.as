@@ -41,6 +41,9 @@ package com.custardbelly.as3flobile.view.list.renderer
 	 */
 	public class DefaultScrollListRenderer extends Sprite implements IScrollListRenderer
 	{
+		private static const STATE_UNLOCKED:uint = 0;
+		private static const STATE_LOCKED:uint = 1;
+		
 		protected var _background:Shape;
 		protected var _block:TextBlock;
 		
@@ -50,6 +53,8 @@ package com.custardbelly.as3flobile.view.list.renderer
 		
 		protected var _selected:Boolean;
 		
+		protected var _isDirty:Boolean;
+		protected var _currentState:uint = DefaultScrollListRenderer.STATE_UNLOCKED;
 		protected var _width:Number = 100;
 		protected var _height:Number = 20;
 		protected var _useVariableWidth:Boolean;
@@ -92,12 +97,31 @@ package com.custardbelly.as3flobile.view.list.renderer
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Validates a property and forwards along method invocation based on current state. 
+		 * @param handler Function
+		 * @param args ...
+		 */
+		protected function invalidateProperty( handler:Function, ...args ):void
+		{
+			var isUnlocked:Boolean = _currentState == DefaultScrollListRenderer.STATE_UNLOCKED;
+			if( isUnlocked )
+				handler.apply( this, args );
+			else
+				_isDirty = true;
+		}
+		
+		/**
 		 * @private 
 		 * 
 		 * Validates the supplied data and updates the display.
 		 */
 		protected function invalidateData():void
 		{
+			// If no data and this was called in response to a property change, move on.
+			if( _data == null ) return;
+			
 			var i:int = numChildren;
 			while( --i > 0 )
 			{
@@ -128,6 +152,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			// If using variable width, reassign width property to largest line.
 			if( _useVariableWidth ) _width = maxLineWidth;
 			
+			_isDirty = false;
 			invalidateSize();
 		}
 		
@@ -154,6 +179,39 @@ package com.custardbelly.as3flobile.view.list.renderer
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Updates the current state.  
+		 * @param oldState uint
+		 * @param newState uint
+		 */
+		protected function handleStateChange( oldState:uint, newState:uint ):void
+		{
+			_currentState = newState;
+			
+			// If properties have changed, run an update.
+			if( _currentState == DefaultScrollListRenderer.STATE_UNLOCKED && _isDirty )
+				invalidateData();
+		}
+		
+		/**
+		 * @copy IScrollListRenderer#lock()
+		 */
+		public function lock():void
+		{
+			handleStateChange( _currentState, DefaultScrollListRenderer.STATE_LOCKED );
+		}
+		
+		/**
+		 * @copy IScrollListRenderer#unlock() 
+		 * 
+		 */
+		public function unlock():void
+		{
+			handleStateChange( _currentState, DefaultScrollListRenderer.STATE_UNLOCKED );
+		}
+		
+		/**
 		 * @copy IScrollListRenderer#selected
 		 */
 		public function get selected():Boolean
@@ -165,7 +223,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _selected == value ) return;
 			
 			_selected = value;
-			invalidateDisplay();
+			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -180,7 +238,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _width == value ) return;
 			
 			_width = value;
-			invalidateSize();
+			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -195,7 +253,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _height == value ) return;
 			
 			_height = value;
-			invalidateSize();
+			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -210,7 +268,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _useVariableHeight == value ) return;
 			
 			_useVariableHeight = value;
-			if( _data ) invalidateData();
+			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -225,7 +283,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _useVariableWidth == value ) return;
 			
 			_useVariableWidth = value;
-			if( _data ) invalidateData();
+			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -240,7 +298,7 @@ package com.custardbelly.as3flobile.view.list.renderer
 			if( _data == value ) return;
 			
 			_data = value;	
-			invalidateData();
+			invalidateProperty( invalidateData );
 		}
 	}
 }

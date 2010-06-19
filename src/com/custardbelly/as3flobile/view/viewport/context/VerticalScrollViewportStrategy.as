@@ -274,6 +274,9 @@ package com.custardbelly.as3flobile.view.viewport.context
 		 */
 		public function start( point:Point ):void
 		{
+			// If the content is less than specified scroll viewport area, don't start.
+			if( _scrollAreaHeight > _content.height ) return;
+			
 			// Notify delegate.
 			if( _delegate )
 			{
@@ -302,6 +305,9 @@ package com.custardbelly.as3flobile.view.viewport.context
 		 */
 		public function move( point:Point ):void
 		{
+			// If the content is less than specified scroll viewport area, don't start.
+			if( _scrollAreaHeight > _content.height ) return;
+			
 			// Grab reference to previous mark and current mark.
 			var previousMark:ScrollMark = recentMark();
 			var currentMark:ScrollMark = addMark( point.y, getTimer() );
@@ -327,6 +333,9 @@ package com.custardbelly.as3flobile.view.viewport.context
 		 */
 		public function end( point:Point ):void
 		{
+			// If the content is less than specified scroll viewport area, don't start.
+			if( _scrollAreaHeight > _content.height ) return;
+			
 			var previousMark:ScrollMark = recentMark();
 			var currentMark:ScrollMark = addMark( point.y, getTimer() );
 			
