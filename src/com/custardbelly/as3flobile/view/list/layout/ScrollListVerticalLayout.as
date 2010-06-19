@@ -144,7 +144,7 @@ package com.custardbelly.as3flobile.view.list.layout
 				renderer.useVariableWidth = false;
 				renderer.useVariableHeight = _useVariableHeight;
 				renderer.width = rect.width;
-				renderer.height = _itemHeight;
+				if( !isNaN( _itemHeight ) ) renderer.height = _itemHeight;
 				// Supply data only if determining variable height.
 				if( _useVariableHeight && data != null && data.length > i )
 					renderer.data = data[i];
