@@ -26,9 +26,9 @@
  */
 package com.custardbelly.as3flobile.controls.viewport
 {
+	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
-	import com.custardbelly.as3flobile.controls.viewport.context.VerticalScrollViewportStrategy;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
@@ -42,6 +42,7 @@ package com.custardbelly.as3flobile.controls.viewport
 	 */
 	public class ScrollViewport extends Sprite implements IScrollViewport
 	{
+		protected var _bounds:Rectangle;
 		protected var _content:InteractiveObject;
 		protected var _context:IScrollViewportContext;
 		protected var _delegate:IScrollViewportDelegate;
@@ -68,7 +69,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		public static function initWithScrollRectAndDelegate( bounds:Rectangle, delegate:IScrollViewportDelegate = null ):ScrollViewport
 		{
 			var viewport:ScrollViewport = new ScrollViewport();
-			viewport.context = new ScrollViewportMouseContext( new VerticalScrollViewportStrategy() );
 			viewport.scrollRect = bounds;
 			viewport.delegate = delegate;
 			return viewport;
@@ -81,6 +81,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		protected function initialize():void
 		{
+			_bounds = new Rectangle( 0, 0, _width, _height );
 			addHandlers();	
 		}
 		
@@ -92,7 +93,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		protected function getDefaultViewportContext():IScrollViewportContext
 		{
-			return new ScrollViewportMouseContext( new VerticalScrollViewportStrategy() );
+			return new ScrollViewportMouseContext( new BaseScrollViewportStrategy() );
 		}
 		
 		/**
@@ -124,7 +125,9 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		protected function invalidateSize():void
 		{
-			this.scrollRect = new Rectangle( 0, 0, _width, _height );
+			_bounds.width = _width;
+			_bounds.height = _height;
+			this.scrollRect = _bounds;
 			invalidateDisplay();
 		}
 		
@@ -233,19 +236,19 @@ package com.custardbelly.as3flobile.controls.viewport
 		public function dispose():void
 		{
 			removeHandlers();
+			
 			_context.dispose();
 			_context = null;
+			
+			_delegate = null;
 		}
 		
 		/**
-		 * @copy IScrollViewport#scrollRect
+		 * @copy IScrollViewport#scrollBounds
 		 */
-		override public function set scrollRect(value:Rectangle):void
+		public function get scrollBounds():Rectangle
 		{
-			super.scrollRect = value;
-			_width = value.width - value.x;
-			_height = value.height - value.y;
-			invalidateDisplay();
+			return _bounds;
 		}
 		
 		/**
@@ -295,6 +298,20 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
+		 * @copy IScrollViewport#context
+		 */
+		public function get context():IScrollViewportContext
+		{
+			return _context;
+		}
+		public function set context( value:IScrollViewportContext ):void
+		{
+			if( _context == value ) return;
+			
+			invalidateContext( _context, value );
+		}
+		
+		/**
 		 * @copy IScrollViewport#delegate
 		 */
 		public function get delegate():IScrollViewportDelegate
@@ -307,20 +324,6 @@ package com.custardbelly.as3flobile.controls.viewport
 			
 			_delegate = value;
 			invalidateDisplay();
-		}
-		
-		/**
-		 * @copy IScrollViewport#context
-		 */
-		public function get context():IScrollViewportContext
-		{
-			return _context;
-		}
-		public function set context( value:IScrollViewportContext ):void
-		{
-			if( _context == value ) return;
-			
-			invalidateContext( _context, value );
 		}
 	}
 }

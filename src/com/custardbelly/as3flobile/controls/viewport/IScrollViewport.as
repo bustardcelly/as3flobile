@@ -26,6 +26,8 @@
  */
 package com.custardbelly.as3flobile.controls.viewport
 {
+	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
+	
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
@@ -46,11 +48,11 @@ package com.custardbelly.as3flobile.controls.viewport
 		function dispose():void;
 		
 		/**
-		 * Accessor/Modifier for the rectangular area of the viewport. 
+		 * Returns the bounding area for which the content is presented in a scrollable viewport.
+		 * The properties of this bounding area is updated on change to width and height.
 		 * @return Rectangle
 		 */
-		function get scrollRect():Rectangle;
-		function set scrollRect( value:Rectangle ):void;
+		function get scrollBounds():Rectangle;
 		
 		/**
 		 * Accessor/Modifier for the display width of the viewport. 
@@ -67,17 +69,24 @@ package com.custardbelly.as3flobile.controls.viewport
 		function set height( value:Number ):void;
 		
 		/**
-		 * Accessor/Modifier for the IScrollViewportDelegate that recieves notifications on action. 
-		 * @return IScrollViewportDelegate
-		 */
-		function get delegate():IScrollViewportDelegate;
-		function set delegate( value:IScrollViewportDelegate ):void;
-		
-		/**
 		 * Accessor/Modifier for the content that is being scrolled within the viewport. 
 		 * @return InteractiveObject
 		 */
 		function get content():InteractiveObject;
 		function set content( value:InteractiveObject ):void;
+		
+		/**
+		 * Accessor/Modifier for the viewport context that manages user gestures and animation of display. 
+		 * @return IScrollViewportContext
+		 */
+		function get context():IScrollViewportContext;
+		function set context( value:IScrollViewportContext ):void;
+		
+		/**
+		 * Accessor/Modifier for the IScrollViewportDelegate that recieves notifications on action. 
+		 * @return IScrollViewportDelegate
+		 */
+		function get delegate():IScrollViewportDelegate;
+		function set delegate( value:IScrollViewportDelegate ):void;
 	}
 }

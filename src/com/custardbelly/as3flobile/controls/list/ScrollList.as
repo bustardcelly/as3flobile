@@ -32,9 +32,9 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
+	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
-	import com.custardbelly.as3flobile.controls.viewport.context.VerticalScrollViewportStrategy;
 	import com.custardbelly.as3flobile.helper.ITapMediator;
 	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.helper.TapMediator;
@@ -58,6 +58,7 @@ package com.custardbelly.as3flobile.controls.list
 	{	
 		protected var _background:Shape;
 		protected var _listHolder:Sprite;
+		protected var _bounds:Rectangle;
 		protected var _viewport:ScrollViewport;
 		
 		protected var _itemRenderer:String;
@@ -137,6 +138,8 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function initialize():void
 		{
+			_bounds = new Rectangle( 0, 0, _width, _height );
+			
 			_currentScrollPosition = new Point( 0, 0 );
 			
 			_cells = new Vector.<IScrollListItemRenderer>()
@@ -154,7 +157,7 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function getDefaultScrollContext():IScrollViewportContext
 		{
-			return new ScrollViewportMouseContext( new VerticalScrollViewportStrategy() );
+			return new ScrollViewportMouseContext( new BaseScrollViewportStrategy() );
 		}
 		
 		/**
@@ -214,7 +217,9 @@ package com.custardbelly.as3flobile.controls.list
 		protected function invalidateSize():void
 		{
 			// Set new scroll rect area.
-			this.scrollRect = new Rectangle( 0, 0, _width, _height );
+			_bounds.width = _width;
+			_bounds.height = _height;
+			this.scrollRect = _bounds;
 			// Apply new values to the viewport instance.
 			_viewport.width = _width;
 			_viewport.height = _height;
@@ -580,6 +585,9 @@ package com.custardbelly.as3flobile.controls.list
 			
 			// Null reference to any selected item.
 			_selectedRenderer = null;
+			
+			// Null reference to delegate.
+			_delegate = null;
 		}
 		
 		/**
@@ -588,12 +596,9 @@ package com.custardbelly.as3flobile.controls.list
 		 * Override to set the display area for the list. 
 		 * @param value Rectangle
 		 */
-		override public function set scrollRect( value:Rectangle ):void
+		public function get scrollBounds():Rectangle
 		{
-			super.scrollRect = value;
-			_width = value.width - value.x;
-			_height = value.height - value.y;
-			invalidateDisplay();
+			return _bounds;
 		}
 		
 		/**

@@ -35,7 +35,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	 * ScrollViewportMouseContext is a context for scrolling strategy that bases its mediated user interaction for a scroll event using the mouse. 
 	 * @author toddanderson
 	 */
-	public class ScrollViewportMouseContext extends AbstractScrollViewportContext
+	public class ScrollViewportMouseContext extends BaseScrollViewportContext
 	{
 		protected var _mouseTarget:Stage;
 		

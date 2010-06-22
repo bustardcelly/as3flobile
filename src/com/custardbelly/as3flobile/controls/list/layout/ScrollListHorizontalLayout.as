@@ -135,7 +135,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 		public function updateDisplay():void
 		{
 			var renderers:Vector.<IScrollListItemRenderer> = _target.renderers;
-			var rect:Rectangle = _target.scrollRect;
+			var rect:Rectangle = _target.scrollBounds;
 			var data:Array = _target.dataProvider;
 			var i:int = 0;
 			var length:int = renderers.length;
@@ -175,7 +175,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			
 			var cells:Vector.<IScrollListItemRenderer> = _target.renderers;
 			var cellAmount:int = cells.length;
-			var rect:Rectangle = _target.scrollRect;
+			var rect:Rectangle = _target.scrollBounds;
 			var scrollAreaWidth:Number = rect.width - rect.x;
 			var cellWidth:Number = _itemWidth;
 			var startIndex:int;

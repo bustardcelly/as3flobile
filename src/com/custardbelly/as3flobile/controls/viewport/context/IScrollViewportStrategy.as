@@ -64,5 +64,12 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 * @param point Point The corrdinate point at which to end.
 		 */
 		function end( point:Point ):void;
+		
+		/**
+		 * Accessor/Modifier for the coordinate position of the top/left corner of content within the viewport. 
+		 * @return Point
+		 */
+		function get position():Point;
+		function set position( value:Point ):void;
 	}
 }

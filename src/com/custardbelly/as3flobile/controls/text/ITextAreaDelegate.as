@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: IScrollViewportContext.as</p>
+ * <p>Class File: ITextAreaDelegate.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,55 +24,27 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.viewport.context
+package com.custardbelly.as3flobile.controls.text
 {
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
-	
-	import flash.display.InteractiveObject;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
 
 	/**
-	 * IScrollViewportContext provides a context for which a scrolling strategy can perform animation.  
+	 * ITextAreaDelegate is a delegate object that is notified in change to properties or operations by a TextArea instance.  
 	 * @author toddanderson
 	 */
-	public interface IScrollViewportContext
+	public interface ITextAreaDelegate
 	{
 		/**
-		 * Initializes the context with a target IScrollViewport. 
-		 * @param viewport IScrollViewport
+		 * Notifies of change in scroll position. 
+		 * @param textArea TextArea The TextArea instance.
+		 * @param position Point The coordinate position.
 		 */
-		function initialize( viewport:IScrollViewport ):void;
+		function textAreaDidScroll( textArea:TextArea, position:Point ):void;
 		/**
-		 * Updates the context and strategy.
+		 * Notifies of change to textual content. 
+		 * @param textArea TextArea The TextArea instance.
+		 * @param text String The textual content.
 		 */
-		function update():void;
-		/**
-		 * Activates this context.
-		 */
-		function activate():void;
-		/**
-		 * Deactivates this context.
-		 */
-		function deactivate():void;
-		/**
-		 * Performs any clean up from the context.
-		 */
-		function dispose():void;
-		
-		/**
-		 * Accessor/Modifier for the coordinate position of the top/left corner of content within the viewport. 
-		 * @return Point
-		 */
-		function get position():Point;
-		function set position( value:Point ):void;
-		
-		/**
-		 * Accessor/Modifier for the IScrollViewportStrategy. 
-		 * @return IScrollViewportStrategy
-		 */
-		function get strategy():IScrollViewportStrategy;
-		function set strategy( value:IScrollViewportStrategy ):void;
+		function textAreaTextChange( textArea:TextArea, text:String ):void;
 	}
 }

@@ -67,8 +67,7 @@ package com.custardbelly.as3flobile.controls.list
 		 * Accessor/Modifier for the rectangular scroll area of the container. 
 		 * @return Rectangle
 		 */
-		function get scrollRect():Rectangle;
-		function set scrollRect( value:Rectangle ):void;
+		function get scrollBounds():Rectangle;
 		
 		/**
 		 * Accessor/Modifier for the action delegate notified of change in properties. 

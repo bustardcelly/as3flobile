@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: AbstractScrollViewportContext.as</p>
+ * <p>Class File: BaseScrollViewportContext.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,12 +27,14 @@
 package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
+	
+	import flash.geom.Point;
 
 	/**
-	 * AbstractScrollViewportContext is an IScrollViewportContext implementation with templated methods meant for override. 
+	 * BaseScrollViewportContext is an IScrollViewportContext implementation with templated methods meant for override. 
 	 * @author toddanderson
 	 */
-	public class AbstractScrollViewportContext implements IScrollViewportContext
+	public class BaseScrollViewportContext implements IScrollViewportContext
 	{
 		protected var _isActive:Boolean;
 		protected var _viewport:IScrollViewport;
@@ -42,7 +44,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 * Constructor. 
 		 * @param strategy IScrollViewportStrategy The Strategy implementation that handles scrolling action.
 		 */
-		public function AbstractScrollViewportContext( strategy:IScrollViewportStrategy )
+		public function BaseScrollViewportContext( strategy:IScrollViewportStrategy )
 		{
 			_strategy = strategy;
 		}
@@ -91,6 +93,18 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function dispose():void
 		{
 			deactivate();
+		}
+		
+		/**
+		 * @copy IScrollViewportContext#position
+		 */
+		public function get position():Point
+		{
+			return ( _strategy != null ) ? _strategy.position : null;
+		}
+		public function set position( value:Point ):void
+		{
+			if( _strategy ) _strategy.position = value;
 		}
 		
 		/**
