@@ -82,7 +82,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected function initialize():void
 		{
 			_bounds = new Rectangle( 0, 0, _width, _height );
-			addHandlers();	
+			addHandlers();
 		}
 		
 		/**

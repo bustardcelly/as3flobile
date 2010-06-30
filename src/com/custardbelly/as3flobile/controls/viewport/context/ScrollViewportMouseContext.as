@@ -26,10 +26,15 @@
  */
 package com.custardbelly.as3flobile.controls.viewport.context
 {
+	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
+	import com.custardbelly.as3flobile.debug.PrintLine;
+	
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	
 	/**
 	 * ScrollViewportMouseContext is a context for scrolling strategy that bases its mediated user interaction for a scroll event using the mouse. 
@@ -37,7 +42,18 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	 */
 	public class ScrollViewportMouseContext extends BaseScrollViewportContext
 	{
+		protected var _point:Point;
 		protected var _mouseTarget:Stage;
+		
+		protected var _viewportPoint:Point;
+		protected var _viewportPosition:Point;
+		protected var _viewportX:int;
+		protected var _viewportY:int;
+		protected var _viewportWidth:int;
+		protected var _viewportHeight:int;
+		
+		protected var _startTime:int;
+		protected var _tapThreshold:int = 500;
 		
 		/**
 		 * Constructor. 
@@ -46,6 +62,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function ScrollViewportMouseContext(strategy:IScrollViewportStrategy)
 		{
 			super(strategy);
+			_point = new Point();
 		}
 		
 		/**
@@ -74,6 +91,27 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		/**
 		 * @private
 		 * 
+		 * Returns flag of coordinate point residing with the viewport bounds. 
+		 * @param xpos Number
+		 * @param ypos Number
+		 * @return Boolean
+		 */
+		protected function isWithinViewportBounds( xpos:Number, ypos:Number ):Boolean
+		{
+			if( _viewportPosition == null ) 
+			{
+				_viewportPosition = ( _viewport as DisplayObject ).localToGlobal( _viewportPoint );
+				_viewportX = _viewportPosition.x;
+				_viewportY = _viewportPosition.y;
+				_viewportWidth =  _viewportX + _viewport.width;
+				_viewportHeight = _viewportY + _viewport.height;
+			}
+			return ( xpos > _viewportX && xpos < _viewportWidth ) && ( ypos > _viewportY && ypos < _viewportHeight );
+		}
+		
+		/**
+		 * @private
+		 * 
 		 * Event handler for MOUSE_DOWN event which instrcuts the scrolling strategy to start. 
 		 * @param evt MouseEvent
 		 */
@@ -82,7 +120,11 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_mouseTarget = ( evt.target as InteractiveObject ).stage;
 			addTargetListeners();
 			
-			_strategy.start( new Point( _mouseTarget.mouseX, _mouseTarget.mouseY ) );
+			_point.x = _mouseTarget.mouseX;
+			_point.y = _mouseTarget.mouseY;
+			_strategy.start( _point );
+			
+			_startTime = getTimer();
 		}
 		
 		/**
@@ -92,7 +134,15 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		protected function handleMouseMove( evt:MouseEvent ):void
 		{
-			_strategy.move( new Point( _mouseTarget.mouseX, _mouseTarget.mouseY ) );
+			var targetX:Number = _mouseTarget.mouseX;
+			var targetY:Number = _mouseTarget.mouseY;
+			var isWithinBounds:Boolean = isWithinViewportBounds( targetX, targetY );
+			
+			_point.x = targetX;
+			_point.y = targetY;
+			_strategy.move( _point );
+			
+			if( !isWithinBounds ) handleMouseUp( evt );
 		}
 		
 		/**
@@ -101,8 +151,26 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		protected function handleMouseUp( evt:MouseEvent ):void
 		{
+			PrintLine.instance().print( "mouseup: " + _mouseTarget, true );
+			var withinTapThreshold:Boolean = ( getTimer() - _startTime <= _tapThreshold );
 			removeTargetListeners();
-			_strategy.end( new Point( _mouseTarget.mouseX, _mouseTarget.mouseY ) );
+			// If we haven't performed what is perceieved as a tap operation.
+			if( !withinTapThreshold )
+			{
+				_point.x = _mouseTarget.mouseX;
+				_point.y = _mouseTarget.mouseY;
+			}
+			_strategy.end( _point );
+			_mouseTarget = null;
+		}
+		
+		/**
+		 * @inherit
+		 */
+		override public function initialize( viewport:IScrollViewport ):void
+		{
+			super.initialize( viewport );
+			_viewportPoint = new Point( ( _viewport as DisplayObject ).x, ( _viewport as DisplayObject ).y );
 		}
 		
 		/**

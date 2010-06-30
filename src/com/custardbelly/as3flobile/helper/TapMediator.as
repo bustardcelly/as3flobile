@@ -44,7 +44,7 @@ package com.custardbelly.as3flobile.helper
 		 * Constructor. 
 		 * @param threshold int The maximum amount of time in milliseconds that relates to the time for a tap gesture.
 		 */
-		public function TapMediator( threshold:int = 700 ) 
+		public function TapMediator( threshold:int = 500 ) 
 		{
 			_threshold = threshold;
 		}

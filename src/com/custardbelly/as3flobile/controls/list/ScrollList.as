@@ -120,6 +120,7 @@ package com.custardbelly.as3flobile.controls.list
 			// List holder will be managed by this ScrollList instance, but actually be on the display list of the viewport.
 			_listHolder = new ScrollListHolder();
 			_listHolder.mouseChildren = false;
+			_listHolder.cacheAsBitmap = true;
 			
 			// Create the viewport and point to the list holder target.
 			_viewport = new ScrollViewport();

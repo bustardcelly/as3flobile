@@ -79,6 +79,8 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		protected function initialize():void
 		{
 			this.cacheAsBitmap = true;
+			this.mouseChildren = false;
+			this.mouseEnabled = false;
 			
 			_format = new ElementFormat( new FontDescription( "Arial" ) );
 			_format.fontSize = 12;

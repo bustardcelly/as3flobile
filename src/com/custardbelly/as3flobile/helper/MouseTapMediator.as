@@ -26,9 +26,12 @@
  */
 package com.custardbelly.as3flobile.helper
 {
+	import com.custardbelly.as3flobile.debug.PrintLine;
+	
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 
 	/**
 	 * MouseTapMediator is an ITapMediator implementation that handles mouse events as tap gestures from an interactive display object. 
@@ -44,7 +47,7 @@ package com.custardbelly.as3flobile.helper
 		 * Constructor. 
 		 * @param threshold int The maximum amount of time in milliseconds that relates to the time for a tap gesture. 
 		 */
-		public function MouseTapMediator( threshold:int = 700 )
+		public function MouseTapMediator( threshold:int = 500 )
 		{
 			super( threshold );
 		}
@@ -58,6 +61,7 @@ package com.custardbelly.as3flobile.helper
 			_startX = mouseEvent.stageX;
 			_startY = mouseEvent.stageY;
 			super.handleTouchBegin( evt );
+			PrintLine.instance().print( "touch start" );
 		}
 		
 		/**
@@ -69,6 +73,9 @@ package com.custardbelly.as3flobile.helper
 			var x:int = mouseEvent.stageX - _startX;
 			var y:int = mouseEvent.stageY - _startY;
 			var len:int = Math.sqrt( x * x + y * y );
+			
+			PrintLine.instance().print( "touch end: " + len, true );
+			PrintLine.instance().print( "touch end time: " + (getTimer() - _startTime), true );
 			
 			if( len < _length )
 				super.handleTouchEnd( evt );

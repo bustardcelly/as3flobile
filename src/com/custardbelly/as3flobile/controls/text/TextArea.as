@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.text
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
+	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -61,6 +62,7 @@ package com.custardbelly.as3flobile.controls.text
 		
 		protected var _width:int = 100;
 		protected var _height:int = 100;
+		protected var _scrollContext:IScrollViewportContext;
 		protected var _delegate:ITextAreaDelegate;
 		
 		/**
@@ -161,6 +163,20 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			if( _viewport.context )
 				_viewport.context.position = _scrollPosition;
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Validates the IScrollViewportContext implementation applied to this instance.
+		 */
+		protected function invalidateScrollContext():void
+		{
+			// If we have a viewport set, apply the new context.
+			if( _viewport != null )
+			{
+				_viewport.context = _scrollContext;
+			}
 		}
 		
 		/**
@@ -287,6 +303,22 @@ package com.custardbelly.as3flobile.controls.text
 			
 			_scrollPosition = value;
 			invalidateScrollPosition();
+		}
+		
+		/**
+		 * Accessor/Modifier for the viewport context that manages user gestures and animation of display. 
+		 * @return IScrollViewportContext
+		 */
+		public function get scrollContext():IScrollViewportContext
+		{
+			return _scrollContext;
+		}
+		public function set scrollContext( value:IScrollViewportContext ):void
+		{
+			if( _scrollContext == value ) return;
+			
+			_scrollContext = value;
+			invalidateScrollContext();
 		}
 
 		/**
