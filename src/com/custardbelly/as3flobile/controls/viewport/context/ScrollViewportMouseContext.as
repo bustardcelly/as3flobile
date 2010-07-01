@@ -27,7 +27,6 @@
 package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
-	import com.custardbelly.as3flobile.debug.PrintLine;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
@@ -151,7 +150,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		protected function handleMouseUp( evt:MouseEvent ):void
 		{
-			PrintLine.instance().print( "mouseup: " + _mouseTarget, true );
 			var withinTapThreshold:Boolean = ( getTimer() - _startTime <= _tapThreshold );
 			removeTargetListeners();
 			// If we haven't performed what is perceieved as a tap operation.
