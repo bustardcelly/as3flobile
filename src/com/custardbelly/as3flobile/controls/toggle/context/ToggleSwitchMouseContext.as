@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 {
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 	
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
@@ -40,6 +41,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 	public class ToggleSwitchMouseContext extends BaseToggleSwitchContext
 	{
 		protected var _point:Point;
+		protected var _mouseTarget:InteractiveObject;
 		protected var _backgroundTarget:InteractiveObject;
 		protected var _thumbTarget:InteractiveObject;
 		
@@ -86,8 +88,8 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		 */
 		protected function handleBackgroundClick( evt:MouseEvent ):void
 		{
-			_point.x = evt.localX;
-			_point.y = evt.localY;
+			_point.x = _mouseTarget.mouseX;
+			_point.y = _mouseTarget.mouseY;
 			_strategy.click( _point );
 		}
 		
@@ -101,8 +103,8 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		{
 			addTargetListeners();
 			
-			_point.x = evt.stageX;
-			_point.y = evt.stageY;
+			_point.x = _mouseTarget.mouseX;
+			_point.y = _mouseTarget.mouseY;
 			_strategy.start( _point );
 		}
 		
@@ -114,8 +116,8 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		 */
 		protected function handleThumbMove( evt:MouseEvent ):void
 		{
-			_point.x = evt.stageX;
-			_point.y = evt.stageY;
+			_point.x = _mouseTarget.mouseX;
+			_point.y = _mouseTarget.mouseY;
 			_strategy.move( _point );	
 		}
 		
@@ -128,8 +130,8 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		protected function handleThumbUp( evt:MouseEvent ):void
 		{
 			removeTargetListeners();
-			_point.x = evt.stageX;
-			_point.y = evt.stageY;
+			_point.x = _mouseTarget.mouseX;
+			_point.y = _mouseTarget.mouseY;
 			_strategy.end( _point );
 		}
 		
@@ -139,6 +141,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		override public function initialize( target:IToggleSwitch ):void
 		{
 			super.initialize( target );
+			_mouseTarget = ( target as InteractiveObject );
 			_backgroundTarget = target.backgroundTarget;
 			_thumbTarget = target.thumbTarget;
 		}
@@ -170,6 +173,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		override public function dispose():void
 		{
 			super.dispose();
+			_mouseTarget = null;
 			_backgroundTarget = null;
 			_thumbTarget = null;
 		}

@@ -95,17 +95,21 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		 * @private 
 		 * 
 		 * Limits the position of a target switch.
+		 * @returns Boolean
 		 */
-		protected function limitPosition():void
+		protected function limitPosition():Boolean
 		{
 			if( _thumb.x < _leftThumbPosition )
 			{
 				_thumb.x = _leftThumbPosition;
+				return true;
 			}
 			else if( _thumb.x > _rightThumbPosition )
 			{
 				_thumb.x = _rightThumbPosition;
+				return true;
 			}
+			return false;
 		}
 		
 		/**
@@ -155,7 +159,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		protected function animate( evt:Event = null ):void
 		{
 			_thumb.x += _velocityX;
-			limitPosition();
+			var hasLimit:Boolean = limitPosition();
 			
 			if( _velocityX == 0 )
 			{	
@@ -166,7 +170,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 			
 			_velocityX *= BaseToggleSwitchStrategy.DAMP;
 			var absoluteVelocity:Number = ( _velocityX > 0 ) ? _velocityX : -_velocityX;
-			if( absoluteVelocity < BaseToggleSwitchStrategy.VECTOR_MIN )
+			if( hasLimit || absoluteVelocity < BaseToggleSwitchStrategy.VECTOR_MIN )
 			{
 				_velocityX = 0;
 			}
