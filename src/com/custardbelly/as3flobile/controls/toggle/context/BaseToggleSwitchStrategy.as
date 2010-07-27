@@ -201,7 +201,7 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		 */
 		public function selectIndex( value:uint ):void
 		{
-			var xpos:Number = ( value == 1 ) ? _rightThumbPosition : _leftThumbPosition;
+			var xpos:Number = ( value == 1 ) ? _rightThumbPosition + 1 : _leftThumbPosition - 1;
 			if( _thumb.x == xpos ) return;
 			
 			endAnimation( false );

@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.viewport
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
@@ -40,21 +41,20 @@ package com.custardbelly.as3flobile.controls.viewport
 	 * ScrollViewport is an IScrollViewport implementation that acts as a scrollable display container.
 	 * @author toddanderson
 	 */
-	public class ScrollViewport extends Sprite implements IScrollViewport
+	public class ScrollViewport extends AS3FlobileComponent implements IScrollViewport
 	{
 		protected var _bounds:Rectangle;
 		protected var _content:InteractiveObject;
 		protected var _context:IScrollViewportContext;
 		protected var _delegate:IScrollViewportDelegate;
 		
-		protected var _width:int = 100;
-		protected var _height:int = 100;
-		
 		/**
 		 * Constructor.
 		 */
 		public function ScrollViewport()
 		{	
+			_width = 100;
+			_height = 100;
 			context = getDefaultViewportContext();
 			scrollRect = new Rectangle( 0, 0, _width, _height );
 			initialize();
@@ -123,7 +123,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		 * 
 		 * Validate the size of the scrollable viewport area.
 		 */
-		protected function invalidateSize():void
+		override protected function invalidateSize():void
 		{
 			_bounds.width = _width;
 			_bounds.height = _height;
@@ -249,36 +249,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		public function get scrollBounds():Rectangle
 		{
 			return _bounds;
-		}
-		
-		/**
-		 * @copy IScrollViewport#width
-		 */
-		override public function get width():Number
-		{
-			return _width;
-		}
-		override public function set width( value:Number ):void
-		{
-			if( _width == value ) return;
-			
-			_width = value;
-			invalidateSize();
-		}
-		
-		/**
-		 * @copy IScrollViewport#height
-		 */
-		override public function get height():Number
-		{
-			return _height;
-		}
-		override public function set height( value:Number ):void
-		{
-			if( _height == value ) return;
-			
-			_height = value;
-			invalidateSize();
 		}
 		
 		/**

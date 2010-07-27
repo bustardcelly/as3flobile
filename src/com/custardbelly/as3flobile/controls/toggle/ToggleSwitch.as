@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.toggle
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.toggle.context.BaseToggleSwitchStrategy;
 	import com.custardbelly.as3flobile.controls.toggle.context.IToggleSwitchContext;
 	import com.custardbelly.as3flobile.controls.toggle.context.ToggleSwitchMouseContext;
@@ -45,7 +46,7 @@ package com.custardbelly.as3flobile.controls.toggle
 	 * ToggleSwitch is an IToggleSwitch implementation that provides a control to select an between 2 values, usually representing opposites such as OFF an ON (default). 
 	 * @author toddanderson
 	 */
-	public class ToggleSwitch extends Sprite implements IToggleSwitch
+	public class ToggleSwitch extends AS3FlobileComponent implements IToggleSwitch
 	{
 		protected var _block:TextBlock;
 		
@@ -53,9 +54,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		protected var _labelHolder:Sprite;
 		protected var _labelMask:Sprite; // Label mask is only set to mask label holder when formatting is out of bounds of height specified.
 		protected var _thumb:Sprite;
-		
-		protected var _width:int = 80;
-		protected var _height:int = 30;
 		
 		protected var _format:ElementFormat;
 		protected var _labels:Vector.<String>;
@@ -85,11 +83,14 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function initialize():void
 		{
+			_width = 100;
+			_height = 40;
+			
 			_bounds = new Rectangle( 0, 0, _width, _height );
 			
 			_block = new TextBlock();
 			
-			_format = new ElementFormat( new FontDescription( "Arial" ) );
+			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
 			_format.color = 0xEEEEEE;
 			_format.fontSize = 12;
 			
@@ -177,7 +178,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		 * 
 		 * Validates the new dimensions given to this instance.
 		 */
-		protected function invalidateSize():void
+		override protected function invalidateSize():void
 		{
 			_bounds.width = _width;
 			_bounds.height = _height;
@@ -439,36 +440,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		public function get toggleBounds():Rectangle
 		{
 			return _bounds;
-		}
-
-		/**
-		 * @inherit
-		 */
-		override public function get width():Number
-		{
-			return _width;
-		}
-		override public function set width( value:Number ):void
-		{
-			if( _width == value ) return;
-			
-			_width = value;
-			invalidateSize();
-		}
-
-		/**
-		 * @inherit
-		 */
-		override public function get height():Number
-		{
-			return _height;
-		}
-		override public function set height( value:Number ):void
-		{
-			if( _height == value ) return;
-			
-			_height = value;
-			invalidateSize();
 		}
 
 		/**

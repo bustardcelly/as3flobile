@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.text
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
@@ -46,7 +47,7 @@ package com.custardbelly.as3flobile.controls.text
 	 * TextArea is a scrollable area of static textual content. 
 	 * @author toddanderson
 	 */
-	public class TextArea extends Sprite implements IScrollViewportDelegate
+	public class TextArea extends AS3FlobileComponent implements IScrollViewportDelegate
 	{
 		protected var _viewport:IScrollViewport;
 		
@@ -60,8 +61,6 @@ package com.custardbelly.as3flobile.controls.text
 		protected var _scrollPosition:Point;
 		protected var _maximumScrollPosition:int;
 		
-		protected var _width:int = 100;
-		protected var _height:int = 100;
 		protected var _scrollContext:IScrollViewportContext;
 		protected var _delegate:ITextAreaDelegate;
 		
@@ -81,8 +80,11 @@ package com.custardbelly.as3flobile.controls.text
 		 */
 		protected function initialize():void
 		{	
-			_format = new ElementFormat( new FontDescription("Arial") );
-			_format.fontSize = 12;
+			_width = 100;
+			_height = 100;
+			
+			_format = new ElementFormat( new FontDescription("DroidSans") );
+			_format.fontSize = 14;
 			
 			_block = new TextBlock();
 			
@@ -97,6 +99,8 @@ package com.custardbelly.as3flobile.controls.text
 		protected function createChildren():void
 		{
 			_lineHolder = new TextAreaLineHolder();
+			_lineHolder.mouseChildren = false;
+			_lineHolder.cacheAsBitmap = true;
 			
 			_viewport = new ScrollViewport();
 			_viewport.delegate = this;
@@ -128,7 +132,7 @@ package com.custardbelly.as3flobile.controls.text
 				_lineHolder.addChild( line );
 				_linePositions[_numLines] = ypos;
 				
-				ypos += ( line.ascent - line.descent )
+				ypos += ( line.ascent - line.descent );
 				
 				_numLines++;
 				// Get next line from factory.
@@ -149,7 +153,7 @@ package com.custardbelly.as3flobile.controls.text
 		 * 
 		 * Validate the scrollable area of the content.
 		 */
-		protected function invalidateSize():void
+		override protected function invalidateSize():void
 		{
 			invalidateTextDisplay();
 		}
@@ -218,6 +222,7 @@ package com.custardbelly.as3flobile.controls.text
 			_lineHolder = null;
 				
 			_format = null;
+			_block.releaseLines( _block.firstLine, _block.lastLine );
 			_block = null;
 			
 			_delegate = null;
@@ -333,9 +338,8 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			if( _width == value ) return;
 			
-			_width = value;
-			_viewport.width = _width;
-			invalidateSize();
+			_viewport.width = value;
+			super.width = value;
 		}
 
 		/**
@@ -350,9 +354,8 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			if( _height == value ) return;
 			
-			_height = value;
-			_viewport.height = _height;
-			invalidateSize();
+			_viewport.height = value;
+			super.height = value;
 		}
 		
 		/**

@@ -26,6 +26,8 @@
  */
 package com.custardbelly.as3flobile.helper
 {
+	import com.custardbelly.as3flobile.debug.PrintLine;
+	
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.utils.getTimer;
@@ -38,6 +40,8 @@ package com.custardbelly.as3flobile.helper
 	{
 		protected var _startTime:int;
 		protected var _threshold:int;
+		protected var _isMediating:Boolean;
+		protected var _tapDisplay:InteractiveObject;
 		protected var _tapHandler:Function;
 		
 		/**
@@ -58,6 +62,7 @@ package com.custardbelly.as3flobile.helper
 		protected function handleTouchBegin( evt:Event ):void
 		{
 			_startTime = getTimer();
+			PrintLine.instance().print( "down: " + _startTime );
 		}
 		
 		/**
@@ -68,8 +73,12 @@ package com.custardbelly.as3flobile.helper
 		 */
 		protected function handleTouchEnd( evt:Event ):void
 		{
+			PrintLine.instance().print( "up: " + getTimer(), true );
 			if( getTimer() - _startTime <= _threshold )
+			{
+				PrintLine.instance().print( "tap: " + ( getTimer() - _startTime ), true );
 				_tapHandler.apply( this, [evt] );
+			}
 		}
 		
 		/**
@@ -77,7 +86,9 @@ package com.custardbelly.as3flobile.helper
 		 */
 		public function mediateTapGesture( display:InteractiveObject, gestureHandler:Function ):void
 		{
+			_tapDisplay = display;
 			_tapHandler = gestureHandler;
+			_isMediating = true;
 		}
 		
 		/**
@@ -86,6 +97,8 @@ package com.custardbelly.as3flobile.helper
 		public function unmediateTapGesture( display:InteractiveObject ):void
 		{
 			_tapHandler = null;
+			_tapDisplay = null;
+			_isMediating = false;
 		}
 	}
 }

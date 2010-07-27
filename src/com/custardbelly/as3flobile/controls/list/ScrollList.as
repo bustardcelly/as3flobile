@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.list
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
@@ -54,7 +55,7 @@ package com.custardbelly.as3flobile.controls.list
 	 * ScrollList is a display component that allows you to scroll through a list of items using a mouse or touch gesture. 
 	 * @author toddanderson
 	 */
-	public class ScrollList extends Sprite implements IScrollViewportDelegate, IScrollListContainer, IScrollListLayoutTarget
+	public class ScrollList extends AS3FlobileComponent implements IScrollViewportDelegate, IScrollListContainer, IScrollListLayoutTarget
 	{	
 		protected var _background:Shape;
 		protected var _listHolder:Sprite;
@@ -77,14 +78,13 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _selectedIndex:int = -1;
 		protected var _dataProvider:Array;
 		
-		protected var _width:int = 100;
-		protected var _height:int = 100;
-		
 		/**
 		 * Constructor.
 		 */
 		public function ScrollList()
 		{
+			_width = 100; 
+			_height = 100;
 			// Get default scroll context.
 			_scrollContext = getDefaultScrollContext();
 			// Create child displays.
@@ -215,7 +215,7 @@ package com.custardbelly.as3flobile.controls.list
 		 * 
 		 * Validates the new size applied to this instance.
 		 */
-		protected function invalidateSize():void
+		override protected function invalidateSize():void
 		{
 			// Set new scroll rect area.
 			_bounds.width = _width;
@@ -600,38 +600,6 @@ package com.custardbelly.as3flobile.controls.list
 		public function get scrollBounds():Rectangle
 		{
 			return _bounds;
-		}
-		
-		/**
-		 * Accessor/Modifier of the width of this instance. 
-		 * @return Number
-		 */
-		override public function get width():Number
-		{
-			return _width;
-		}
-		override public function set width( value:Number ):void
-		{
-			if( _width == value ) return;
-			
-			_width = value;
-			invalidateSize();
-		}
-		
-		/**
-		 * Accessor/Modifier of the height of this instance. 
-		 * @return Number
-		 */
-		override public function get height():Number
-		{
-			return _height;
-		}
-		override public function set height( value:Number ):void
-		{
-			if( _height == value ) return;
-			
-			_height = value;
-			invalidateSize();
 		}
 		
 		/**

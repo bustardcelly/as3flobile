@@ -26,6 +26,8 @@
  */
 package com.custardbelly.as3flobile.helper
 {	
+	import com.custardbelly.as3flobile.debug.PrintLine;
+	
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -39,15 +41,79 @@ package com.custardbelly.as3flobile.helper
 	{
 		protected var _startX:Number;
 		protected var _startY:Number;
-		protected var _length:int = 3;
+		protected var _movementThreshold:int = 12;
 		
 		/**
 		 * Constructor. 
 		 * @param threshold int The maximum amount of time in milliseconds that relates to the time for a tap gesture. 
 		 */
-		public function MouseTapMediator( threshold:int = 500 )
+		public function MouseTapMediator( movementThreshold:int = 12, timeThreshold:int = 500 )
 		{
-			super( threshold );
+			super( timeThreshold );
+			_movementThreshold = movementThreshold;
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Assigns event handlers related to the target display being added and removed from the stage.
+		 */
+		protected function assignDisplayHandlers():void
+		{
+			_tapDisplay.addEventListener( Event.ADDED_TO_STAGE, handleTapDisplayAdded, false, 0, true );
+			_tapDisplay.addEventListener( Event.REMOVED_FROM_STAGE, handleTapDisplayRemoved, false, 0, true );
+		}
+		/**
+		 * @private 
+		 * 
+		 * Removes event handlers related to the target display being added and removed from the stage.
+		 */
+		protected function removeDisplayHandlers():void
+		{
+			_tapDisplay.removeEventListener( Event.ADDED_TO_STAGE, handleTapDisplayAdded, false );
+			_tapDisplay.removeEventListener( Event.REMOVED_FROM_STAGE, handleTapDisplayRemoved, false );	
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Assigns event handlers for mouse actions on the stage of the target tap display.
+		 */
+		protected function assignMouseHandlers():void
+		{
+			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false, 0, true );
+			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false, 0, true );
+		}
+		/**
+		 * @private 
+		 * 
+		 * Removes event handlers for mouse actions on the stage of the target tap display.
+		 */
+		protected function removeMouseHandlers():void
+		{
+			_tapDisplay.stage.removeEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false );
+			_tapDisplay.stage.removeEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Event handler for tap display being added to the display list. 
+		 * @param evt Event
+		 */
+		protected function handleTapDisplayAdded( evt:Event ):void
+		{
+			if( _isMediating ) assignMouseHandlers();
+		}
+		/**
+		 * @private
+		 * 
+		 * Event handler for tap display being added to the display list. 
+		 * @param evt Event
+		 */
+		protected function handleTapDisplayRemoved( evt:Event ):void
+		{
+			if( _isMediating ) removeMouseHandlers();
 		}
 		
 		/**
@@ -71,7 +137,8 @@ package com.custardbelly.as3flobile.helper
 			var y:int = mouseEvent.stageY - _startY;
 			var len:int = Math.sqrt( x * x + y * y );
 			
-			if( len < _length )
+			PrintLine.instance().print( "tap length: " + len, true );
+			if( len < _movementThreshold )
 				super.handleTouchEnd( evt );
 		}
 		
@@ -82,8 +149,14 @@ package com.custardbelly.as3flobile.helper
 		{
 			super.mediateTapGesture( display, handler );
 			// Use MouseEvents to recognize tap gesture.
-			display.addEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false, 100, true );
-			display.addEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false, 100, true );
+			if( display.stage )
+			{
+				assignMouseHandlers();
+			}
+			else
+			{
+				assignDisplayHandlers();
+			}
 		}
 		
 		/**
@@ -91,9 +164,12 @@ package com.custardbelly.as3flobile.helper
 		 */
 		override public function unmediateTapGesture( display:InteractiveObject ):void
 		{
+			if( display.stage )
+			{
+				removeMouseHandlers();
+			}
+			removeDisplayHandlers();
 			super.unmediateTapGesture( display );
-			display.removeEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false );
-			display.removeEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false );
 		}
 	}
 }

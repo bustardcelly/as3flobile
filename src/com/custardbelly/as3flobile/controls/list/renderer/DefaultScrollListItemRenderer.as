@@ -82,7 +82,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			this.mouseChildren = false;
 			this.mouseEnabled = false;
 			
-			_format = new ElementFormat( new FontDescription( "Arial" ) );
+			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
 			_format.fontSize = 12;
 			_block = new TextBlock();
 		}

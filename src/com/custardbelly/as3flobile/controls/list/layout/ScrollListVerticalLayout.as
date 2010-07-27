@@ -289,7 +289,11 @@ package com.custardbelly.as3flobile.controls.list.layout
 			if( _useVariableHeight == value ) return;
 			
 			_useVariableHeight = value;
-			if( _target != null ) updateDisplay();
+			if( _target != null ) 
+			{
+				updateDisplay();
+				updateScrollPosition();
+			}
 		}
 	}
 }

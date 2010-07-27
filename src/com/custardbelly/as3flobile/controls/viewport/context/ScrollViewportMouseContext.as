@@ -135,13 +135,14 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		{
 			var targetX:Number = _mouseTarget.mouseX;
 			var targetY:Number = _mouseTarget.mouseY;
-			var isWithinBounds:Boolean = isWithinViewportBounds( targetX, targetY );
+			// NOTE: Taking out check for bounds for speed.
+//			var isWithinBounds:Boolean = isWithinViewportBounds( targetX, targetY );
 			
 			_point.x = targetX;
 			_point.y = targetY;
 			_strategy.move( _point );
 			
-			if( !isWithinBounds ) handleMouseUp( evt );
+//			if( !isWithinBounds ) handleMouseUp( evt );
 		}
 		
 		/**
