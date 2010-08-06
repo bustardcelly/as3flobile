@@ -28,6 +28,9 @@ package com.custardbelly.as3flobile.controls.button
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.skin.ButtonSkin;
+	import com.custardbelly.as3flobile.skin.ISkin;
+	import com.custardbelly.as3flobile.skin.Skin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -51,9 +54,14 @@ package com.custardbelly.as3flobile.controls.button
 		 */
 		public function Button()
 		{
+			super();
+			
 			initialize();
 			createChildren();
-			draw();
+			
+			initializeDisplay();
+			updateDisplay();
+			
 			mouseChildren = false;
 		}
 		
@@ -65,7 +73,10 @@ package com.custardbelly.as3flobile.controls.button
 		protected function initialize():void
 		{
 			_width = 100;
-			_height = 40;
+			_height = 48;
+			
+			_skin = new ButtonSkin();
+			_skin.target = this;
 		}
 		
 		/**
@@ -81,9 +92,17 @@ package com.custardbelly.as3flobile.controls.button
 			_labelDisplay = new Label();
 			_labelDisplay.autosize = true;
 			_labelDisplay.multiline = true;
-			_labelDisplay.width = _width - ( _padding * 2 );
-			_labelDisplay.height = _height - ( _padding * 2 );
 			addChild( _labelDisplay );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Initialize the display using newly created members and properties.
+		 */
+		protected function initializeDisplay():void
+		{
+			_skin.initializeDisplay( _width, _height );
 		}
 		
 		/**
@@ -91,12 +110,9 @@ package com.custardbelly.as3flobile.controls.button
 		 * 
 		 * Redraws any display content.
 		 */
-		protected function draw():void
+		protected function updateDisplay():void
 		{
-			_buttonDisplay.graphics.clear();
-			_buttonDisplay.graphics.beginFill( 0xFFFFFF );
-			_buttonDisplay.graphics.drawRect( 0, 0, _width, _height );
-			_buttonDisplay.graphics.endFill();
+			_skin.updateDisplay( width, height );
 		}
 		
 		/**
@@ -107,29 +123,18 @@ package com.custardbelly.as3flobile.controls.button
 		protected function invalidateLabel():void
 		{
 			_labelDisplay.text = _label;
-			positionLabel();
+			updateDisplay();
 		}
 		
 		/**
 		 * @inherit
 		 */
-		override protected function invalidateSize():void
+		override public function dispose():void
 		{
-			super.invalidateSize();
-			_labelDisplay.width = _width - ( _padding * 2 );
-			positionLabel();
-			draw();
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Positions the label display.
-		 */
-		protected function positionLabel():void
-		{
-			_labelDisplay.x = ( _width - _labelDisplay.width ) / 2;
-			_labelDisplay.y = ( _height - _labelDisplay.height ) / 2;
+			super.dispose();
+			
+			while( numChildren > 0 )
+				removeChildAt( 0 );
 		}
 		
 		/**
@@ -146,6 +151,40 @@ package com.custardbelly.as3flobile.controls.button
 			
 			_label = value;
 			invalidateLabel();
+		}
+		
+		/**
+		 * Accessor/Modifier for the padding offset for the label display. 
+		 * @return int
+		 */
+		public function get labelPadding():int
+		{
+			return _padding;
+		}
+		public function set labelPadding( value:int ):void
+		{
+			if( _padding == value ) return;
+			
+			_padding = value;
+			updateDisplay();
+		}
+		
+		/**
+		 * Accessor for the label display that can be used in skinning process. 
+		 * @return Label
+		 */
+		public function get labelDisplay():Label
+		{
+			return _labelDisplay;
+		}
+		
+		/**
+		 * Accessor for the buttonDisplay that can be used in the skinning process. 
+		 * @return Sprite
+		 */
+		public function get buttonDisplay():Sprite
+		{
+			return _buttonDisplay;
 		}
 	}
 }

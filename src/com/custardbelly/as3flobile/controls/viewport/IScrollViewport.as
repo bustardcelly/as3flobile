@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.viewport
 {
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
+	import com.custardbelly.as3flobile.model.IDisposable;
 	
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
@@ -36,16 +37,12 @@ package com.custardbelly.as3flobile.controls.viewport
 	 * IScrollViewport is a display container that provides a viewport area for scrolling of content. 
 	 * @author toddanderson
 	 */
-	public interface IScrollViewport extends IEventDispatcher
+	public interface IScrollViewport extends IEventDispatcher, IDisposable
 	{
 		/**
 		 * Runs a refresh on content and context.
 		 */
 		function refresh():void;
-		/**
-		 * Performs any clenaup.
-		 */
-		function dispose():void;
 		
 		/**
 		 * Returns the bounding area for which the content is presented in a scrollable viewport.
@@ -53,6 +50,20 @@ package com.custardbelly.as3flobile.controls.viewport
 		 * @return Rectangle
 		 */
 		function get scrollBounds():Rectangle;
+		
+		/**
+		 * Accessor/Modifier for the position along the x axis. 
+		 * @return Number
+		 */
+		function get x():Number;
+		function set x( value:Number ):void;
+		
+		/**
+		 * Accessor/Modifier for the position along the y axis. 
+		 * @return Number
+		 */
+		function get y():Number;
+		function set y( value:Number ):void;
 		
 		/**
 		 * Accessor/Modifier for the display width of the viewport. 

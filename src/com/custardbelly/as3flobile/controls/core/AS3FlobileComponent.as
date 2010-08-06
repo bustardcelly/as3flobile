@@ -23,23 +23,32 @@
  *
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
- */package com.custardbelly.as3flobile.controls.core
+ */
+package com.custardbelly.as3flobile.controls.core
 {
+	import com.custardbelly.as3flobile.model.IDisposable;
+	import com.custardbelly.as3flobile.skin.ISkin;
+	import com.custardbelly.as3flobile.skin.ISkinnable;
+	
 	import flash.display.Sprite;
+	import flash.utils.describeType;
+	import flash.utils.getDefinitionByName;
 	
 	/**
 	 * AS3FlobileComponent is a base component for all components in the as3flobile package. 
 	 * @author toddanderson
 	 */
-	public class AS3FlobileComponent extends Sprite
+	public class AS3FlobileComponent extends Sprite implements IDisposable, ISkinnable
 	{
+		protected var _skin:ISkin;
+		
 		protected var _width:int = 100;
 		protected var _height:int = 100;
 		
 		/**
 		 * Constructor. 
 		 */
-		public function AS3FlobileComponent() { super(); }
+		public function AS3FlobileComponent() {}
 		
 		/**
 		 * @private 
@@ -48,7 +57,47 @@
 		 */
 		protected function invalidateSize():void
 		{
-			// abstract.
+			if( _skin != null ) _skin.updateDisplay( _width, _height );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Invalidates the supplied skin through the skin modifier.
+		 */
+		protected function invalidateSkin():void
+		{
+			_skin.target = this;
+			_skin.initializeDisplay( _width, _height );
+			invalidateSize();
+		}
+		
+		/**
+		 * @copy IDisposable#dispose()
+		 */
+		public function dispose():void
+		{
+			if( _skin != null )
+			{
+				_skin.dispose();
+				_skin = null;
+			}
+		}
+		
+		/**
+		 * Accessor/Modifier for the skin instance used to draw any display attributes. 
+		 * @return ISkin
+		 */
+		public function get skin():ISkin
+		{
+			return _skin;
+		}
+		public function set skin( value:ISkin ):void
+		{
+			if( _skin == value ) return;
+			
+			_skin = value;
+			invalidateSkin();
 		}
 		
 		/**

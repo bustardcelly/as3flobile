@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.label.renderer
 {
 	import flash.display.DisplayObjectContainer;
+	import flash.text.TextFormatAlign;
 	import flash.text.engine.BreakOpportunity;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.TextBlock;
@@ -41,6 +42,7 @@ package com.custardbelly.as3flobile.controls.label.renderer
 	{
 		protected var _target:DisplayObjectContainer;
 		protected var _block:TextBlock;
+		protected var _textAlign:String;
 		
 		/**
 		 * Constructor. 
@@ -72,7 +74,9 @@ package com.custardbelly.as3flobile.controls.label.renderer
 			// Create text lines.
 			_block.content = element;
 			var ypos:int;
+			var maxWidth:int;
 			var hasHeightLimit:Boolean = ( height != 0 );
+			var lines:Vector.<TextLine> = new Vector.<TextLine>();
 			var line:TextLine = _block.createTextLine( null, width );
 			lineCreation: while( line )
 			{
@@ -84,8 +88,36 @@ package com.custardbelly.as3flobile.controls.label.renderer
 				ypos += line.descent;
 				_target.addChild( line );
 				
+				// push for positioning.
+				lines.push( line );
+				maxWidth = ( maxWidth < line.width ) ? line.width : maxWidth;
+				
 				// Get next line from factory.
 				line = _block.createTextLine( line, width );
+			}
+			
+			// Position content.
+			switch( _textAlign )
+			{
+				case TextFormatAlign.LEFT:
+				default:
+					while( lines.length > 0 )
+						( lines.shift() as TextLine ).x = 0;
+					break;
+				case TextFormatAlign.CENTER:
+					while( lines.length > 0 )
+					{
+						line = ( lines.shift() as TextLine );
+						line.x = ( maxWidth - line.width ) / 2;
+					}
+					break;
+				case TextFormatAlign.RIGHT:
+					while( lines.length > 0 )
+					{
+						line = ( lines.shift() as TextLine );
+						line.x = maxWidth - line.width;
+					}
+					break;
 			}
 		}
 		
@@ -111,6 +143,18 @@ package com.custardbelly.as3flobile.controls.label.renderer
 		public function set truncationText(value:String):void
 		{
 			// fall through. unneeded here.
+		}
+
+		/**
+		 * @copy ILabelRenderer#textAlign
+		 */
+		public function get textAlign():String
+		{
+			return _textAlign;
+		}
+		public function set textAlign(value:String):void
+		{
+			_textAlign = value;
 		}
 	}
 }

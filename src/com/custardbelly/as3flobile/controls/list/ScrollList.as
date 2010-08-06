@@ -31,6 +31,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
+	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
@@ -39,6 +40,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.helper.ITapMediator;
 	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.helper.TapMediator;
+	import com.custardbelly.as3flobile.skin.ScrollListSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
@@ -60,7 +62,7 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _background:Shape;
 		protected var _listHolder:Sprite;
 		protected var _bounds:Rectangle;
-		protected var _viewport:ScrollViewport;
+		protected var _viewport:IScrollViewport;
 		
 		protected var _itemRenderer:String;
 		protected var _tapMediator:ITapMediator;
@@ -73,24 +75,28 @@ package com.custardbelly.as3flobile.controls.list
 		
 		protected var _currentScrollPosition:Point;
 		protected var _isScrolling:Boolean;
+		
 		protected var _selectedRenderer:IScrollListItemRenderer;
 		
 		protected var _selectedIndex:int = -1;
 		protected var _dataProvider:Array;
+		
+		protected var _padding:int;
+		protected var _seperatorLength:int;
 		
 		/**
 		 * Constructor.
 		 */
 		public function ScrollList()
 		{
-			_width = 100; 
-			_height = 100;
 			// Get default scroll context.
 			_scrollContext = getDefaultScrollContext();
-			// Create child displays.
-			createChildren();
 			// Initialize.
 			initialize();
+			// Create child displays.
+			createChildren();
+			// Initialize skin.
+			_skin.initializeDisplay( _width, _height );
 		}
 		
 		/**
@@ -110,6 +116,31 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * @private 
 		 * 
+		 * Initializes any necessary values for the creation of an instance of ScrollList.
+		 */
+		protected function initialize():void
+		{
+			_width = 100; 
+			_height = 100;
+			
+			_padding = 2;
+			_seperatorLength = 2;
+			
+			_bounds = new Rectangle( 0, 0, _width, _height );
+			
+			_currentScrollPosition = new Point( 0, 0 );
+			
+			_cells = new Vector.<IScrollListItemRenderer>()
+			_itemRenderer = getQualifiedClassName( DefaultScrollListItemRenderer );
+			_layout = getDefaultLayout();
+			
+			_skin = new ScrollListSkin();
+			_skin.target = this;
+		}
+		
+		/**
+		 * @private 
+		 * 
 		 * Creates all necessary display children.
 		 */
 		protected function createChildren():void
@@ -123,29 +154,16 @@ package com.custardbelly.as3flobile.controls.list
 			_listHolder.cacheAsBitmap = true;
 			
 			// Create the viewport and point to the list holder target.
+			var doublePadding:int = ( _padding * 2 );
 			_viewport = new ScrollViewport();
 			_viewport.delegate = this;
 			_viewport.context = _scrollContext;
 			_viewport.content = _listHolder;
-			_viewport.width = _width;
-			_viewport.height = _height;
-			addChild( _viewport );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Initializes any necessary values for the creation of an instance of ScrollList.
-		 */
-		protected function initialize():void
-		{
-			_bounds = new Rectangle( 0, 0, _width, _height );
-			
-			_currentScrollPosition = new Point( 0, 0 );
-			
-			_cells = new Vector.<IScrollListItemRenderer>()
-			_itemRenderer = getQualifiedClassName( DefaultScrollListItemRenderer );
-			_layout = getDefaultLayout();
+			_viewport.width = _width - doublePadding;
+			_viewport.height = _height - doublePadding;
+			_viewport.x = _padding;
+			_viewport.y = _padding;
+			addChild( _viewport as DisplayObject );
 			
 			_tapMediator = getDefaultTapMediator( _listHolder, handleListTap );
 		}
@@ -217,13 +235,18 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		override protected function invalidateSize():void
 		{
+			super.invalidateSize();
+			
+			var doublePadding:int = ( _padding * 2 );
 			// Set new scroll rect area.
-			_bounds.width = _width;
-			_bounds.height = _height;
-			this.scrollRect = _bounds;
+			_bounds.width = _width - doublePadding;
+			_bounds.height = _height - doublePadding;
+//			this.scrollRect = _bounds;
 			// Apply new values to the viewport instance.
-			_viewport.width = _width;
-			_viewport.height = _height;
+			_viewport.width = _width - doublePadding;
+			_viewport.height = _height - doublePadding;
+			_viewport.x = _padding;
+			_viewport.y = _padding;
 			// Run refresh on display.
 			invalidateDisplay();
 		}
@@ -356,10 +379,7 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function updateDisplay():void
 		{
-			_background.graphics.clear();
-			_background.graphics.beginFill( 0xEEEEEE );
-			_background.graphics.drawRect( scrollRect.x, scrollRect.y, scrollRect.width, scrollRect.height );
-			_background.graphics.endFill();
+			_skin.updateDisplay( _width, _height );
 		}
 		
 		/**
@@ -488,7 +508,10 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		public function addRendererToDisplay( renderer:IScrollListItemRenderer ):void
 		{
-			_listHolder.addChild( renderer as DisplayObject );
+			if( _listHolder.contains( renderer as DisplayObject ) )
+				( renderer as DisplayObject ).visible = true;
+			else
+				_listHolder.addChild( renderer as DisplayObject );
 		}
 		
 		/**
@@ -498,7 +521,8 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		public function removeRendererFromDisplay( renderer:IScrollListItemRenderer ):void
 		{
-			_listHolder.removeChild( renderer as DisplayObject );
+			if( _listHolder.contains( renderer as DisplayObject ) )
+				( renderer as DisplayObject ).visible = false;
 		}
 		
 		/**
@@ -562,10 +586,12 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * Performs any cleanup necessary.
+		 * @inherit
 		 */
-		public function dispose():void
+		override public function dispose():void
 		{
+			super.dispose();
+			
 			// Empty list.
 			_cells = new Vector.<IScrollListItemRenderer>();
 			
@@ -600,6 +626,48 @@ package com.custardbelly.as3flobile.controls.list
 		public function get scrollBounds():Rectangle
 		{
 			return _bounds;
+		}
+		
+		/**
+		 * Accessor for the background display that can be used in the skinning process. 
+		 * @return Shape
+		 */
+		public function get backgroundDisplay():Shape
+		{
+			return _background;
+		}
+		
+		/**
+		 * Accessor/Modifier for the padding offset of the list content of item renderers and the border of this instance. 
+		 * Allows for rendering of lowest layer of Skin to be seen if value is above 0. 
+		 * @return int
+		 */
+		public function get padding():int
+		{
+			return _padding;
+		}
+		public function set padding(value:int):void
+		{
+			if( _padding == value ) return;
+			
+			_padding = ( value < 0 ) ? 0 : value;
+			invalidateSize();
+		}
+		
+		/**
+		 * Accessor/Modifier for the seperator size between list items. 
+		 * @return int
+		 */
+		public function get seperatorLength():int
+		{
+			return _seperatorLength;
+		}
+		public function set seperatorLength(value:int):void
+		{
+			if( _seperatorLength == value ) return;
+			
+			_seperatorLength = ( value < 0 ) ? 0 : value;
+			invalidateDisplay();
 		}
 		
 		/**

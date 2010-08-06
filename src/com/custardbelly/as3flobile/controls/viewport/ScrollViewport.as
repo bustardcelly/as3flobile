@@ -231,10 +231,12 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
-		 * @copy IScrollViewport#dispose()
+		 * @inherit
 		 */
-		public function dispose():void
+		override public function dispose():void
 		{
+			super.dispose();
+			
 			removeHandlers();
 			
 			_context.dispose();

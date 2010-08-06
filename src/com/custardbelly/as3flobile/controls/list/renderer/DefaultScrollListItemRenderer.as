@@ -26,6 +26,8 @@
  */
 package com.custardbelly.as3flobile.controls.list.renderer
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
+	
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.text.engine.ElementFormat;
@@ -39,7 +41,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 	 * The recognize object model for the data supplied to this class is {label:"your label"}. The label property of the object model is represented textually.
 	 * @author toddanderson
 	 */
-	public class DefaultScrollListItemRenderer extends Sprite implements IScrollListItemRenderer
+	public class DefaultScrollListItemRenderer extends AS3FlobileComponent implements IScrollListItemRenderer
 	{
 		private static const STATE_UNLOCKED:uint = 0;
 		private static const STATE_LOCKED:uint = 1;
@@ -55,12 +57,12 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		
 		protected var _isDirty:Boolean;
 		protected var _currentState:uint = DefaultScrollListItemRenderer.STATE_UNLOCKED;
-		protected var _width:Number = 100;
-		protected var _height:Number = 20;
 		protected var _useVariableWidth:Boolean;
 		protected var _useVariableHeight:Boolean;
 		
 		protected var _data:Object;
+		
+		protected var _padding:int;
 		
 		/**
 		 * Constructor.
@@ -82,8 +84,13 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			this.mouseChildren = false;
 			this.mouseEnabled = false;
 			
+			_width = 100;
+			_height = 20;
+			
+			_padding = 3;
+			
 			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
-			_format.fontSize = 12;
+			_format.fontSize = 14;
 			_block = new TextBlock();
 		}
 		
@@ -132,17 +139,19 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			// Use TextBlock factory to create TextLines and add to the display.
 			_block.content = new TextElement( _data.label, _format );
-			var w:Number = ( _useVariableWidth ) ? 1000000 : _width;
+			var w:int = ( _useVariableWidth ) ? 1000000 : _width - ( _padding * 2 );
 			var line:TextLine = _block.createTextLine( null, w );
-			var offset:Number = 3;
-			var maxLineWidth:Number = 0;
-			var ypos:int = 0;
+			var offset:int = 3;
+			var maxLineWidth:int = 0;
+			var ypos:int = _padding;
 			while( line )
 			{
 				ypos += line.height;
-				line.y = ypos;
-				ypos += ( line.ascent - line.descent )
+				line.y = int(ypos);
+				line.x = _padding;
 				addChild( line );
+				
+				ypos += ( line.ascent - line.descent )
 				
 				// If using variable height, reassign height to new height of line.
 				if( _useVariableHeight ) _height = ypos;
@@ -163,7 +172,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		 * 
 		 * Validates the size determined from #invalidateData.
 		 */
-		protected function invalidateSize():void
+		override protected function invalidateSize():void
 		{
 			invalidateDisplay();
 		}
@@ -231,10 +240,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		/**
 		 * @copy IScrollListItemRenderer#width
 		 */
-		override public function get width():Number
-		{
-			return _width;
-		}
 		override public function set width( value:Number ):void
 		{
 			if( _width == value ) return;
@@ -246,10 +251,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		/**
 		 * @copy IScrollListItemRenderer#height
 		 */
-		override public function get height():Number
-		{
-			return _height;
-		}
 		override public function set height( value:Number ):void
 		{
 			if( _height == value ) return;
@@ -302,5 +303,19 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			_data = value;	
 			invalidateProperty( invalidateData );
 		}
+
+		/**
+		 * Accessor/Modifier for the offset set padding between the instance's edge and the default content label. Default is 3. 
+		 * @return String
+		 */
+		public function get padding():int
+		{
+			return _padding;
+		}
+		public function set padding(value:int):void
+		{
+			_padding = value;
+		}
+
 	}
 }

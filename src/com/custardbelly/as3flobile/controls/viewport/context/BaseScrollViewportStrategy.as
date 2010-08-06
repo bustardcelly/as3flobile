@@ -42,8 +42,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected var _bounds:Rectangle;
 		protected var _delegate:IScrollViewportDelegate;
 		
-		protected var _currentScrollPositionX:Number;
-		protected var _currentScrollPositionY:Number;
+		protected var _currentScrollPositionX:int;
+		protected var _currentScrollPositionY:int;
 		protected var _scrollBoundsLeft:int;
 		protected var _scrollBoundsRight:int;
 		protected var _scrollBoundsTop:int;
@@ -71,7 +71,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public static const VECTOR_MIN:Number = 0.01;
 		public static const VECTOR_MAX:int = 60;
 		public static const VECTOR_MULTIPLIER:Number = 0.25;
-		public static const RETURN_TIME:int = 70;
+		public static const RETURN_TIME:int = 85;
 		public static const CAPACITY:uint = 20;
 		
 		public function BaseScrollViewportStrategy() {}
@@ -280,7 +280,26 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_currentScrollPositionY += _velocityY;
 			
 			// Limit the position.
-			limitPosition();
+//			limitPosition();
+			// limit position along the x-axis.
+			if( _currentScrollPositionX > _scrollBoundsLeft )
+			{
+				_currentScrollPositionX = _scrollBoundsLeft;
+			}
+			else if( _currentScrollPositionX < _scrollBoundsRight )
+			{
+				_currentScrollPositionX = _scrollBoundsRight;
+			}
+			// limit position along the y-axis.
+			if( _currentScrollPositionY > _scrollBoundsTop )
+			{
+				_currentScrollPositionY = _scrollBoundsTop;
+			}
+			else if( _currentScrollPositionY < _scrollBoundsBottom )
+			{
+				_currentScrollPositionY = _scrollBoundsBottom;
+			}
+			
 			// Set the position of target content along the x, y axis.
 			_content.x = _currentScrollPositionX;
 			_content.y = _currentScrollPositionY;
@@ -362,7 +381,25 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_velocityX = _velocityY = 0;
 			_currentScrollPositionX += currentMark.x - previousMark.x;
 			_currentScrollPositionY += currentMark.y - previousMark.y;
-			limitPosition();
+//			limitPosition();
+			// limit position along the x-axis.
+			if( _currentScrollPositionX > _scrollBoundsLeft )
+			{
+				_currentScrollPositionX = _scrollBoundsLeft;
+			}
+			else if( _currentScrollPositionX < _scrollBoundsRight )
+			{
+				_currentScrollPositionX = _scrollBoundsRight;
+			}
+			// limit position along the y-axis.
+			if( _currentScrollPositionY > _scrollBoundsTop )
+			{
+				_currentScrollPositionY = _scrollBoundsTop;
+			}
+			else if( _currentScrollPositionY < _scrollBoundsBottom )
+			{
+				_currentScrollPositionY = _scrollBoundsBottom;
+			}
 			
 			// Notify client of animate.
 			if( _delegate )
@@ -375,12 +412,17 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		
 		public function end(point:Point):void
 		{	
+			const VECTOR_MULTIPLIER:Number = 0.25;
+			const VECTOR_MAX:int = 60;
+			
 			var previousMark:ScrollMark = recentMark();
 			var currentMark:ScrollMark = addMark( point.x, point.y, getTimer() );
+			var currentMarkX:Number = currentMark.x;
+			var currentMarkY:Number = currentMark.y;
 			
 			// Update position.
-			_currentScrollPositionX += currentMark.x - previousMark.x;
-			_currentScrollPositionY += currentMark.y - previousMark.y;
+			_currentScrollPositionX += currentMarkX - previousMark.x;
+			_currentScrollPositionY += currentMarkY - previousMark.y;
 			limitPosition();
 			
 			// Find the most recent mark related to the crossover.
@@ -405,43 +447,43 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			previousMark = _marks[int(recentIndex - 1)];
 			// Determine the threshold and new point.
 			var crossoverPercent:Number = linearMap( crossover, previousMark.time, recentMark.time, 0, 1 );
-			var newPointX:Number = interpolate( previousMark.x, recentMark.x, crossoverPercent );
-			var newPointY:Number = interpolate( previousMark.y, recentMark.y, crossoverPercent );
-			var thresholdX:Number = currentMark.x - newPointX;
-			var thresholdY:Number = currentMark.y - newPointY;
+			var newPointX:Number = ( previousMark.x * ( 1 - crossoverPercent ) ) + ( recentMark.x * crossoverPercent );//interpolate( previousMark.x, recentMark.x, crossoverPercent );
+			var newPointY:Number = ( previousMark.y * ( 1 - crossoverPercent ) ) + ( recentMark.y * crossoverPercent );//interpolate( previousMark.y, recentMark.y, crossoverPercent );
+			var thresholdX:Number = currentMarkX - newPointX;
+			var thresholdY:Number = currentMarkY - newPointY;
 			var absoluteThreshold:Number = ( thresholdX > 0.0 ) ? thresholdX : -thresholdX;
 			
 			// If we haven't reach our threshold, our latest point is the current one.
 			if( absoluteThreshold < _thresholdX )
 			{
-				newPointX = currentMark.x;
+				newPointX = currentMarkX;
 			}
 			absoluteThreshold = ( thresholdY > 0.0 ) ? thresholdY : -thresholdY;
 			if( absoluteThreshold < _thresholdY )
 			{
-				newPointY = currentMark.y;
+				newPointY = currentMarkY;
 			}
 			// If we have determined that the newest point is the current one, then we have stopped animating.
-			if( currentMark.x == newPointX && currentMark.y == newPointY )
+			if( currentMarkX == newPointX && currentMarkY == newPointY )
 			{
 				endAnimate();
 				return;
 			}
 			// Update the velocity.
-			var velocityX:Number = thresholdX * BaseScrollViewportStrategy.VECTOR_MULTIPLIER;
-			var velocityY:Number = thresholdY * BaseScrollViewportStrategy.VECTOR_MULTIPLIER;
+			var velocityX:Number = thresholdX * VECTOR_MULTIPLIER;
+			var velocityY:Number = thresholdY * VECTOR_MULTIPLIER;
 			var absoluteVelocity:Number = ( velocityX > 0.0 ) ? velocityX : -velocityX;
 			// If we have reached our max velocity, start slowing down.
 			var factor:Number;
-			if( absoluteVelocity >= BaseScrollViewportStrategy.VECTOR_MAX )
+			if( absoluteVelocity >= VECTOR_MAX )
 			{
-				factor = BaseScrollViewportStrategy.VECTOR_MAX / absoluteVelocity;
+				factor = VECTOR_MAX / absoluteVelocity;
 				velocityX *= factor;
 			}
 			absoluteVelocity = ( velocityY > 0.0 ) ? velocityY : -velocityY;
-			if( absoluteVelocity >= BaseScrollViewportStrategy.VECTOR_MAX )
+			if( absoluteVelocity >= VECTOR_MAX )
 			{
-				factor = BaseScrollViewportStrategy.VECTOR_MAX / absoluteVelocity;
+				factor = VECTOR_MAX / absoluteVelocity;
 				velocityY *= factor;
 			}
 			_velocityX = velocityX;
@@ -457,6 +499,18 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_content = viewport.content;
 			_bounds = viewport.scrollBounds;
 			_delegate = viewport.delegate;
+			// Return marks.
+			if( _marks != null )
+			{
+				var i:int;
+				var length:int = _marks.length;
+				var mark:ScrollMark;
+				for( i = 0; i < length; i++ )
+				{
+					mark = _marks[i];
+					ScrollMark.returnScrollMark( mark );
+				}
+			}
 			// If we have the minimum of what is needed, initialize.
 			if( _content && _bounds )
 				initialize();

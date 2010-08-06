@@ -91,6 +91,13 @@ package com.custardbelly.as3flobile.controls.list
 		function set scrollContext( value:IScrollViewportContext ):void;
 		
 		/**
+		 * Accessor/Modifier for the seperator size between list items. 
+		 * @return int
+		 */
+		function get seperatorLength():int;
+		function set seperatorLength(value:int):void;
+		
+		/**
 		 * Accessor/Modifier for the item renderer instance to represent the data. 
 		 * @return String The fully qualified class name of the item renderer.
 		 */

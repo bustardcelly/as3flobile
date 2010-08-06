@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.label.renderer
 {
 	import flash.display.DisplayObjectContainer;
+	import flash.text.TextFormatAlign;
 	import flash.text.engine.BreakOpportunity;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.TextBlock;
@@ -43,6 +44,7 @@ package com.custardbelly.as3flobile.controls.label.renderer
 		protected var _block:TextBlock;
 		
 		protected var _truncationText:String;
+		protected var _textAlign:String;
 		
 		/**
 		 * Constructor. 
@@ -89,6 +91,20 @@ package com.custardbelly.as3flobile.controls.label.renderer
 			if( line )
 			{
 				line.y = line.height;
+				// Position content.
+				switch( _textAlign )
+				{
+					case TextFormatAlign.LEFT:
+					default:
+						line.x = 0;
+						break;
+					case TextFormatAlign.CENTER:
+						line.x = ( width == 0 ) ? 0 : ( width - line.width ) / 2;
+						break;
+					case TextFormatAlign.RIGHT:
+						line.x = ( width == 0 ) ? 0 : ( width - line.width );
+						break;
+				}
 				_target.addChild( line );
 			}
 		}
@@ -115,6 +131,18 @@ package com.custardbelly.as3flobile.controls.label.renderer
 		public function set truncationText(value:String):void
 		{
 			_truncationText = value;
+		}
+
+		/**
+		 * @copy ILabelRenderer#textAlign
+		 */
+		public function get textAlign():String
+		{
+			return _textAlign;
+		}
+		public function set textAlign(value:String):void
+		{
+			_textAlign = value;
 		}
 	}
 }

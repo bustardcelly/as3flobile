@@ -52,5 +52,12 @@ package com.custardbelly.as3flobile.controls.label.renderer
 		 */
 		function get truncationText():String;
 		function set truncationText( value:String ):void;
+		
+		/**
+		 * Accessor/Modifier for the alignment of each text line. Valid values ae those from flash.text.TextFormatAlign.
+		 * @return String
+		 */
+		function get textAlign():String;
+		function set textAlign( value:String ):void;
 	}
 }

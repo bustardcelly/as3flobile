@@ -103,6 +103,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 		{	
 			var i:int = cells.length;
 			var h:Number;
+			var seperator:int = _target.seperatorLength;
 			_heightCache = new Vector.<int>( i );
 			_contentHeight = 0;
 			while( --i > -1 )
@@ -111,6 +112,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 				_contentHeight += h;
 				_heightCache[i] = h;
 			}
+			_contentHeight += ( ( _heightCache.length - 1 ) * seperator );
 			_tallestRowHeight = ( _heightCache.length > 0 ) ? _heightCache.sort( Array.NUMERIC )[_heightCache.length - 1] : 0;
 		}
 		
@@ -152,7 +154,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 				
 				( renderer as DisplayObject ).y = ypos;
 				( renderer as DisplayObject ).x = 0;
-				ypos += renderer.height;
+				ypos += renderer.height + _target.seperatorLength;
 				i++;
 			}
 			
@@ -174,7 +176,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			var cellAmount:int = cells.length;
 			var rect:Rectangle = _target.scrollBounds;
 			var scrollAreaHeight:Number = rect.height - rect.y;
-			var cellHeight:Number = _itemHeight;
+			var cellHeight:Number = _itemHeight + _target.seperatorLength;
 			var startIndex:int;
 			var endIndex:int;
 			
@@ -203,13 +205,10 @@ package com.custardbelly.as3flobile.controls.list.layout
 				cell = cells[index];
 				if( index >= startIndex && index < endIndex )
 				{
-					if( ( cell as DisplayObject ).stage == null )
-					{
-						IScrollListItemRenderer(cell).data = listProvider[index];
-						( _target as IScrollListLayoutTarget ).addRendererToDisplay( cell );
-					}
+					IScrollListItemRenderer(cell).data = listProvider[index];
+					( _target as IScrollListLayoutTarget ).addRendererToDisplay( cell );
 				}
-				else if( ( cell as DisplayObject ).stage != null )
+				else
 				{
 					( _target as IScrollListLayoutTarget ).removeRendererFromDisplay( cell );
 				}

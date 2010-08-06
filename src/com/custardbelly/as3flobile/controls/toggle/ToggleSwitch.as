@@ -27,9 +27,11 @@
 package com.custardbelly.as3flobile.controls.toggle
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
+	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.toggle.context.BaseToggleSwitchStrategy;
 	import com.custardbelly.as3flobile.controls.toggle.context.IToggleSwitchContext;
 	import com.custardbelly.as3flobile.controls.toggle.context.ToggleSwitchMouseContext;
+	import com.custardbelly.as3flobile.skin.ToggleSwitchSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
@@ -48,11 +50,9 @@ package com.custardbelly.as3flobile.controls.toggle
 	 */
 	public class ToggleSwitch extends AS3FlobileComponent implements IToggleSwitch
 	{
-		protected var _block:TextBlock;
-		
 		protected var _background:Sprite;
-		protected var _labelHolder:Sprite;
-		protected var _labelMask:Sprite; // Label mask is only set to mask label holder when formatting is out of bounds of height specified.
+		protected var _leftLabel:Label;
+		protected var _rightLabel:Label;
 		protected var _thumb:Sprite;
 		
 		protected var _format:ElementFormat;
@@ -74,6 +74,7 @@ package com.custardbelly.as3flobile.controls.toggle
 			createChildren();
 			invalidateLabels();
 			toggleContext = getDefaultContext();
+			initializeDisplay();
 		}
 		
 		/**
@@ -88,13 +89,10 @@ package com.custardbelly.as3flobile.controls.toggle
 			
 			_bounds = new Rectangle( 0, 0, _width, _height );
 			
-			_block = new TextBlock();
-			
-			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
-			_format.color = 0xEEEEEE;
-			_format.fontSize = 12;
-			
 			_labels = getDefaultLabels();
+			
+			_skin = new ToggleSwitchSkin();
+			_skin.target = this;
 			
 			addHandlers();
 		}
@@ -109,10 +107,13 @@ package com.custardbelly.as3flobile.controls.toggle
 			_background = new Sprite();
 			addChild( _background );
 			
-			_labelHolder = new Sprite();
-			_labelHolder.mouseChildren = false;
-			_labelHolder.mouseEnabled = false;
-			addChild( _labelHolder );
+			_leftLabel = new Label();
+			_leftLabel.autosize = true;
+			addChild( _leftLabel );
+			
+			_rightLabel = new Label();
+			_rightLabel.autosize = true;
+			addChild( _rightLabel );
 			
 			_thumb = new Sprite();
 			addChild( _thumb );
@@ -176,6 +177,16 @@ package com.custardbelly.as3flobile.controls.toggle
 		/**
 		 * @private 
 		 * 
+		 * Runs initialization on skin instance.
+		 */
+		protected function initializeDisplay():void
+		{
+			_skin.initializeDisplay( _width, _height );
+		}
+		
+		/**
+		 * @private 
+		 * 
 		 * Validates the new dimensions given to this instance.
 		 */
 		override protected function invalidateSize():void
@@ -192,7 +203,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function invalidateFormat():void
 		{
-			invalidateLabels();
+			updateDisplay();
 		}
 		
 		/**
@@ -202,23 +213,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function invalidateLabels():void
 		{
-			// Remove previous labels from display.
-			while( _labelHolder.numChildren > 0 )
-			{
-				_labelHolder.removeChildAt( 0 );
-			}
+			_leftLabel.text = ( _labels && _labels.length > 0 ) ? _labels[0] : "";
+			_rightLabel.text = ( _labels && _labels.length > 0 ) ? _labels[1] : "";
 			
-			// Use TextBlock factory to create TextLines.
-			var label:String;
-			var i:int;
-			for each( label in _labels )
-			{
-				_block.content = new TextElement( label, _format );
-				var line:TextLine = _block.createTextLine( null );
-				line.y = line.height;
-				_labelHolder.addChild( line );
-			}
-			// Refresh.
 			updateDisplay();
 		}
 		
@@ -278,28 +275,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function updateDisplay():void
 		{
-			redraw();
+			_skin.updateDisplay( _width, _height );
 			positionLabels();
 			positionThumb();
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Redraws any graphical display elements.
-		 */
-		protected function redraw():void
-		{
-			_background.graphics.clear();
-			_background.graphics.beginFill( 0x333333 );
-			_background.graphics.drawRect( 0, 0, _width, _height );
-			_background.graphics.endFill();
-			
-			var thumbWidth:int = _width * 0.5;
-			_thumb.graphics.clear();
-			_thumb.graphics.beginFill( 0xAAAAAA );
-			_thumb.graphics.drawRect( 0, 0, thumbWidth, _height );
-			_thumb.graphics.endFill();
 		}
 		
 		/**
@@ -309,24 +287,8 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function positionLabels():void
 		{
-			if( _labelHolder.numChildren == 0 ) return;
-			
-			var firstLabel:DisplayObject = _labelHolder.getChildAt( 0 );
-			var lastLabel:DisplayObject = _labelHolder.getChildAt( 1 );
-			
-			if( firstLabel ) 	firstLabel.x = _labelPadding;
-			if( lastLabel ) 	lastLabel.x = int(_width - lastLabel.width - _labelPadding);
-			
-			if( _labelHolder.height > _height )
-			{
-				_labelHolder.y = 0;
-				addLabelHolderMask();
-			}
-			else
-			{
-				_labelHolder.y = int(( _height - _labelHolder.height ) * 0.5);
-				removeLabelHolderMask();
-			}
+			_leftLabel.x = _labelPadding;
+			_rightLabel.x = _width - _rightLabel.width - _labelPadding;
 		}
 		
 		/**
@@ -337,40 +299,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		protected function positionThumb():void
 		{	
 			_thumb.x = ( _selectedIndex == 0 ) ? 0 : _width - _thumb.width;
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Adds a mask to the label display if formatting has increased the height of the labels greater than that of the specified height.
-		 */
-		protected function addLabelHolderMask():void
-		{
-			if( _labelHolder.mask == null )
-			{
-				_labelMask = new Sprite();
-				_labelMask.graphics.beginFill( 0, 0 );
-				_labelMask.graphics.drawRect( 0, 0, _width, _height );
-				_labelMask.graphics.endFill();
-				addChild( _labelMask );
-				
-				_labelHolder.mask = _labelMask;
-			}
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Removes the possible mask set to the label display.
-		 */
-		protected function removeLabelHolderMask():void
-		{
-			if( _labelMask && _labelHolder.mask == _labelMask )
-			{
-				removeChild( _labelMask );
-				_labelHolder.mask = null;
-				_labelMask = null;
-			}
 		}
 		
 		/**
@@ -398,17 +326,17 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * Performs any cleanup.
+		 * @inherit
 		 */
-		public function dispose():void
+		override public function dispose():void
 		{
-			// Remove label displays.
-			while( _labelHolder.numChildren > 0 )
-			{
-				_labelHolder.removeChildAt( 0 );
-			}
-			// Remove mask.
-			removeLabelHolderMask();
+			super.dispose();
+			
+			_leftLabel.dispose();
+			_leftLabel = null;
+			
+			_rightLabel.dispose();
+			_rightLabel = null;
 			
 			// Clean up context.
 			_toggleContext.dispose();
@@ -440,6 +368,39 @@ package com.custardbelly.as3flobile.controls.toggle
 		public function get toggleBounds():Rectangle
 		{
 			return _bounds;
+		}
+		
+		/**
+		 * Returns reference to background display.
+		 * @return Sprite
+		 */
+		public function get backgroundDisplay():Sprite
+		{
+			return _background;
+		}
+		/**
+		 * Returns reference to thunm display. 
+		 * @return Sprite
+		 */
+		public function get thumbDisplay():Sprite
+		{
+			return _thumb;
+		}
+		/**
+		 * Returns reference to the left ("off") label display. 
+		 * @return Label
+		 */
+		public function get leftLabelDisplay():Label
+		{
+			return _leftLabel;
+		}
+		/**
+		 * Returns reference to the right ("on") label display. 
+		 * @return Label
+		 */
+		public function get rightLabelDisplay():Label
+		{
+			return _rightLabel;
 		}
 
 		/**

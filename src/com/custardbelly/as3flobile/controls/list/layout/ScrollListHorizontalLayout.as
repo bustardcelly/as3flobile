@@ -156,7 +156,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 				
 				( renderer as DisplayObject ).x = xpos;
 				( renderer as DisplayObject ).y = 0;
-				xpos += renderer.width;
+				xpos += renderer.width + _target.seperatorLength;
 				i++;
 			}
 			// Cache the widths.
@@ -206,13 +206,10 @@ package com.custardbelly.as3flobile.controls.list.layout
 				cell = cells[index];
 				if( index >= startIndex && index < endIndex )
 				{
-					if( ( cell as DisplayObject ).stage == null )
-					{
-						IScrollListItemRenderer(cell).data = listProvider[index];
-						( _target as IScrollListLayoutTarget ).addRendererToDisplay( cell );
-					}
+					IScrollListItemRenderer(cell).data = listProvider[index];
+					( _target as IScrollListLayoutTarget ).addRendererToDisplay( cell );
 				}
-				else if( ( cell as DisplayObject ).stage != null )
+				else
 				{
 					( _target as IScrollListLayoutTarget ).removeRendererFromDisplay( cell );
 				}

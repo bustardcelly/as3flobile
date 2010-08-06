@@ -34,14 +34,13 @@ package com.custardbelly.as3flobile.controls.label
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	import flash.text.TextFormatAlign;
 	import flash.text.engine.BreakOpportunity;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
 	import flash.text.engine.TextBlock;
 	import flash.text.engine.TextElement;
 	import flash.text.engine.TextLine;
-	
-	import mx.controls.Text;
 	
 	/**
 	 * Label is a textual base component utilizing the Flash Text Engine to render a single or multiple line of text. 
@@ -59,6 +58,7 @@ package com.custardbelly.as3flobile.controls.label
 		
 		protected var _autosize:Boolean;
 		protected var _multiline:Boolean;
+		protected var _textAlign:String;
 		
 		protected var _renderer:ILabelRenderer;
 		protected var _truncationRenderer:ILabelRenderer;
@@ -89,10 +89,14 @@ package com.custardbelly.as3flobile.controls.label
 			_format.fontSize = 14;
 			
 			_textElement = new TextElement();
+			_truncationText = "...";
+			_textAlign = TextFormatAlign.LEFT;
 			
 			_truncationRenderer = new TruncationLabelRenderer( this );
 			_multilineRenderer = new MultilineLabelRenderer( this );
 			_renderer = _truncationRenderer;
+			_renderer.truncationText = _truncationText;
+			_renderer.textAlign = _textAlign;
 		}
 		
 		/**
@@ -141,10 +145,12 @@ package com.custardbelly.as3flobile.controls.label
 		}
 		
 		/**
-		 * Performs any cleanup.
+		 * @inherit
 		 */
-		public function dispose():void
+		override public function dispose():void
 		{
+			super.dispose();
+			
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
@@ -251,6 +257,24 @@ package com.custardbelly.as3flobile.controls.label
 			_multiline = value;
 			setRendererState( _multilineRenderer );
 			if( _text != null ) invalidateTextDisplay();	
+		}
+		
+		/**
+		 * Accessor/Modifier for the alignment of text within a single or multiline Label. 
+		 * @return String Value values are from flash.text.TextFormatAlign
+		 */
+		public function get textAlign():String
+		{
+			return _textAlign;
+		}
+		public function set textAlign( value:String ):void
+		{
+			if( _textAlign == value ) return;
+			
+			_textAlign = value;
+			_truncationRenderer.textAlign = _textAlign;
+			_multilineRenderer.textAlign = _textAlign;
+			if( _text != null ) invalidateTextDisplay();
 		}
 	}
 }

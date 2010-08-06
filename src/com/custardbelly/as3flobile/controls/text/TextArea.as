@@ -31,8 +31,10 @@ package com.custardbelly.as3flobile.controls.text
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
+	import com.custardbelly.as3flobile.skin.TextAreaSkin;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
@@ -49,6 +51,7 @@ package com.custardbelly.as3flobile.controls.text
 	 */
 	public class TextArea extends AS3FlobileComponent implements IScrollViewportDelegate
 	{
+		protected var _background:Shape;
 		protected var _viewport:IScrollViewport;
 		
 		protected var _block:TextBlock;
@@ -64,6 +67,8 @@ package com.custardbelly.as3flobile.controls.text
 		protected var _scrollContext:IScrollViewportContext;
 		protected var _delegate:ITextAreaDelegate;
 		
+		protected var _padding:int;
+		
 		/**
 		 * Constructor.
 		 */
@@ -71,6 +76,7 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			initialize();
 			createChildren();
+			_skin.initializeDisplay( _width, _height );
 		}
 		
 		/**
@@ -89,6 +95,11 @@ package com.custardbelly.as3flobile.controls.text
 			_block = new TextBlock();
 			
 			_linePositions = new Vector.<int>(1);
+			
+			_padding = 5;
+			
+			_skin = new TextAreaSkin();
+			_skin.target = this;
 		}
 		
 		/**
@@ -98,14 +109,20 @@ package com.custardbelly.as3flobile.controls.text
 		 */
 		protected function createChildren():void
 		{
+			_background = new Shape();
+			addChild( _background );
+			
 			_lineHolder = new TextAreaLineHolder();
 			_lineHolder.mouseChildren = false;
 			_lineHolder.cacheAsBitmap = true;
 			
+			var doublePadding:int = _padding * 2;
 			_viewport = new ScrollViewport();
 			_viewport.delegate = this;
-			_viewport.width = _width;
-			_viewport.height = _height;
+			_viewport.width = _width - doublePadding;
+			_viewport.height = _height - doublePadding;
+			_viewport.x = _padding;
+			_viewport.y = _padding;
 			_viewport.content = _lineHolder;
 			addChild( _viewport as DisplayObject );
 		}
@@ -119,10 +136,11 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			_lineHolder.clear();
 			
+			var doublePadding:int = _padding * 2;
 			// Use TextBlock factory to create TextLines and add to the display.
 			_block.content = new TextElement( _text, _format );
 			_numLines = 0;
-			var line:TextLine = _block.createTextLine( null, _width );
+			var line:TextLine = _block.createTextLine( null, _width - doublePadding );
 			var ypos:int = 0;
 			while( line )
 			{
@@ -136,11 +154,11 @@ package com.custardbelly.as3flobile.controls.text
 				
 				_numLines++;
 				// Get next line from factory.
-				line = _block.createTextLine( line, _width );
+				line = _block.createTextLine( line, _width - doublePadding );
 			}
 			
 			// Update dimensions and viewport.
-			_lineHolder.width = _width;
+			_lineHolder.width = _width - doublePadding;
 			_lineHolder.height = ypos;
 			_viewport.refresh();
 			
@@ -155,6 +173,13 @@ package com.custardbelly.as3flobile.controls.text
 		 */
 		override protected function invalidateSize():void
 		{
+			super.invalidateSize();
+			
+			var doublePadding:int = _padding * 2;
+			_viewport.width = _width - doublePadding;
+			_viewport.height = _height - doublePadding;
+			_viewport.x = _padding;
+			_viewport.y = _padding;
 			invalidateTextDisplay();
 		}
 		
@@ -209,10 +234,12 @@ package com.custardbelly.as3flobile.controls.text
 		}
 		
 		/**
-		 * Performs any cleanup.
+		 * @inherit
 		 */
-		public function dispose():void
+		override public function dispose():void
 		{
+			super.dispose();
+			
 			_linePositions = null;
 			
 			_viewport.dispose();
@@ -250,8 +277,8 @@ package com.custardbelly.as3flobile.controls.text
 			}
 			// Invoke invalidation.
 			invalidateScrollPosition();
-		}
-
+		}		
+		
 		/**
 		 * Returns the number of lines created from the textual content. 
 		 * @return int
@@ -259,6 +286,28 @@ package com.custardbelly.as3flobile.controls.text
 		public function get numLines():int
 		{
 			return _numLines;
+		}
+		
+		/**
+		 * Accessor for the background display for a ISkin instance targeting this control. 
+		 * @return Shape
+		 */
+		public function get backgroundDisplay():Shape
+		{
+			return _background;
+		}
+		
+		/**
+		 * Accessor/Modifier for the padding offset of the textual content and the bounds of this control. 
+		 * @return int
+		 */
+		public function get padding():int
+		{
+			return _padding;
+		}
+		public function set padding(value:int):void
+		{
+			_padding = value;
 		}
 		
 		/**
