@@ -106,6 +106,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 		{
 			var i:int = cells.length;
 			var w:Number;
+			var seperator:int = _target.seperatorLength;
 			_widthCache = new Vector.<int>( i );
 			_contentWidth = 0;
 			while( --i > -1 )
@@ -114,6 +115,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 				_contentWidth += w;
 				_widthCache[i] = w;
 			}
+			_contentWidth += ( ( _widthCache.length - 1 ) * seperator );
 			// Hold reference to largest width to be used if using variable layout.
 			_widestItemWidth = ( _widthCache.length > 0 ) ? _widthCache.sort( Array.NUMERIC )[_widthCache.length - 1] : 0;
 		}
@@ -177,7 +179,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			var cellAmount:int = cells.length;
 			var rect:Rectangle = _target.scrollBounds;
 			var scrollAreaWidth:Number = rect.width - rect.x;
-			var cellWidth:Number = _itemWidth;
+			var cellWidth:Number = _itemWidth + _target.seperatorLength;
 			var startIndex:int;
 			var endIndex:int;
 			

@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.list.renderer
 {
+	import flash.display.Graphics;
 	import flash.events.IEventDispatcher;
 
 	/**
@@ -42,6 +43,11 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		 * Frees the renderer from a locked state to perform updates based on property changes.
 		 */
 		function unlock():void;
+		
+		/**
+		 * Accessor for the graphic display of the background for the item renderer.
+		 */
+		function get backgroundDisplay():Graphics
 		
 		/**
 		 * Accessor/Modifier for the width dimension of this instance. 

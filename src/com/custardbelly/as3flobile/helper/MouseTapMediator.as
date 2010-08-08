@@ -26,12 +26,11 @@
  */
 package com.custardbelly.as3flobile.helper
 {	
-	import com.custardbelly.as3flobile.debug.PrintLine;
-	
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.utils.getTimer;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 
 	/**
 	 * MouseTapMediator is an ITapMediator implementation that handles mouse events as tap gestures from an interactive display object. 
@@ -42,6 +41,7 @@ package com.custardbelly.as3flobile.helper
 		protected var _startX:Number;
 		protected var _startY:Number;
 		protected var _movementThreshold:int = 12;
+		protected static const ORIGIN:Point = new Point();
 		
 		/**
 		 * Constructor. 
@@ -51,6 +51,24 @@ package com.custardbelly.as3flobile.helper
 		{
 			super( timeThreshold );
 			_movementThreshold = movementThreshold;
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Determines if the tap coordinate is within the bounds of the tap target. 
+		 * @param x int
+		 * @param y int
+		 * @return Boolean
+		 */
+		protected function isWithinTargetBounds( x:int, y:int ):Boolean
+		{
+			if( _tapDisplay.stage == null ) return false;
+			
+			var position:Point = _tapDisplay.localToGlobal( MouseTapMediator.ORIGIN );
+			var scaledBounds:Rectangle = _tapDisplay.getBounds( _tapDisplay.stage );
+			return ( x >= position.x && x <= position.x + scaledBounds.width ) &&
+					( y >= position.y && y <= position.y + scaledBounds.height );
 		}
 		
 		/**
@@ -122,9 +140,12 @@ package com.custardbelly.as3flobile.helper
 		override protected function handleTouchBegin( evt:Event ):void
 		{
 			var mouseEvent:MouseEvent = ( evt as MouseEvent );
-			_startX = mouseEvent.stageX;
-			_startY = mouseEvent.stageY;
-			super.handleTouchBegin( evt );
+			if( isWithinTargetBounds( mouseEvent.stageX, mouseEvent.stageY ) )
+			{
+				_startX = mouseEvent.stageX;
+				_startY = mouseEvent.stageY;
+				super.handleTouchBegin( evt );
+			}
 		}
 		
 		/**
@@ -133,13 +154,15 @@ package com.custardbelly.as3flobile.helper
 		override protected function handleTouchEnd( evt:Event ):void
 		{
 			var mouseEvent:MouseEvent = ( evt as MouseEvent );
-			var x:int = mouseEvent.stageX - _startX;
-			var y:int = mouseEvent.stageY - _startY;
-			var len:int = Math.sqrt( x * x + y * y );
-			
-			PrintLine.instance().print( "tap length: " + len, true );
-			if( len < _movementThreshold )
-				super.handleTouchEnd( evt );
+			if( isWithinTargetBounds( mouseEvent.stageX, mouseEvent.stageY ) )
+			{
+				var x:int = mouseEvent.stageX - _startX;
+				var y:int = mouseEvent.stageY - _startY;
+				var len:int = Math.sqrt( x * x + y * y );
+				
+				if( len < _movementThreshold )
+					super.handleTouchEnd( evt );
+			}
 		}
 		
 		/**

@@ -27,7 +27,10 @@
 package com.custardbelly.as3flobile.controls.list.renderer
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
+	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.skin.ScrollListItemRendererSkin;
 	
+	import flash.display.Graphics;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.text.engine.ElementFormat;
@@ -50,9 +53,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		protected var _block:TextBlock;
 		
 		protected var _format:ElementFormat;
-		protected var _color:uint = 0xFFFFFF;
-		protected var _selectedColor:uint = 0xDDDDDD;
-		
 		protected var _selected:Boolean;
 		
 		protected var _isDirty:Boolean;
@@ -71,6 +71,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		{
 			initialize();
 			createChildren();
+			initializeDisplay();
 		}
 		
 		/**
@@ -92,6 +93,9 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
 			_format.fontSize = 14;
 			_block = new TextBlock();
+			
+			_skin = new ScrollListItemRendererSkin();
+			_skin.target = this;
 		}
 		
 		/**
@@ -168,25 +172,14 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		
 		/**
-		 * @private 
+		 * @private
 		 * 
-		 * Validates the size determined from #invalidateData.
+		 * Validates the selection state.
 		 */
-		override protected function invalidateSize():void
+		protected function invalidateSelected():void
 		{
-			invalidateDisplay();
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Validates the display based on determined propeties from #invalidateData
-		 */
-		protected function invalidateDisplay():void
-		{
-			_background.graphics.clear();
-			_background.graphics.beginFill( ( _selected ) ? _selectedColor : _color );
-			_background.graphics.drawRect( 0, 0, _width, _height );
+			_skinState = ( _selected ) ? BasicStateEnum.SELECTED : BasicStateEnum.NORMAL;
+			invalidateSize();
 		}
 		
 		/**
@@ -223,6 +216,14 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		
 		/**
+		 * @copy IScrollListItemRenderer#backgroundDisplay
+		 */
+		public function get backgroundDisplay():Graphics
+		{
+			return _background.graphics;
+		}
+		
+		/**
 		 * @copy IScrollListItemRenderer#selected
 		 */
 		public function get selected():Boolean
@@ -234,7 +235,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			if( _selected == value ) return;
 			
 			_selected = value;
-			invalidateProperty( invalidateData );
+			invalidateProperty( invalidateSelected );
 		}
 		
 		/**
@@ -316,6 +317,5 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		{
 			_padding = value;
 		}
-
 	}
 }

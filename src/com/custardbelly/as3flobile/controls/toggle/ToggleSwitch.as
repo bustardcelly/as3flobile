@@ -37,6 +37,7 @@ package com.custardbelly.as3flobile.controls.toggle
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -109,10 +110,14 @@ package com.custardbelly.as3flobile.controls.toggle
 			
 			_leftLabel = new Label();
 			_leftLabel.autosize = true;
+			_leftLabel.mouseEnabled = false;
+			_leftLabel.mouseChildren = false;
 			addChild( _leftLabel );
 			
 			_rightLabel = new Label();
 			_rightLabel.autosize = true;
+			_rightLabel.mouseEnabled = false;
+			_rightLabel.mouseChildren = false;
 			addChild( _rightLabel );
 			
 			_thumb = new Sprite();
@@ -172,16 +177,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		protected function isOnDisplayList():Boolean
 		{
 			return this.stage != null;
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Runs initialization on skin instance.
-		 */
-		protected function initializeDisplay():void
-		{
-			_skin.initializeDisplay( _width, _height );
 		}
 		
 		/**
@@ -269,13 +264,11 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Refreshes the display.
+		 * @inherit
 		 */
-		protected function updateDisplay():void
+		override protected function updateDisplay():void
 		{
-			_skin.updateDisplay( _width, _height );
+			super.updateDisplay();
 			positionLabels();
 			positionThumb();
 		}

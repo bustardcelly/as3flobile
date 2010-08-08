@@ -373,16 +373,6 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Updates the visual display.
-		 */
-		protected function updateDisplay():void
-		{
-			_skin.updateDisplay( _width, _height );
-		}
-		
-		/**
 		 * @private
 		 * 
 		 * Factory method to create the IScrollListItemRenderer instance based on the item renderer class. 

@@ -56,7 +56,7 @@ package com.custardbelly.as3flobile.skin
 			{
 				_defaultLabelFormat = new ElementFormat( new FontDescription( "DroidSans" ) );
 				_defaultLabelFormat.color = 0xEEEEEE;
-				_defaultLabelFormat.fontSize = 12;
+				_defaultLabelFormat.fontSize = 18;
 			}
 			return _defaultLabelFormat;
 		}

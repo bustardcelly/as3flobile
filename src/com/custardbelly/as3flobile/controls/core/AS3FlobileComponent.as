@@ -41,6 +41,7 @@ package com.custardbelly.as3flobile.controls.core
 	public class AS3FlobileComponent extends Sprite implements IDisposable, ISkinnable
 	{
 		protected var _skin:ISkin;
+		protected var _skinState:int;
 		
 		protected var _width:int = 100;
 		protected var _height:int = 100;
@@ -53,11 +54,41 @@ package com.custardbelly.as3flobile.controls.core
 		/**
 		 * @private 
 		 * 
-		 * Handles any operations related to size change. Meant for Override.
+		 * Initialize the display using newly created members and properties.
+		 */
+		protected function initializeDisplay():void
+		{
+			if( _skin != null ) _skin.initializeDisplay( _width, _height );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Redraws any display content.
+		 */
+		protected function updateDisplay():void
+		{
+			if( _skin != null ) _skin.updateDisplay( width, height );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Handles any operations related to size change.
 		 */
 		protected function invalidateSize():void
 		{
-			if( _skin != null ) _skin.updateDisplay( _width, _height );
+			updateDisplay();
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Handles any operations related to the state of this component in relation to its skin.
+		 */
+		protected function invalidateSkinState():void
+		{
+			updateDisplay();
 		}
 		
 		/**
@@ -68,8 +99,8 @@ package com.custardbelly.as3flobile.controls.core
 		protected function invalidateSkin():void
 		{
 			_skin.target = this;
-			_skin.initializeDisplay( _width, _height );
-			invalidateSize();
+			initializeDisplay();
+			updateDisplay();
 		}
 		
 		/**
@@ -85,8 +116,7 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
-		 * Accessor/Modifier for the skin instance used to draw any display attributes. 
-		 * @return ISkin
+		 * @copy ISkinnable#skin
 		 */
 		public function get skin():ISkin
 		{
@@ -98,6 +128,21 @@ package com.custardbelly.as3flobile.controls.core
 			
 			_skin = value;
 			invalidateSkin();
+		}
+		
+		/**
+		 * @opy ISkinnable#skinState
+		 */
+		public function get skinState():int
+		{
+			return _skinState;
+		}
+		public function set skinState( value:int ):void
+		{
+			if( _skinState == value ) return;
+			
+			_skinState = value;
+			invalidateSkinState();
 		}
 		
 		/**

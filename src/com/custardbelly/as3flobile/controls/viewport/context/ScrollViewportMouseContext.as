@@ -124,6 +124,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_strategy.start( _point );
 			
 			_startTime = getTimer();
+			evt.updateAfterEvent();
 		}
 		
 		/**
@@ -143,6 +144,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_strategy.move( _point );
 			
 //			if( !isWithinBounds ) handleMouseUp( evt );
+			evt.updateAfterEvent();
 		}
 		
 		/**
@@ -161,6 +163,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			}
 			_strategy.end( _point );
 			_mouseTarget = null;
+			evt.updateAfterEvent();
 		}
 		
 		/**

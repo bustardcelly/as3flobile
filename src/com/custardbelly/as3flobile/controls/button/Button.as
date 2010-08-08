@@ -98,26 +98,6 @@ package com.custardbelly.as3flobile.controls.button
 		/**
 		 * @private 
 		 * 
-		 * Initialize the display using newly created members and properties.
-		 */
-		protected function initializeDisplay():void
-		{
-			_skin.initializeDisplay( _width, _height );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Redraws any display content.
-		 */
-		protected function updateDisplay():void
-		{
-			_skin.updateDisplay( width, height );
-		}
-		
-		/**
-		 * @private 
-		 * 
 		 * Invalidates the label text for the label display.
 		 */
 		protected function invalidateLabel():void

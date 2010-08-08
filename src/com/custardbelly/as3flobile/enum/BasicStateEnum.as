@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ISkinnable.as</p>
+ * <p>Class File: BasicStateEnum.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,26 +24,17 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.skin
+package com.custardbelly.as3flobile.enum
 {
 	/**
-	 * ISkinnable is a display that can be skinned using an ISkin. 
+	 * BasicStateEnum is an enumeration of basic states within the life of a component from the as3flobile project.
+	 * Values can be used to update the grpahic state of a component with regards to its assigned skin. 
 	 * @author toddanderson
 	 */
-	public interface ISkinnable
+	public class BasicStateEnum
 	{
-		/**
-		 * Accessor/Modifier to the skin instance that updates graphical content. 
-		 * @return ISkin
-		 */
-		function get skin():ISkin;
-		function set skin( value:ISkin ):void;
-		
-		/**
-		 * Accesor/Modifier for the state of the control as it relates to the graphic display (skin). 
-		 * @return int
-		 */
-		function get skinState():int;
-		function set skinState( value:int ):void;
+		public static const NORMAL:int = 0;
+		public static const DISABLED:int = 1;
+		public static const SELECTED:int = 2;
 	}
 }
