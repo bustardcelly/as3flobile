@@ -32,7 +32,6 @@ package com.custardbelly.as3flobile.skin
 	import flash.display.Sprite;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
-	import flash.text.engine.FontWeight;
 	
 	import flashx.textLayout.formats.TextAlign;
 
@@ -96,12 +95,16 @@ package com.custardbelly.as3flobile.skin
 		 * @param padding int
 		 */
 		protected function initializeLabel( label:Label, width:int, height:int, padding:int = 0 ):void
-		{
-			var format:ElementFormat = label.format.clone();
-			var fontDesc:FontDescription = format.fontDescription.clone();
-			fontDesc.fontName = "DroidSans-Bold";
-			format.fontDescription = fontDesc;
-			label.format = format;
+		{	
+			var format:ElementFormat = label.format;
+			if( format.fontDescription.fontName != "DroidSans-Bold" )
+			{
+				format = format.clone();
+				var fontDesc:FontDescription = format.fontDescription.clone();
+				fontDesc.fontName = "DroidSans-Bold";
+				format.fontDescription = fontDesc;
+				label.format = format;
+			}
 			label.textAlign = TextAlign.CENTER;
 			updateLabel( label, width, height, padding );
 		}

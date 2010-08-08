@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.list.renderer
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
+	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.skin.ScrollListItemRendererSkin;
 	
@@ -50,10 +51,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		private static const STATE_LOCKED:uint = 1;
 		
 		protected var _background:Shape;
-		protected var _block:TextBlock;
-		
-		protected var _format:ElementFormat;
-		protected var _selected:Boolean;
+		protected var _label:Label;
 		
 		protected var _isDirty:Boolean;
 		protected var _currentState:uint = DefaultScrollListItemRenderer.STATE_UNLOCKED;
@@ -61,7 +59,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		protected var _useVariableHeight:Boolean;
 		
 		protected var _data:Object;
-		
+		protected var _selected:Boolean;
 		protected var _padding:int;
 		
 		/**
@@ -90,10 +88,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			_padding = 3;
 			
-			_format = new ElementFormat( new FontDescription( "DroidSans" ) );
-			_format.fontSize = 14;
-			_block = new TextBlock();
-			
 			_skin = new ScrollListItemRendererSkin();
 			_skin.target = this;
 		}
@@ -107,6 +101,11 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		{
 			_background = new Shape();
 			addChild( _background );
+			
+			_label = new Label();
+			_label.multiline = true;
+			_label.autosize = true;
+			addChild( _label );
 		}
 		
 		/**
@@ -135,40 +134,23 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			// If no data and this was called in response to a property change, move on.
 			if( _data == null ) return;
 			
-			var i:int = numChildren;
-			while( --i > 0 )
-			{
-				removeChildAt( i );
-			}
+			_label.text = _data.label;
 			
-			// Use TextBlock factory to create TextLines and add to the display.
-			_block.content = new TextElement( _data.label, _format );
-			var w:int = ( _useVariableWidth ) ? 1000000 : _width - ( _padding * 2 );
-			var line:TextLine = _block.createTextLine( null, w );
-			var offset:int = 3;
-			var maxLineWidth:int = 0;
-			var ypos:int = _padding;
-			while( line )
-			{
-				ypos += line.height;
-				line.y = int(ypos);
-				line.x = _padding;
-				addChild( line );
-				
-				ypos += ( line.ascent - line.descent )
-				
-				// If using variable height, reassign height to new height of line.
-				if( _useVariableHeight ) _height = ypos;
-				// Hold reference for widest line to be used to determine true width if using variable dimensions.
-				maxLineWidth = line.width > maxLineWidth ? line.width : maxLineWidth;
-				// Get next line from factory.
-				line = _block.createTextLine( line, w );
-			} 
-			// If using variable width, reassign width property to largest line.
-			if( _useVariableWidth ) _width = maxLineWidth;
+			var doublePadding:int = _padding * 2;
+			if( _useVariableHeight ) _height = _label.height + doublePadding;
+			if( _useVariableWidth ) _width = _label.width + doublePadding;
 			
 			_isDirty = false;
-			invalidateSize();
+			updateDisplay();
+		}
+		
+		/**
+		 * @inherit
+		 */
+		override protected function invalidateSize():void
+		{
+			_label.width = _width - ( _padding * 2 );
+			super.invalidateSize();
 		}
 		
 		/**
@@ -224,6 +206,15 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		
 		/**
+		 * Returns the display related to textual content. 
+		 * @return Label
+		 */
+		public function get labelDisplay():Label
+		{
+			return _label;
+		}
+		
+		/**
 		 * @copy IScrollListItemRenderer#selected
 		 */
 		public function get selected():Boolean
@@ -236,28 +227,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			_selected = value;
 			invalidateProperty( invalidateSelected );
-		}
-		
-		/**
-		 * @copy IScrollListItemRenderer#width
-		 */
-		override public function set width( value:Number ):void
-		{
-			if( _width == value ) return;
-			
-			_width = value;
-			invalidateProperty( invalidateData );
-		}
-		
-		/**
-		 * @copy IScrollListItemRenderer#height
-		 */
-		override public function set height( value:Number ):void
-		{
-			if( _height == value ) return;
-			
-			_height = value;
-			invalidateProperty( invalidateData );
 		}
 		
 		/**
@@ -315,7 +284,10 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		public function set padding(value:int):void
 		{
+			if( _padding == value ) return;
+			
 			_padding = value;
+			invalidateProperty( invalidateData );
 		}
 	}
 }
