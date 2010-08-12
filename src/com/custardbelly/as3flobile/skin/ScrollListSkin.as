@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.skin
 {
 	import com.custardbelly.as3flobile.controls.list.ScrollList;
 	
+	import flash.display.Graphics;
 	import flash.display.Shape;
 
 	/**
@@ -49,12 +50,12 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updateBackground( display:Shape, width:int, height:int ):void
+		protected function updateBackground( display:Graphics, width:int, height:int ):void
 		{
-			display.graphics.clear();
-			display.graphics.beginFill( 0x999999 );
-			display.graphics.drawRect( 0, 0, width, height );
-			display.graphics.endFill();
+			display.clear();
+			display.beginFill( 0x999999 );
+			display.drawRect( 0, 0, width, height );
+			display.endFill();
 		}
 		
 		/**

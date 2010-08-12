@@ -43,6 +43,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.skin.ScrollListSkin;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 	import flash.display.InteractiveObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -59,7 +60,6 @@ package com.custardbelly.as3flobile.controls.list
 	 */
 	public class ScrollList extends AS3FlobileComponent implements IScrollViewportDelegate, IScrollListContainer, IScrollListLayoutTarget
 	{	
-		protected var _background:Shape;
 		protected var _listHolder:Sprite;
 		protected var _bounds:Rectangle;
 		protected var _viewport:IScrollViewport;
@@ -145,9 +145,6 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function createChildren():void
 		{
-			_background = new Shape();
-			addChild( _background );
-			
 			// List holder will be managed by this ScrollList instance, but actually be on the display list of the viewport.
 			_listHolder = new ScrollListHolder();
 			_listHolder.mouseChildren = false;
@@ -622,9 +619,9 @@ package com.custardbelly.as3flobile.controls.list
 		 * Accessor for the background display that can be used in the skinning process. 
 		 * @return Shape
 		 */
-		public function get backgroundDisplay():Shape
+		public function get backgroundDisplay():Graphics
 		{
-			return _background;
+			return graphics;
 		}
 		
 		/**

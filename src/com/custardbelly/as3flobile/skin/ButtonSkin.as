@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.button.Button;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -54,7 +55,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function initializeBackground( display:Sprite, width:int, height:int ):void
+		protected function initializeBackground( display:Graphics, width:int, height:int ):void
 		{
 			updateBackground( display, width, height );
 		}
@@ -67,22 +68,22 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updateBackground( display:Sprite, width:int, height:int ):void
+		protected function updateBackground( display:Graphics, width:int, height:int ):void
 		{
 			if( display == null ) return;
 			
-			display.graphics.clear();
-			display.graphics.beginFill( 0xFFFFFF );
-			display.graphics.drawRect( 0, 0, width, height );
-			display.graphics.endFill();
-			display.graphics.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
-			display.graphics.moveTo( width, 0 );
-			display.graphics.lineTo( width, height );
-			display.graphics.lineTo( 0, height );
-			display.graphics.lineStyle( 2, 0xAAAAAA, 1, true, "normal", "square", "miter" );
-			display.graphics.moveTo( 0, height );
-			display.graphics.lineTo( 0, 0 );
-			display.graphics.lineTo( width, 0 );
+			display.clear();
+			display.beginFill( 0xFFFFFF );
+			display.drawRect( 0, 0, width, height );
+			display.endFill();
+			display.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
+			display.moveTo( width, 0 );
+			display.lineTo( width, height );
+			display.lineTo( 0, height );
+			display.lineStyle( 2, 0xAAAAAA, 1, true, "normal", "square", "miter" );
+			display.moveTo( 0, height );
+			display.lineTo( 0, 0 );
+			display.lineTo( width, 0 );
 		}
 		
 		/**
@@ -135,7 +136,7 @@ package com.custardbelly.as3flobile.skin
 			super.initializeDisplay( width, height );
 			
 			var buttonTarget:Button = ( _target as Button );
-			initializeBackground( buttonTarget.buttonDisplay, width, height );
+			initializeBackground( buttonTarget.backgroundDisplay, width, height );
 			initializeLabel( buttonTarget.labelDisplay, width, height, buttonTarget.labelPadding );
 		}
 		
@@ -147,7 +148,7 @@ package com.custardbelly.as3flobile.skin
 			super.updateDisplay( width, height );
 			
 			var buttonTarget:Button = ( _target as Button );
-			updateBackground( buttonTarget.buttonDisplay, width, height );
+			updateBackground( buttonTarget.backgroundDisplay, width, height );
 			updateLabel( buttonTarget.labelDisplay, width, height, buttonTarget.labelPadding );
 		}
 	}

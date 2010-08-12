@@ -36,14 +36,18 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
+	/**
+	 * BaseScrollViewportStrategy is the base strategy for managing the movement of content within a viewport along its x and y axes. 
+	 * @author toddanderson
+	 */
 	public class BaseScrollViewportStrategy implements IScrollViewportStrategy
 	{
 		protected var _content:DisplayObject;
 		protected var _bounds:Rectangle;
 		protected var _delegate:IScrollViewportDelegate;
 		
-		protected var _currentScrollPositionX:int;
-		protected var _currentScrollPositionY:int;
+		protected var _currentScrollPositionX:Number = 0;
+		protected var _currentScrollPositionY:Number = 0;
 		protected var _scrollBoundsLeft:int;
 		protected var _scrollBoundsRight:int;
 		protected var _scrollBoundsTop:int;
@@ -74,6 +78,9 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public static const RETURN_TIME:int = 85;
 		public static const CAPACITY:uint = 20;
 		
+		/**
+		 * Constructor.
+		 */
 		public function BaseScrollViewportStrategy() {}
 		
 		/**
@@ -84,9 +91,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected function initialize():void
 		{
 			_velocityX = _velocityY = 0;
-			_currentScrollPositionX = _currentScrollPositionY = 0;
-			_content.x = _currentScrollPositionX;
-			_content.y = _currentScrollPositionY;
 			
 			_scrollAreaWidth = _bounds.width - _bounds.x;
 			_scrollAreaHeight = _bounds.height - _bounds.y;
@@ -119,6 +123,12 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_coordinate.y = _currentScrollPositionY;
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Validates the supplied position. 
+		 * @param value Point
+		 */
 		protected function invalidatePosition( value:Point ):void
 		{
 			endAnimate();
@@ -279,9 +289,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_currentScrollPositionX += _velocityX;
 			_currentScrollPositionY += _velocityY;
 			
-			// Limit the position.
-//			limitPosition();
-			// limit position along the x-axis.
+			// limit position along the x and y-axis.
 			if( _currentScrollPositionX > _scrollBoundsLeft )
 			{
 				_currentScrollPositionX = _scrollBoundsLeft;
@@ -374,14 +382,14 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			// Store reference to current mark.
 			var currentMark:ScrollMark = addMark( point.x, point.y, getTimer() );
 			
-			// * This method is simply a move of point along the x-axis, it is not a running update on animation,
+			// * This method is simply a move of point along the x and y-axis, it is not a running update on animation,
 			//		as such, we clamp down on velocity.
 			
 			// Update velocity and position.
 			_velocityX = _velocityY = 0;
 			_currentScrollPositionX += currentMark.x - previousMark.x;
 			_currentScrollPositionY += currentMark.y - previousMark.y;
-//			limitPosition();
+			
 			// limit position along the x-axis.
 			if( _currentScrollPositionX > _scrollBoundsLeft )
 			{

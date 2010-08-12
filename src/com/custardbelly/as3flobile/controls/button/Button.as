@@ -33,6 +33,7 @@ package com.custardbelly.as3flobile.controls.button
 	import com.custardbelly.as3flobile.skin.Skin;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -43,7 +44,6 @@ package com.custardbelly.as3flobile.controls.button
 	 */
 	public class Button extends AS3FlobileComponent
 	{
-		protected var _buttonDisplay:Sprite;
 		protected var _labelDisplay:Label;
 		
 		protected var _label:String;
@@ -86,9 +86,6 @@ package com.custardbelly.as3flobile.controls.button
 		 */
 		protected function createChildren():void
 		{
-			_buttonDisplay = new Sprite();
-			addChild( _buttonDisplay );
-			
 			_labelDisplay = new Label();
 			_labelDisplay.autosize = true;
 			_labelDisplay.multiline = true;
@@ -162,9 +159,9 @@ package com.custardbelly.as3flobile.controls.button
 		 * Accessor for the buttonDisplay that can be used in the skinning process. 
 		 * @return Sprite
 		 */
-		public function get buttonDisplay():Sprite
+		public function get backgroundDisplay():Graphics
 		{
-			return _buttonDisplay;
+			return graphics;
 		}
 	}
 }
