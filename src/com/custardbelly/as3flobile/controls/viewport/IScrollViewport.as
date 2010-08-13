@@ -45,6 +45,12 @@ package com.custardbelly.as3flobile.controls.viewport
 		function refresh():void;
 		
 		/**
+		 * Returns flag of this viewport being considered active and live on the stage. 
+		 * @return Boolean
+		 */
+		function isActive():Boolean;
+		
+		/**
 		 * Returns the bounding area for which the content is presented in a scrollable viewport.
 		 * The properties of this bounding area is updated on change to width and height.
 		 * @return Rectangle

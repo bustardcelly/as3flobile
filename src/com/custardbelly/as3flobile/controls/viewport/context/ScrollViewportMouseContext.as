@@ -161,7 +161,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 				_point.x = _mouseTarget.mouseX;
 				_point.y = _mouseTarget.mouseY;
 			}
-			_strategy.end( _point );
+			// The viewport is not active, we don't need to notify the strategy.
+			if( _viewport.isActive() ) _strategy.end( _point );
 			_mouseTarget = null;
 			evt.updateAfterEvent();
 		}

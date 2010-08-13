@@ -231,6 +231,15 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
+		 * @copy IScrollViewport#isActive() 
+		 * @return Boolean
+		 */
+		public function isActive():Boolean
+		{
+			return isOnDisplayList() && visible;
+		}
+		
+		/**
 		 * @inherit
 		 */
 		override public function dispose():void

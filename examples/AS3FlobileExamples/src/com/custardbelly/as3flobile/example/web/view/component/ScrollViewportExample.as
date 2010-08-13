@@ -1,5 +1,6 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
+	import com.custardbelly.as3flobile.controls.dropdown.DropDown;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	
@@ -55,6 +56,12 @@ package com.custardbelly.as3flobile.example.web.view.component
 			viewport.height = 300;
 			viewport.content = content;
 			addChild( viewport );
+			
+			var dropDown:DropDown = new DropDown();
+			dropDown.y = 200;
+			dropDown.dataProvider = [{label:"item 1"}, {label:"item 2"}, {label:"item 3"}, {label:"item 4"}, {label:"item 5"}, {label:"item 6"}, {label:"item 7"},
+										{label:"item 8"}, {label:"item 9"}, {label:"item 10"}, {label:"item 11"}, {label:"item 12"}, {label:"item 13"}, {label:"item 14"}]
+			addChild( dropDown );
 		}
 	}
 }

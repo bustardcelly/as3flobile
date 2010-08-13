@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.controls.list
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
+	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
@@ -108,8 +109,9 @@ package com.custardbelly.as3flobile.controls.list
 		public static function initWithScrollRectAndDelegate( bounds:Rectangle, delegate:IScrollListDelegate = null ):ScrollList
 		{
 			var list:ScrollList = new ScrollList();
-			list.scrollRect = bounds;
 			list.delegate = delegate;
+			list.width = bounds.width;
+			list.height = bounds.height;
 			return list;
 		}
 		
@@ -136,6 +138,8 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_skin = new ScrollListSkin();
 			_skin.target = this;
+			
+			addHandlers();
 		}
 		
 		/**
@@ -166,6 +170,28 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * @private 
+		 * 
+		 * Adds event handlers for addition and removal from parent display list.
+		 */
+		protected function addHandlers():void
+		{
+			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
+			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Removes event handlers.
+		 */
+		protected function removeHandlers():void
+		{
+			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
+			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Factory method to return default IScrollViewportContext implementation used. 
@@ -186,9 +212,7 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function getDefaultTapMediator( display:InteractiveObject, tapHandler:Function ):ITapMediator
 		{
-			var mediator:TapMediator = new MouseTapMediator();
-			mediator.mediateTapGesture( display, tapHandler );
-			return mediator;
+			return new MouseTapMediator();
 		}
 		
 		/**
@@ -201,6 +225,7 @@ package com.custardbelly.as3flobile.controls.list
 		{	
 			var layout:IScrollListLayout = new ScrollListVerticalLayout();
 			layout.target = this;
+			( layout as IScrollListVerticalLayout ).itemHeight = 40;
 			return layout;
 		}
 		
@@ -468,6 +493,28 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * @private
 		 * 
+		 * Event handler for being added to the display list of parent. 
+		 * @param evt Event
+		 */
+		protected function handleAddedToStage( evt:Event ):void
+		{
+			_tapMediator.mediateTapGesture( _listHolder, handleListTap );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Event handler for being removed from the display list of the parent. 
+		 * @param evt Event
+		 */
+		protected function handleRemovedFromStage( evt:Event ):void
+		{
+			_tapMediator.unmediateTapGesture( _listHolder );
+		}
+		
+		/**
+		 * @private
+		 * 
 		 * Event handler for tap gesture on content. Determines the selected index within the list. 
 		 * @param evt Event
 		 */
@@ -578,6 +625,9 @@ package com.custardbelly.as3flobile.controls.list
 		override public function dispose():void
 		{
 			super.dispose();
+			
+			// Remove stage handlers.
+			removeHandlers();
 			
 			// Empty list.
 			_cells = new Vector.<IScrollListItemRenderer>();
@@ -820,5 +870,10 @@ class ScrollListHolder extends Sprite
 		if( _height == value ) return;
 		
 		_height = value;
+	}
+	
+	override public function set y(value:Number):void
+	{
+		super.y = value;
 	}
 }
