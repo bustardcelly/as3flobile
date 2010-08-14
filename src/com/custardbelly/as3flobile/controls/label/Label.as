@@ -236,8 +236,10 @@ package com.custardbelly.as3flobile.controls.label
 		{
 			return _autosize;
 		}
-		public function set autosize(value:Boolean):void
+		public function set autosize( value:Boolean ):void
 		{
+			if( _autosize == value ) return;
+			
 			_autosize = value;
 			if( _text != null ) invalidateTextDisplay();
 		}
@@ -250,12 +252,12 @@ package com.custardbelly.as3flobile.controls.label
 		{
 			return _multiline;
 		}
-		public function set multiline(value:Boolean):void
+		public function set multiline( value:Boolean ):void
 		{
 			if( _multiline == value ) return;
 		
 			_multiline = value;
-			setRendererState( _multilineRenderer );
+			setRendererState( ( value ) ? _multilineRenderer : _truncationRenderer );
 			if( _text != null ) invalidateTextDisplay();	
 		}
 		

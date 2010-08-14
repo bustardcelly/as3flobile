@@ -7,6 +7,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 	import com.custardbelly.as3flobile.controls.list.ScrollList;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
+	import com.custardbelly.as3flobile.skin.DropDownSkin;
 	
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
@@ -35,6 +36,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			super();
 			initialize();
 			createChildren();
+			initializeDisplay();
 			updateDisplay();
 		}
 		
@@ -49,6 +51,9 @@ package com.custardbelly.as3flobile.controls.dropdown
 			_defaultLabel = "Select";
 			
 			_selectedIndex = -1;
+			
+			_skin = new DropDownSkin();
+			_skin.target = this;
 		}
 		
 		protected function createChildren():void
@@ -94,20 +99,11 @@ package com.custardbelly.as3flobile.controls.dropdown
 				removeChild( _dropDownList );
 		}
 		
-		override protected function updateDisplay():void
+		protected function invalidateDropDownSize():void
 		{
-			super.updateDisplay();
-			_arrowButton.x = _width - _arrowButton.width;
-		}
-		
-		override protected function invalidateSize():void
-		{
-			_labelButton.width = _width - _arrowButton.width;
-			_labelButton.height = _height;
-			
-			_arrowButton.height = _height;
-			
-			super.invalidateSize();
+			var list:ScrollList = getDropDownList();
+			list.width = _dropDownWidth;
+			list.height = _dropDownHeight;
 		}
 		
 		protected function invalidateDefaultLabel():void
@@ -213,6 +209,11 @@ package com.custardbelly.as3flobile.controls.dropdown
 		{
 			return _arrowButton;
 		}
+		
+		public function get dropDownListDisplay():ScrollList
+		{
+			return getDropDownList();
+		}
 
 		public function get defaultLabel():String
 		{
@@ -224,6 +225,30 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_defaultLabel = value;
 			invalidateDefaultLabel();
+		}
+		
+		public function get dropDownWidth():int
+		{
+			return _dropDownWidth;
+		}
+		public function set dropDownWidth(value:int):void
+		{
+			if( _dropDownWidth == value ) return;
+			
+			_dropDownWidth = value;
+			invalidateDropDownSize();
+		}
+		
+		public function get dropDownHeight():int
+		{
+			return _dropDownHeight;
+		}
+		public function set dropDownHeight(value:int):void
+		{
+			if( _dropDownHeight == value ) return;
+			
+			_dropDownHeight = value;
+			invalidateDropDownSize();
 		}
 
 		public function get selectedIndex():int
