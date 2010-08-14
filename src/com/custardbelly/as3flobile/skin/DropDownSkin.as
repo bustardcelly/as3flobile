@@ -120,7 +120,7 @@ package com.custardbelly.as3flobile.skin
 		protected function updateDropDownList( display:ScrollList, width:int, height:int ):void
 		{
 			var dropDownTarget:DropDown = ( _target as DropDown );
-			display.width = ( dropDownTarget.dropDownWidth > 0 ) ? dropDownTarget.dropDownWidth : width;
+			display.width = ( dropDownTarget.dropDownWidth > 0 ) ? dropDownTarget.dropDownWidth : dropDownTarget.labelButtonDisplay.width;
 			display.height = ( dropDownTarget.dropDownHeight > 0 ) ? dropDownTarget.dropDownHeight : 160;
 		}
 		

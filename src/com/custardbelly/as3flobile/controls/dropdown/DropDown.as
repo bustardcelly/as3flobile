@@ -77,9 +77,6 @@ package com.custardbelly.as3flobile.controls.dropdown
 			_width = 160;
 			_height = 40;
 			
-			_dropDownWidth = 160;
-			_dropDownHeight = 160;
-			
 			_defaultLabel = "Select";
 			
 			_selectedIndex = -1;

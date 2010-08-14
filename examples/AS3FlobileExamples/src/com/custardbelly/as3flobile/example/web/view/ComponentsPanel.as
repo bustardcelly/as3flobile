@@ -1,5 +1,6 @@
 package com.custardbelly.as3flobile.example.web.view
 {
+	import com.custardbelly.as3flobile.example.web.view.component.DropDownExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollListExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollViewportExample;
 	import com.custardbelly.as3flobile.example.web.view.component.TextAreaExample;
@@ -21,13 +22,15 @@ package com.custardbelly.as3flobile.example.web.view
 		private var toggleswitchexample:ToggleSwitchExample; ToggleSwitchExample;
 		private var textareaexample:TextAreaExample; TextAreaExample;
 		private var scrolllistexample:ScrollListExample; ScrollListExample;
+		private var dropdownexample:DropDownExample; DropDownExample;
 		
 		public function ComponentsPanel()
 		{
 			_displays = Vector.<String>(["com.custardbelly.as3flobile.example.web.view.component.ScrollViewportExample",
 										"com.custardbelly.as3flobile.example.web.view.component.ScrollListExample",
 										"com.custardbelly.as3flobile.example.web.view.component.TextAreaExample",
-										"com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample"]);
+										"com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample",
+										"com.custardbelly.as3flobile.example.web.view.component.DropDownExample"]);
 			_displayMap = new Dictionary( true );
 			
 			drawBackground();

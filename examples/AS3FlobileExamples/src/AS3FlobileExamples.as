@@ -61,7 +61,7 @@ package
 			_componentPanel.y = 55;
 			view.addChild( _componentPanel );
 			
-			new FPSMeter( view, 15, 300 );
+			new FPSMeter( view, 15, 30 );
 			
 			var printField:TextArea = new TextArea();
 			var format:ElementFormat = new ElementFormat( new FontDescription( "Arial" ), 20 );
