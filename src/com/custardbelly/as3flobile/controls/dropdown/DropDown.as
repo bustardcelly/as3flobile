@@ -75,7 +75,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 		override protected function initialize():void
 		{
 			_width = 160;
-			_height = 40;
+			_height = 48;
 			
 			_defaultLabel = "Select";
 			
@@ -118,7 +118,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _dropDownList == null )
 			{
 				var layout:IScrollListVerticalLayout = new ScrollListVerticalLayout();
-				layout.itemHeight = 40;
+				layout.itemHeight = 48;
 				_dropDownList = ScrollList.initWithScrollRectAndDelegate( new Rectangle( 0, 0, _dropDownWidth, _dropDownHeight ), this );
 				_dropDownList.layout = layout;
 			}

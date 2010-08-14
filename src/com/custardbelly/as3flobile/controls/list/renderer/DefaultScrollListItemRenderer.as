@@ -80,7 +80,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			this.mouseEnabled = false;
 			
 			_width = 100;
-			_height = 20;
+			_height = 48;
 			
 			_padding = 3;
 			

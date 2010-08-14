@@ -222,7 +222,7 @@ package com.custardbelly.as3flobile.controls.list
 		{	
 			var layout:IScrollListLayout = new ScrollListVerticalLayout();
 			layout.target = this;
-			( layout as IScrollListVerticalLayout ).itemHeight = 40;
+			( layout as IScrollListVerticalLayout ).itemHeight = 48;
 			return layout;
 		}
 		
