@@ -71,19 +71,18 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		public function ToggleSwitch()
 		{
-			initialize();
-			createChildren();
+//			initialize();
+//			createChildren();
+			super();
 			invalidateLabels();
 			toggleContext = getDefaultContext();
-			initializeDisplay();
+//			initializeDisplay();
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Initializes any necessary values/properties.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{
 			_width = 100;
 			_height = 40;
@@ -99,11 +98,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Creates any necessary display children.
+		 * @inherit
 		 */
-		protected function createChildren():void
+		override protected function createChildren():void
 		{
 			_background = new Sprite();
 			addChild( _background );

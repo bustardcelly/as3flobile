@@ -55,22 +55,13 @@ package com.custardbelly.as3flobile.controls.button
 		public function Button()
 		{
 			super();
-			
-			initialize();
-			createChildren();
-			
-			initializeDisplay();
-			updateDisplay();
-			
 			mouseChildren = false;
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Initializes any necessary values.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{
 			_width = 100;
 			_height = 48;
@@ -80,11 +71,9 @@ package com.custardbelly.as3flobile.controls.button
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Creates any necessary display children.
+		 * @inherit
 		 */
-		protected function createChildren():void
+		override protected function createChildren():void
 		{
 			_labelDisplay = new Label();
 			_labelDisplay.autosize = true;

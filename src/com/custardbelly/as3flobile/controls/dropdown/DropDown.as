@@ -1,3 +1,29 @@
+/**
+ * <p>Original Author: toddanderson</p>
+ * <p>Class File: DropDown.as</p>
+ * <p>Version: 0.1</p>
+ *
+ * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:</p>
+ *
+ * <p>The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.</p>
+ *
+ * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.</p>
+ *
+ * <p>Licensed under The MIT License</p>
+ * <p>Redistributions of files must retain the above copyright notice.</p>
+ */
 package com.custardbelly.as3flobile.controls.dropdown
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
@@ -13,6 +39,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	/**
+	 * DownDown is a mutli-button control exposing a list control to select items from. 
+	 * @author toddanderson
+	 */
 	public class DropDown extends AS3FlobileComponent implements IScrollListDelegate
 	{
 		protected static const STATE_CLOSED:int = 0;
@@ -31,16 +61,18 @@ package com.custardbelly.as3flobile.controls.dropdown
 		protected var _selectedIndex:int;
 		protected var _dataProvider:Array;
 		
+		/**
+		 * Constructor.
+		 */
 		public function DropDown()
 		{
 			super();
-			initialize();
-			createChildren();
-			initializeDisplay();
-			updateDisplay();
 		}
 		
-		protected function initialize():void
+		/**
+		 * @inherit
+		 */
+		override protected function initialize():void
 		{
 			_width = 160;
 			_height = 40;
@@ -56,7 +88,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			_skin.target = this;
 		}
 		
-		protected function createChildren():void
+		/**
+		 * @inherit
+		 */
+		override protected function createChildren():void
 		{
 			_labelButton = new Button();
 			_labelButton.label = _defaultLabel;
@@ -75,6 +110,12 @@ package com.custardbelly.as3flobile.controls.dropdown
 			_labelButton.width = _width - _arrowButton.width;
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Lazy creates and returns the dropdown ScrollList instance. 
+		 * @return ScrollList
+		 */
 		protected function getDropDownList():ScrollList
 		{
 			if( _dropDownList == null )
@@ -87,18 +128,33 @@ package com.custardbelly.as3flobile.controls.dropdown
 			return _dropDownList;
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Adds the dropdown list to the display.
+		 */
 		protected function addDropDownList():void
 		{
 			if( _dropDownList == null || !contains( _dropDownList ) )
 				addChild( getDropDownList() );
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Removes the dropdown list from the display.
+		 */
 		protected function removeDropDownList():void
 		{
 			if( _dropDownList != null && contains( _dropDownList ) )
 				removeChild( _dropDownList );
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Validates the size of the drop down list control.
+		 */
 		protected function invalidateDropDownSize():void
 		{
 			var list:ScrollList = getDropDownList();
@@ -106,25 +162,47 @@ package com.custardbelly.as3flobile.controls.dropdown
 			list.height = _dropDownHeight;
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Validates the textual content of the default label.
+		 */
 		protected function invalidateDefaultLabel():void
 		{
 			// if in state with default label ->
 			_labelButton.label = _defaultLabel;
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Validates the supplied data for the dropdown list control.
+		 */
 		protected function invalidateDataProvider():void
 		{
 			var list:ScrollList = getDropDownList();
 			list.dataProvider = _dataProvider;
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Validates the selected index within the dropdon list control.
+		 */
 		protected function invalidateSelectedIndex():void
 		{
 			var list:ScrollList = getDropDownList();
 			list.selectedIndex = _selectedIndex;
+			// Update label button to selection or default.
 			_labelButton.label = ( _selectedIndex >= 0 && _selectedIndex < _dataProvider.length ) ? _dataProvider[_selectedIndex].label : _defaultLabel;
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Sets the internal state of the control as either being open with dropdown list on the display list, or closed with the dropdown list off the display list. 
+		 * @param state int
+		 */
 		protected function setCurrentState( state:int ):void
 		{
 			if( _currentState == state ) return;
@@ -136,11 +214,23 @@ package com.custardbelly.as3flobile.controls.dropdown
 				removeDropDownList();
 		}
 		
+		/**
+		 * @private 
+		 * 
+		 * Toggles the internal state of the control.
+		 * @see #setCurrentState()
+		 */
 		protected function toggleState():void
 		{
 			setCurrentState( _currentState == DropDown.STATE_CLOSED ? DropDown.STATE_OPENED : DropDown.STATE_CLOSED );
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Event hanlder for click on any of the multi-button display to toggle the state. 
+		 * @param evt MouseEvent
+		 */
 		protected function handleButtonTriggerClick( evt:MouseEvent ):void
 		{
 			var list:ScrollList = getDropDownList();
@@ -169,30 +259,43 @@ package com.custardbelly.as3flobile.controls.dropdown
 			closeDropDown();
 		}
 		
+		/**
+		 * Opens the dropdown list control.
+		 */
 		public function openDropDown():void
 		{
 			setCurrentState( DropDown.STATE_OPENED );
 		}
+		/**
+		 * Closes the dropdown list control.
+		 */
 		public function closeDropDown():void
 		{
 			setCurrentState( DropDown.STATE_CLOSED );
 		}
 		
+		/**
+		 * @inherit
+		 */
 		override public function dispose():void
 		{
 			super.dispose();
 			
+			// Remove all children from the display list.
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
+			// Clear out label button.
 			_labelButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
 			_labelButton.dispose();
 			_labelButton = null;
 			
+			// Clear out arrow button.
 			_arrowButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
 			_arrowButton.dispose();
 			_arrowButton = null;
 			
+			// Clear out drop down.
 			if( _dropDownList )
 			{
 				_dropDownList.dispose();
@@ -200,21 +303,37 @@ package com.custardbelly.as3flobile.controls.dropdown
 			}
 		}
 		
+		/**
+		 * Returns the label button display instance. 
+		 * @return Button
+		 */
 		public function get labelButtonDisplay():Button
 		{
 			return _labelButton;
 		}
 		
+		/**
+		 * Returns the arrow button display instance. 
+		 * @return Button
+		 */
 		public function get arrowButtonDisplay():Button
 		{
 			return _arrowButton;
 		}
 		
+		/**
+		 * Returns the drop down list display instance. 
+		 * @return ScrollList
+		 */
 		public function get dropDownListDisplay():ScrollList
 		{
 			return getDropDownList();
 		}
 
+		/**
+		 * Accessor/Modifier for the default textual content of the label display when a selection is not present in the dropdown list control. 
+		 * @return String
+		 */
 		public function get defaultLabel():String
 		{
 			return _defaultLabel;
@@ -227,6 +346,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			invalidateDefaultLabel();
 		}
 		
+		/**
+		 * Accessor/Modifier for the desired width of the dropdown list control. 
+		 * @return int
+		 */
 		public function get dropDownWidth():int
 		{
 			return _dropDownWidth;
@@ -239,6 +362,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			invalidateDropDownSize();
 		}
 		
+		/**
+		 * Accessor/Modifier for the desired height of the dropdown list control. 
+		 * @return int
+		 */
 		public function get dropDownHeight():int
 		{
 			return _dropDownHeight;
@@ -251,6 +378,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			invalidateDropDownSize();
 		}
 
+		/**
+		 * Accessor/Modifier for the selected index within the dropdown list control. 
+		 * @return int
+		 */
 		public function get selectedIndex():int
 		{
 			return _selectedIndex;
@@ -263,6 +394,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			invalidateSelectedIndex();
 		}
 		
+		/**
+		 * Accessor/Modifier for the selection item within the dropdown list control. 
+		 * @return Object
+		 */
 		public function get selectedItem():Object
 		{
 			var list:ScrollList = getDropDownList();
@@ -274,6 +409,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 			list.selectedItem = value;
 		}
 		
+		/**
+		 * Accessor/Modifier for the data provider of the dropdown list control. 
+		 * @return Array
+		 */
 		public function get dataProvider():Array
 		{
 			return _dataProvider;

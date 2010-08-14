@@ -67,17 +67,13 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		 */
 		public function DefaultScrollListItemRenderer()
 		{
-			initialize();
-			createChildren();
-			initializeDisplay();
+			super();
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Initializes any proper data for composition.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{
 			this.cacheAsBitmap = true;
 			this.mouseChildren = false;
@@ -93,11 +89,9 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Creates any required display children.
+		 * @inherit
 		 */
-		protected function createChildren():void
+		override protected function createChildren():void
 		{
 			_background = new Shape();
 			addChild( _background );

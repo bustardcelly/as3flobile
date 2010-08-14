@@ -92,12 +92,13 @@ package com.custardbelly.as3flobile.controls.list
 		{
 			// Get default scroll context.
 			_scrollContext = getDefaultScrollContext();
-			// Initialize.
-			initialize();
-			// Create child displays.
-			createChildren();
-			// Initialize skin.
-			_skin.initializeDisplay( _width, _height );
+//			// Initialize.
+//			initialize();
+//			// Create child displays.
+//			createChildren();
+//			// Initialize skin.
+//			_skin.initializeDisplay( _width, _height );
+			super();
 		}
 		
 		/**
@@ -116,11 +117,9 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Initializes any necessary values for the creation of an instance of ScrollList.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{
 			_width = 100; 
 			_height = 100;
@@ -143,11 +142,9 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Creates all necessary display children.
+		 * @inherit
 		 */
-		protected function createChildren():void
+		override protected function createChildren():void
 		{
 			// List holder will be managed by this ScrollList instance, but actually be on the display list of the viewport.
 			_listHolder = new ScrollListHolder();

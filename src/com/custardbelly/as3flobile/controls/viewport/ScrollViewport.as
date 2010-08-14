@@ -53,8 +53,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		public function ScrollViewport()
 		{	
-			_width = 100;
-			_height = 100;
 			context = getDefaultViewportContext();
 			scrollRect = new Rectangle( 0, 0, _width, _height );
 			initialize();
@@ -75,11 +73,9 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Performs initialization operations.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{
 			_bounds = new Rectangle( 0, 0, _width, _height );
 			addHandlers();

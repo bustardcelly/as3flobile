@@ -49,7 +49,33 @@ package com.custardbelly.as3flobile.controls.core
 		/**
 		 * Constructor. 
 		 */
-		public function AS3FlobileComponent() {}
+		public function AS3FlobileComponent() 
+		{
+			initialize();
+			createChildren();
+			initializeDisplay();
+			updateDisplay();
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Initializes any necessary property values.
+		 */
+		protected function initialize():void
+		{
+			// abstract. Meant for override. 
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Creates any necessary display chidren.
+		 */
+		protected function createChildren():void
+		{
+			// abstract. Meant for override. 
+		}
 		
 		/**
 		 * @private 

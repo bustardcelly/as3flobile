@@ -74,17 +74,13 @@ package com.custardbelly.as3flobile.controls.text
 		 */
 		public function TextArea() 
 		{
-			initialize();
-			createChildren();
-			_skin.initializeDisplay( _width, _height );
+			super();
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Initializes necessary properties.
+		 * @inherit
 		 */
-		protected function initialize():void
+		override protected function initialize():void
 		{	
 			_width = 100;
 			_height = 100;
@@ -103,11 +99,9 @@ package com.custardbelly.as3flobile.controls.text
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Creates and adds necessary children to the display list.
+		 * @inherit
 		 */
-		protected function createChildren():void
+		override protected function createChildren():void
 		{
 			_background = new Shape();
 			addChild( _background );
