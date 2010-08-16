@@ -30,6 +30,8 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	
 	import flash.display.Graphics;
+	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
@@ -74,7 +76,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function initializeClearDisplay( display:Graphics, width:int, height:int ):void
+		protected function initializeClearDisplay( display:Sprite, width:int, height:int ):void
 		{
 			updateClearDisplay( display, width, height );
 		}
@@ -118,21 +120,20 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updateClearDisplay( display:Graphics, width:int, height:int ):void
+		protected function updateClearDisplay( display:Sprite, width:int, height:int ):void
 		{
 			const offset:int = 4;
-			const doubleOffset:int = 8;
-			var radius:int = ( height / 2 ) - offset;
-			var position:Number = offset + ( radius * 0.5 );
-			display.clear();
-			display.beginFill( 0xCCCCCC );
-			display.drawCircle( width - position - offset, position + offset, radius );
-			display.endFill();
-			display.lineStyle( 2, 0xFFFFFF, 1, true, "normal", "square", "miter" );
-			display.moveTo( width - position - radius, doubleOffset );
-			display.lineTo( width - doubleOffset, height - doubleOffset );
-			display.moveTo( width - doubleOffset, doubleOffset );
-			display.lineTo( width - position - radius, height - doubleOffset );
+			var radius:int = ( height < 8 ) ? ( height * 0.5 ) : 8;
+			var diameter:int = radius * 2;
+			display.graphics.clear();
+			display.graphics.beginFill( 0xCCCCCC );
+			display.graphics.drawCircle( radius, radius, radius );
+			display.graphics.endFill();
+			display.graphics.lineStyle( 2, 0xFFFFFF, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( offset, offset );
+			display.graphics.lineTo( diameter - offset, diameter - offset );
+			display.graphics.moveTo( diameter - offset, offset );
+			display.graphics.lineTo( offset, diameter - offset );
 		}
 		
 		/**
@@ -151,19 +152,43 @@ package com.custardbelly.as3flobile.skin
 				if( display.getTextFormat() != format )
 				{
 					display.setTextFormat( format );
-					// Base height on font size. This will be overwritten if multiline is true on input.
-					display.height = int(format.size) * 1.25;
 				}
 			}
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Updates the position of display items. 
+		 * @param width int
+		 * @param height int
+		 */
+		protected function updatePosition( width:int, height:int ):void
+		{
+			const offset:int = 4;
+			var inputTarget:TextInput = ( _target as TextInput );
+			var inputDisplay:TextField = inputTarget.inputDisplay;
+			var clearButtonDisplay:Sprite = inputTarget.clearButtonDisplay;
 			
-			// Offsetting based on clear button size and positioning.
-			const offset:int = 8;
-			var widthOffset:int = ( height / 2 ) + offset;
-			// Update width based on offset.
-			display.width = width - widthOffset;
+			// Update clear button display position.
+			clearButtonDisplay.x = width - clearButtonDisplay.width - offset;
+			// Update input size and position.
+			inputDisplay.width = clearButtonDisplay.x - offset;
+			
 			// Base height on multiline.
-			if( display.multiline ) display.height = height;
-			display.y = ( height - display.height ) / 2;
+			if( inputDisplay.multiline )
+			{
+				inputDisplay.height = height;
+				clearButtonDisplay.y = offset;
+			}
+			else
+			{
+				// Base height on font size. This will be overwritten if multiline is true on input.
+				var fontSize:int = ( _target.skinState == BasicStateEnum.NORMAL ) ? int(_defaultFormat.size) : int(_boilerFormat.size);
+				inputDisplay.height = fontSize * 1.25;
+				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) / 2;
+			}
+			inputDisplay.y = ( height - inputDisplay.height ) / 2;
 		}
 		
 		/**
@@ -177,6 +202,7 @@ package com.custardbelly.as3flobile.skin
 			initializeBackground( inputTarget.backgroundDisplay, width, height );
 			initializeClearDisplay( inputTarget.clearButtonDisplay, width, height );
 			initializeInput( inputTarget.inputDisplay, width, height );
+			updatePosition( width, height );
 		}
 		
 		/**
@@ -190,6 +216,7 @@ package com.custardbelly.as3flobile.skin
 			updateBackground( inputTarget.backgroundDisplay, width, height );
 			updateClearDisplay( inputTarget.clearButtonDisplay, width, height );
 			updateInput( inputTarget.inputDisplay, width, height );
+			updatePosition( width, height );
 		}
 		
 		/**

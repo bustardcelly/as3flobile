@@ -30,17 +30,18 @@ package com.custardbelly.as3flobile.controls.textinput
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.skin.TextInputSkin;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Graphics;
-	import flash.display.InteractiveObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
+	
+	import flashx.textLayout.edit.SelectionManager;
 	
 	/**
 	 * TextInput is a control to allow for input of text on single and multiple lines. 
@@ -99,6 +100,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			addChild( _input );
 			
 			_clearButton = new Sprite();
+			_clearButton.mouseChildren = false;
 		}
 		
 		/**
@@ -133,7 +135,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			_input.addEventListener( FocusEvent.FOCUS_IN, handleFocusIn, false, 0, true );
 			_input.addEventListener( FocusEvent.FOCUS_OUT, handleFocusOut, false, 0, true );
 			
-			_clearButton.addEventListener( MouseEvent.CLICK, handleClear, false, 0, true );
+			addEventListener( MouseEvent.MOUSE_DOWN, handleClear, false, 0, true );
 		}
 		
 		/**
@@ -146,7 +148,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			_input.removeEventListener( FocusEvent.FOCUS_IN, handleFocusIn, false );
 			_input.removeEventListener( FocusEvent.FOCUS_OUT, handleFocusOut, false );
 			
-			_clearButton.removeEventListener( MouseEvent.CLICK, handleClear, false );
+			removeEventListener( MouseEvent.MOUSE_DOWN, handleClear, false );
 		}
 		
 		/**
@@ -265,7 +267,6 @@ package com.custardbelly.as3flobile.controls.textinput
 		protected function handleFocusIn( evt:Event ):void
 		{
 			if( _input.text == _defaultText ) _input.text = "";
-			
 			setCurrentState( BasicStateEnum.FOCUSED );
 		}
 		
@@ -278,8 +279,8 @@ package com.custardbelly.as3flobile.controls.textinput
 		protected function handleFocusOut( evt:Event ):void
 		{
 			if( _input.text.length == 0 ) _input.text = _defaultText;
-			
 			setCurrentState( BasicStateEnum.NORMAL );
+			_input.scrollV = 0;
 		}
 		
 		/**
@@ -288,9 +289,17 @@ package com.custardbelly.as3flobile.controls.textinput
 		 * Event handler for having requested to clear the input field. 
 		 * @param evt Event
 		 */
-		protected function handleClear( evt:Event ):void
+		protected function handleClear( evt:MouseEvent ):void
 		{
-			invalidateText( "" );
+			if( mouseX >= _clearButton.x && mouseX <= ( _clearButton.x + _clearButton.width ) )
+			{
+				if( mouseY >= _clearButton.y && mouseY <= ( _clearButton.y + _clearButton.height ) )
+				{
+					invalidateText( "" );
+					stage.focus = _input;
+					_input.setSelection( 0, 0 );
+				}
+			} 
 		}
 		
 		/**
@@ -320,9 +329,9 @@ package com.custardbelly.as3flobile.controls.textinput
 		 * Returns the clear button display instance for this control. 
 		 * @return Graphics
 		 */
-		public function get clearButtonDisplay():Graphics
+		public function get clearButtonDisplay():Sprite
 		{
-			return _clearButton.graphics;
+			return _clearButton;
 		}
 		
 		/**
