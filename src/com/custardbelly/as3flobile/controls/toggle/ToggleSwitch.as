@@ -166,17 +166,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Returns flag of this instance residing on a display list. Add and Remove events are tracked by this control in order to activate/deactivate the IToggleContext.
-		 * @return Boolean
-		 */
-		protected function isOnDisplayList():Boolean
-		{
-			return this.stage != null;
-		}
-		
-		/**
 		 * @private 
 		 * 
 		 * Validates the new dimensions given to this instance.

@@ -48,7 +48,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		 * Returns flag of this viewport being considered active and live on the stage. 
 		 * @return Boolean
 		 */
-		function isActive():Boolean;
+		function isActiveOnDisplayList():Boolean;
 		
 		/**
 		 * Returns the bounding area for which the content is presented in a scrollable viewport.

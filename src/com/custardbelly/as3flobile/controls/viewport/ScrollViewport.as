@@ -204,17 +204,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Returns flag of this instance being on a display list. 
-		 * @return Boolean
-		 */
-		protected function isOnDisplayList():Boolean
-		{
-			return stage != null;
-		}
-		
-		/**
 		 * @copy IScrollViewport#refresh()
 		 */
 		public function refresh():void
@@ -224,15 +213,6 @@ package com.custardbelly.as3flobile.controls.viewport
 				_content.x = _content.y = 0;
 			}
 			_context.update();
-		}
-		
-		/**
-		 * @copy IScrollViewport#isActive() 
-		 * @return Boolean
-		 */
-		public function isActive():Boolean
-		{
-			return isOnDisplayList() && visible;
 		}
 		
 		/**

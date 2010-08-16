@@ -130,6 +130,24 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
+		 * Returns flag of this instance being on the display list. 
+		 * @return Boolean
+		 */
+		public function isOnDisplayList():Boolean
+		{
+			return ( stage != null );
+		}
+		
+		/**
+		 * Returns flag of this instance being on the display list and visible for rendering. 
+		 * @return Boolean
+		 */
+		public function isActiveOnDisplayList():Boolean
+		{
+			return isOnDisplayList() && visible;
+		}
+		
+		/**
 		 * @copy IDisposable#dispose()
 		 */
 		public function dispose():void

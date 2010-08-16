@@ -2,6 +2,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.dropdown.DropDown;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.controls.textinput.TextInput;
 	
 	import flash.display.Sprite;
 	

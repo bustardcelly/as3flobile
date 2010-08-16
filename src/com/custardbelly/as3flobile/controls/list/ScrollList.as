@@ -92,12 +92,6 @@ package com.custardbelly.as3flobile.controls.list
 		{
 			// Get default scroll context.
 			_scrollContext = getDefaultScrollContext();
-//			// Initialize.
-//			initialize();
-//			// Create child displays.
-//			createChildren();
-//			// Initialize skin.
-//			_skin.initializeDisplay( _width, _height );
 			super();
 		}
 		
