@@ -44,5 +44,10 @@ package com.custardbelly.as3flobile.controls.list
 		 * @param renderer IScrollListItemRenderer
 		 */
 		function removeRendererFromDisplay( renderer:IScrollListItemRenderer ):void;
+		
+		/**
+		 * Runs a refesh on the display due to a change in content from the layout.
+		 */
+		function commitContentChange():void;
 	}
 }

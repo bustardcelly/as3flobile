@@ -59,12 +59,12 @@ package com.custardbelly.as3flobile.example.web.view.component
 			button.addEventListener( MouseEvent.CLICK, handleSwitchLayout );
 			addChild( button );
 			
-//			button = new Button();
-//			button.label = "toggle variable size";
-//			button.x = 110;
-//			button.y = 340;
-//			button.addEventListener( MouseEvent.CLICK, handleVariableSize );
-//			addChild( button );
+			button = new Button();
+			button.label = "toggle variable size";
+			button.x = 110;
+			button.y = 340;
+			button.addEventListener( MouseEvent.CLICK, handleVariableSize );
+			addChild( button );
 		}
 		
 		protected function randomRange( min:int, max:int ):int
@@ -98,6 +98,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 		protected function handleVariableSize( evt:Event ):void
 		{
 			_isVariableSize = !_isVariableSize;
+			_list.seperatorLength = 0;
+			_list.seperatorLength = 2;
 			_verticalLayout.useVariableHeight = _isVariableSize;
 			_horizontalLayout.useVariableWidth = _isVariableSize;
 		}

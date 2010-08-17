@@ -123,7 +123,7 @@ package com.custardbelly.as3flobile.skin
 		protected function updateClearDisplay( display:Sprite, width:int, height:int ):void
 		{
 			const offset:int = 4;
-			var radius:int = ( height < 8 ) ? ( height * 0.5 ) : 8;
+			var radius:int = ( height < 10 ) ? ( height * 0.5 ) : 10;
 			var diameter:int = radius * 2;
 			display.graphics.clear();
 			display.graphics.beginFill( 0xCCCCCC );
@@ -185,7 +185,7 @@ package com.custardbelly.as3flobile.skin
 			{
 				// Base height on font size. This will be overwritten if multiline is true on input.
 				var fontSize:int = ( _target.skinState == BasicStateEnum.NORMAL ) ? int(_defaultFormat.size) : int(_boilerFormat.size);
-				inputDisplay.height = fontSize * 1.25;
+				inputDisplay.height = fontSize * 1.4;
 				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) / 2;
 			}
 			inputDisplay.y = ( height - inputDisplay.height ) / 2;

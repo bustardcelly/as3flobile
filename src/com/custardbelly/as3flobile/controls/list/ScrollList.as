@@ -61,7 +61,7 @@ package com.custardbelly.as3flobile.controls.list
 	 */
 	public class ScrollList extends AS3FlobileComponent implements IScrollViewportDelegate, IScrollListContainer, IScrollListLayoutTarget
 	{	
-		protected var _listHolder:Sprite;
+		protected var _listHolder:ScrollListHolder;
 		protected var _bounds:Rectangle;
 		protected var _viewport:IScrollViewport;
 		
@@ -127,6 +127,7 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_cells = new Vector.<IScrollListItemRenderer>()
 			_itemRenderer = getQualifiedClassName( DefaultScrollListItemRenderer );
+			
 			_layout = getDefaultLayout();
 			
 			_skin = new ScrollListSkin();
@@ -254,12 +255,14 @@ package com.custardbelly.as3flobile.controls.list
 			// Set new scroll rect area.
 			_bounds.width = _width - doublePadding;
 			_bounds.height = _height - doublePadding;
-//			this.scrollRect = _bounds;
 			// Apply new values to the viewport instance.
 			_viewport.width = _width - doublePadding;
 			_viewport.height = _height - doublePadding;
 			_viewport.x = _padding;
 			_viewport.y = _padding;
+			// Update visible dimensions on scroll list holder
+			_listHolder.visibleWidth = _width - doublePadding;
+			_listHolder.visibleHeight = _height - doublePadding;
 			// Run refresh on display.
 			invalidateDisplay();
 		}
@@ -455,7 +458,7 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function getContentHeight():Number
 		{
-			return _layout.getContentHeight();
+			return ( _layout ) ? _layout.getContentHeight() : _width;
 		}
 		
 		/**
@@ -467,7 +470,7 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function getContentWidth():Number
 		{
-			return _layout.getContentWidth();
+			return ( _layout ) ? _layout.getContentWidth() : _height;
 		}
 		
 		/**
@@ -548,6 +551,25 @@ package com.custardbelly.as3flobile.controls.list
 		{
 			if( _listHolder.contains( renderer as DisplayObject ) )
 				( renderer as DisplayObject ).visible = false;
+		}
+		
+		/**
+		 * copy @IScrollListLayoutTarget#commitContentChange()
+		 */
+		public function commitContentChange():void
+		{
+			// Set bounds of content holder.
+			if( _listHolder )
+			{
+				_listHolder.height = getContentHeight();
+				_listHolder.width = getContentWidth();	
+			}
+			// Update the visual display.
+			updateDisplay();
+			// Run refresh on viewport.
+			if( _viewport ) _viewport.refresh();
+			// Show the cells based on display properties.
+			if( _layout ) showCells();
 		}
 		
 		/**
@@ -815,7 +837,11 @@ package com.custardbelly.as3flobile.controls.list
 	}
 }
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
+
 /**
  * @private
  * 
@@ -828,10 +854,71 @@ class ScrollListHolder extends Sprite
 	protected var _width:Number = 0;
 	protected var _height:Number = 0;
 	
+	protected var _visibleWidth:Number = 0;
+	protected var _visibleHeight:Number = 0;
+	
+	protected var _rectCache:Rectangle;
+	private static const ORIGIN:Point = new Point( 0, 0 );
+	
 	/**
 	 * Constructor.
 	 */
-	public function ScrollListHolder() {}
+	public function ScrollListHolder() 
+	{
+		_rectCache = new Rectangle();
+	}
+	
+	/**
+	 * @inherit
+	 * 
+	 * Override to prvide proper bounds based on visible height rather than child display height. 
+	 * @param targetCoordinateSpace DisplayObject
+	 * @return Rectangle
+	 */
+	override public function getBounds( targetCoordinateSpace:DisplayObject ):Rectangle
+	{
+		// Use parent positioning, as this content is scrolled within, and the point should reside at the origina of parenting container.
+		var pt:Point = ( parent ) ? parent.localToGlobal( ScrollListHolder.ORIGIN ) : localToGlobal( ScrollListHolder.ORIGIN );
+		var w:int = _visibleWidth * targetCoordinateSpace.scaleX;
+		var h:int = _visibleHeight * targetCoordinateSpace.scaleY;
+		
+		_rectCache.x = pt.x;
+		_rectCache.y = pt.y;
+		_rectCache.width = w;
+		_rectCache.height = h;
+		
+		return _rectCache;
+	}
+	
+	/**
+	 * Accessor/Modifier for the visible width dimension of this display within the list. 
+	 * @return Number
+	 */
+	public function get visibleWidth():Number
+	{
+		return _visibleWidth;
+	}
+	public function set visibleWidth( value:Number ):void
+	{
+		if( _visibleWidth == value ) return;
+		
+		_visibleWidth = value;
+	}
+	
+	/**
+	 * Accessor/Modifier for the visible height dimension of this display within the list. 
+	 * @return Number
+	 */
+	public function get visibleHeight():Number
+	{
+		return _visibleHeight;
+	}
+	public function set visibleHeight( value:Number ):void
+	{
+		if( _visibleHeight == value ) return;
+		
+		_visibleHeight = value;
+	}
 	
 	/**
 	 * Accessor/Modifier for the preferred width of the display. 
@@ -861,10 +948,5 @@ class ScrollListHolder extends Sprite
 		if( _height == value ) return;
 		
 		_height = value;
-	}
-	
-	override public function set y(value:Number):void
-	{
-		super.y = value;
 	}
 }

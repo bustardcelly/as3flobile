@@ -65,10 +65,9 @@ package com.custardbelly.as3flobile.helper
 		{
 			if( _tapDisplay.stage == null ) return false;
 			
-			var position:Point = _tapDisplay.localToGlobal( MouseTapMediator.ORIGIN );
 			var scaledBounds:Rectangle = _tapDisplay.getBounds( _tapDisplay.stage );
-			return ( x >= position.x && x <= position.x + scaledBounds.width ) &&
-					( y >= position.y && y <= position.y + scaledBounds.height );
+			return ( x >= scaledBounds.x && x <= scaledBounds.x + scaledBounds.width ) &&
+					( y >= scaledBounds.y && y <= scaledBounds.y + scaledBounds.height );
 		}
 		
 		/**

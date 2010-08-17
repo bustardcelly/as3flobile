@@ -151,13 +151,12 @@ package com.custardbelly.as3flobile.controls.list.layout
 				renderer.useVariableWidth = _useVariableWidth;
 				if( !isNaN( _itemWidth ) ) renderer.width = _itemWidth;
 				renderer.height = rect.height;
-				// Supply data only if determining variable width.
-				if( _useVariableWidth && data != null && data.length > i )
-					renderer.data = data[i];
+				renderer.data = data[i];
 				renderer.unlock();
 				
 				( renderer as DisplayObject ).x = xpos;
 				( renderer as DisplayObject ).y = 0;
+				( _target as IScrollListLayoutTarget ).addRendererToDisplay( renderer );
 				xpos += renderer.width + _target.seperatorLength;
 				i++;
 			}
@@ -165,6 +164,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			cacheWidths( _target.renderers );
 			// Update the determined height of the content.
 			_contentHeight = rect.height;
+			( _target as IScrollListLayoutTarget ).commitContentChange();
 		}
 		
 		/**
@@ -172,6 +172,14 @@ package com.custardbelly.as3flobile.controls.list.layout
 		 */
 		public function updateScrollPosition():void
 		{
+			/*
+			// 	[NOTE] 
+			//	This has been deprecated to save rendering time.
+			//	Previous implementation ensured only needed list items were on the display list.
+			//	Unfortunately this was too expensive during runtime and affacted the rendering position of list items.
+			//	Left in or histories sake, if we circle around and want to implement on-demand item rendering.
+			//	[/NOTE]
+			
 			var currentScrollPosition:Number = _target.scrollPosition.x;
 			var position:Number = ( currentScrollPosition > 0.0 ) ? currentScrollPosition : -currentScrollPosition;
 			
@@ -216,6 +224,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 					( _target as IScrollListLayoutTarget ).removeRendererFromDisplay( cell );
 				}
 			}
+			*/
 		}
 		
 		/**

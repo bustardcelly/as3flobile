@@ -70,7 +70,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected var _framerate:int = 24;
 		protected var _damp:Number;
 		
-		public static const DAMP:Number = 0.95;
+		public static const DAMP:Number = 0.8;
 		public static const THRESHOLD:Number = 0.01;
 		public static const VECTOR_MIN:Number = 0.01;
 		public static const VECTOR_MAX:int = 60;
@@ -290,23 +290,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_currentScrollPositionY += _velocityY;
 			
 			// limit position along the x and y-axis.
-			if( _currentScrollPositionX > _scrollBoundsLeft )
-			{
-				_currentScrollPositionX = _scrollBoundsLeft;
-			}
-			else if( _currentScrollPositionX < _scrollBoundsRight )
-			{
-				_currentScrollPositionX = _scrollBoundsRight;
-			}
-			// limit position along the y-axis.
-			if( _currentScrollPositionY > _scrollBoundsTop )
-			{
-				_currentScrollPositionY = _scrollBoundsTop;
-			}
-			else if( _currentScrollPositionY < _scrollBoundsBottom )
-			{
-				_currentScrollPositionY = _scrollBoundsBottom;
-			}
+			limitPosition();
 			
 			// Set the position of target content along the x, y axis.
 			_content.x = _currentScrollPositionX;
@@ -347,6 +331,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		}
 		
 		
+		/**
+		 * Starts the marking of touch movements and animation. 
+		 * @param point Point
+		 */
 		public function start(point:Point):void
 		{
 			// Notify delegate of end.
@@ -363,8 +351,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			
 			// Add mark to revolving list.
 			addMark( point.x, point.y, getTimer() );
-			// Start the animation session.
-			startAnimate();
 			
 			// Notify the delegate of start.
 			if( _delegate )
@@ -375,39 +361,32 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			}
 		}
 		
+		/**
+		 * Marks continually movement of touch gesture and moves the content along the x and y axis within the limit bounds. 
+		 * @param point Point
+		 */
 		public function move(point:Point):void
 		{
 			// Grab reference to last mark.
 			var previousMark:ScrollMark = recentMark();
 			// Store reference to current mark.
-			var currentMark:ScrollMark = addMark( point.x, point.y, getTimer() );
+			addMark( point.x, point.y, getTimer() );
 			
 			// * This method is simply a move of point along the x and y-axis, it is not a running update on animation,
 			//		as such, we clamp down on velocity.
 			
 			// Update velocity and position.
-			_velocityX = _velocityY = 0;
-			_currentScrollPositionX += currentMark.x - previousMark.x;
-			_currentScrollPositionY += currentMark.y - previousMark.y;
+			_velocityX = 0; 
+			_velocityY = 0;
+			_currentScrollPositionX += point.x - previousMark.x;
+			_currentScrollPositionY += point.y - previousMark.y;
 			
-			// limit position along the x-axis.
-			if( _currentScrollPositionX > _scrollBoundsLeft )
-			{
-				_currentScrollPositionX = _scrollBoundsLeft;
-			}
-			else if( _currentScrollPositionX < _scrollBoundsRight )
-			{
-				_currentScrollPositionX = _scrollBoundsRight;
-			}
-			// limit position along the y-axis.
-			if( _currentScrollPositionY > _scrollBoundsTop )
-			{
-				_currentScrollPositionY = _scrollBoundsTop;
-			}
-			else if( _currentScrollPositionY < _scrollBoundsBottom )
-			{
-				_currentScrollPositionY = _scrollBoundsBottom;
-			}
+			// limit position along the x and y-axis.
+			limitPosition();
+			
+			// Set the position of target content along the x, y axis.
+			_content.x = _currentScrollPositionX;
+			_content.y = _currentScrollPositionY;
 			
 			// Notify client of animate.
 			if( _delegate )
@@ -418,6 +397,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			}
 		}
 		
+		/**
+		 * Ends the touch session which marks consequitive movements of the finger. 
+		 * @param point Point
+		 */
 		public function end(point:Point):void
 		{	
 			const VECTOR_MULTIPLIER:Number = 0.25;
@@ -496,6 +479,9 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			}
 			_velocityX = velocityX;
 			_velocityY = velocityY;
+			
+			// Start the animation session.
+			startAnimate();
 		}
 		
 		/**

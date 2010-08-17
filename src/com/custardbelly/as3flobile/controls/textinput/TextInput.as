@@ -77,7 +77,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			super.initialize();
 			
 			_width = 180;
-			_height = 24;
+			_height = 40;
 			
 			_skin = new TextInputSkin();
 			_skin.target = this;
