@@ -41,7 +41,7 @@
 		 * @param rangeFunction Function A Delegate function to detemrine if the object's dimensions reside within the position.
 		 * @return int The elemental index of the cell display object that resides within the list at the position.
 		 */
-		public static function findCellIndexInPosition( vector:Object, position:Number, compareFunction:Function, rangeFunction:Function ):int
+		public static function findCellIndexInPosition( vector:Object, position:Number, compareFunction:Function = null, rangeFunction:Function = null ):int
 		{
 			var length:int = vector.length;
 			if( length == 0 ) return -1;
@@ -52,7 +52,7 @@
 			var item:DisplayObject;
 			while( low < high )
 			{
-				mid = ( low + high ) / 2;
+				mid = ( low + high ) * 0.5;
 				item = vector[mid] as DisplayObject;
 				if( compareFunction.apply( null, [item, position] ) )
 				{
@@ -69,7 +69,7 @@
 				item = vector[low] as DisplayObject;
 				if( rangeFunction.apply( null, [item, position] ) )
 				{
-					return low
+					return low;
 				}
 			}
 			

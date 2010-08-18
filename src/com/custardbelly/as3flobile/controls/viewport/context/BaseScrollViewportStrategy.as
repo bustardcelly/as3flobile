@@ -28,6 +28,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
+	import com.custardbelly.as3flobile.controls.viewport.adaptor.ITargetScrollAdaptor;
+	import com.custardbelly.as3flobile.controls.viewport.adaptor.TargetScrollAdaptor;
 	import com.custardbelly.as3flobile.model.ScrollMark;
 	
 	import flash.display.DisplayObject;
@@ -45,6 +47,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected var _content:DisplayObject;
 		protected var _bounds:Rectangle;
 		protected var _delegate:IScrollViewportDelegate;
+		protected var _targetAdaptor:ITargetScrollAdaptor;
 		
 		protected var _currentScrollPositionX:Number = 0;
 		protected var _currentScrollPositionY:Number = 0;
@@ -72,7 +75,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		
 		public static const DAMP:Number = 0.8;
 		public static const THRESHOLD:Number = 0.01;
-		public static const VECTOR_MIN:Number = 0.01;
+		public static const VECTOR_MIN:Number = 0.065;
 		public static const VECTOR_MAX:int = 60;
 		public static const VECTOR_MULTIPLIER:Number = 0.25;
 		public static const RETURN_TIME:int = 85;
@@ -81,7 +84,24 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		/**
 		 * Constructor.
 		 */
-		public function BaseScrollViewportStrategy() {}
+		public function BaseScrollViewportStrategy() 
+		{
+			_targetAdaptor = getDefaultTargetScrollAdaptor();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Returns default target scroll adaptor.
+		 * The ITargetScrollAdaptor assumes behaviour of scrolling to a target position.
+		 * Scrolling within this strategy is mainly loose scrolling based on user gestures.
+		 * When a defined position within the viewport is requested, this adaptor takes over control of seeking to that coordinate. 
+		 * @return ITargetScrollAdaptor
+		 */
+		protected function getDefaultTargetScrollAdaptor():ITargetScrollAdaptor
+		{
+			return new TargetScrollAdaptor();
+		}
 		
 		/**
 		 * @private 
@@ -131,11 +151,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		protected function invalidatePosition( value:Point ):void
 		{
-			endAnimate();
-			_velocityX = _velocityY = 0;
-			_currentScrollPositionX = value.x;
-			_currentScrollPositionY = value.y;
-			animate();
+			_targetAdaptor.stop();
+			_targetAdaptor.scrollToPosition( value, _coordinate, _content, _delegate );
 		}
 		
 		/**
@@ -157,6 +174,26 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_marks[index].y = y;
 			_marks[index].time = time;
 			return _marks[index];
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Returns all the marks out there to the bank.
+		 */
+		protected function returnAllMarks():void
+		{
+			if( _marks != null )
+			{
+				var i:int;
+				var length:int = _marks.length;
+				var mark:ScrollMark;
+				for( i = 0; i < length; i++ )
+				{
+					mark = _marks[i];
+					ScrollMark.returnScrollMark( mark );
+				}
+			}
 		}
 		
 		/**
@@ -207,6 +244,11 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			return ( from * ( 1 - percent ) ) + ( to * percent );
 		}
 		
+		protected function isPositionEqual( point:Point, matchPoint:Point ):Boolean
+		{
+			return Math.round(point.x) == Math.round(matchPoint.x) && Math.round(point.y) == Math.round(matchPoint.y);
+		}
+		
 		/**
 		 * @private
 		 * 
@@ -242,10 +284,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected function startAnimate():void
 		{
 			// Use ENTER_FRAME to update position based on velocity.
-			if( !_content.hasEventListener( Event.ENTER_FRAME ) )
-			{
-				_content.addEventListener( Event.ENTER_FRAME, animate, false, 0, true );
-			}
+			_content.removeEventListener( Event.ENTER_FRAME, animate, false );
+			_content.addEventListener( Event.ENTER_FRAME, animate, false, 0, true );
 		}
 		
 		/**
@@ -296,13 +336,15 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_content.x = _currentScrollPositionX;
 			_content.y = _currentScrollPositionY;
 			
+			// Update coordinate position.
+			_coordinate.x = _currentScrollPositionX;
+			_coordinate.y = _currentScrollPositionY;
+			
 			// IF we have stopped moving, stop moving.
 			if( _velocityX == 0 && _velocityY == 0 ) return;
 			// Notify delegate of animation.
 			if( _delegate )
 			{
-				_coordinate.x = _currentScrollPositionX;
-				_coordinate.y = _currentScrollPositionY;
 				_delegate.scrollViewDidAnimate( _coordinate );
 			}
 			
@@ -337,13 +379,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		public function start(point:Point):void
 		{
-			// Notify delegate of end.
-			if( _delegate )
-			{
-				_coordinate.x = _currentScrollPositionX;
-				_coordinate.y = _currentScrollPositionY;
-				_delegate.scrollViewDidEnd( _coordinate );
-			}
+			_targetAdaptor.stop();
 			
 			// Start from the top.
 			_velocityX = _velocityY = 0;
@@ -352,11 +388,13 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			// Add mark to revolving list.
 			addMark( point.x, point.y, getTimer() );
 			
+			// Base current on stored coordinate.
+			_currentScrollPositionX = _coordinate.x;
+			_currentScrollPositionY = _coordinate.y;
+			
 			// Notify the delegate of start.
 			if( _delegate )
 			{
-				_coordinate.x = _currentScrollPositionX;
-				_coordinate.y = _currentScrollPositionY;
 				_delegate.scrollViewDidStart( _coordinate );
 			}
 		}
@@ -388,11 +426,13 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_content.x = _currentScrollPositionX;
 			_content.y = _currentScrollPositionY;
 			
+			// update coordinate postion.
+			_coordinate.x = _currentScrollPositionX;
+			_coordinate.y = _currentScrollPositionY;
+			
 			// Notify client of animate.
 			if( _delegate )
 			{
-				_coordinate.x = _currentScrollPositionX;
-				_coordinate.y = _currentScrollPositionY;
 				_delegate.scrollViewDidAnimate( _coordinate );
 			}
 		}
@@ -442,8 +482,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			var newPointY:Number = ( previousMark.y * ( 1 - crossoverPercent ) ) + ( recentMark.y * crossoverPercent );//interpolate( previousMark.y, recentMark.y, crossoverPercent );
 			var thresholdX:Number = currentMarkX - newPointX;
 			var thresholdY:Number = currentMarkY - newPointY;
-			var absoluteThreshold:Number = ( thresholdX > 0.0 ) ? thresholdX : -thresholdX;
 			
+			var absoluteThreshold:Number = ( thresholdX > 0.0 ) ? thresholdX : -thresholdX;
 			// If we haven't reach our threshold, our latest point is the current one.
 			if( absoluteThreshold < _thresholdX )
 			{
@@ -454,6 +494,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			{
 				newPointY = currentMarkY;
 			}
+			
 			// If we have determined that the newest point is the current one, then we have stopped animating.
 			if( currentMarkX == newPointX && currentMarkY == newPointY )
 			{
@@ -477,6 +518,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 				factor = VECTOR_MAX / absoluteVelocity;
 				velocityY *= factor;
 			}
+			
 			_velocityX = velocityX;
 			_velocityY = velocityY;
 			
@@ -494,17 +536,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_bounds = viewport.scrollBounds;
 			_delegate = viewport.delegate;
 			// Return marks.
-			if( _marks != null )
-			{
-				var i:int;
-				var length:int = _marks.length;
-				var mark:ScrollMark;
-				for( i = 0; i < length; i++ )
-				{
-					mark = _marks[i];
-					ScrollMark.returnScrollMark( mark );
-				}
-			}
+			returnAllMarks();
 			// If we have the minimum of what is needed, initialize.
 			if( _content && _bounds )
 				initialize();
@@ -515,20 +547,24 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		public function unmediate():void
 		{
+			// Kill adaptor.
+			_targetAdaptor.stop();
 			// Kill handlers.
 			if( _content ) _content.removeEventListener( Event.ENTER_FRAME, animate, false );
 			// Return marks.
-			if( _marks != null )
-			{
-				var i:int;
-				var length:int = _marks.length;
-				var mark:ScrollMark;
-				for( i = 0; i < length; i++ )
-				{
-					mark = _marks[i];
-					ScrollMark.returnScrollMark( mark );
-				}
-			}
+			returnAllMarks();
+		}
+		
+		/**
+		 * @copy IDisposable#dispose()
+		 */
+		public function dispose():void
+		{
+			_targetAdaptor.dispose();
+			_targetAdaptor = null;
+			
+			_content = null;
+			_delegate = null;
 		}
 		
 		/**
@@ -540,7 +576,21 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		}
 		public function set position( value:Point ):void
 		{
+			if( isPositionEqual( value, _coordinate ) ) return;
+			
 			invalidatePosition( value );
+		}
+		
+		/**
+		 * @copy IScrollViewportStrategy#targetScrollAdaptor
+		 */
+		public function get targetScrollAdaptor():ITargetScrollAdaptor
+		{
+			return _targetAdaptor;
+		}
+		public function set targetScrollAdaptor(value:ITargetScrollAdaptor):void
+		{
+			_targetAdaptor = value;
 		}
 	}
 }

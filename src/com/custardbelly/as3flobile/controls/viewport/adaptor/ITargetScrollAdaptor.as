@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ITapMediator.as</p>
+ * <p>Class File: ITargetScrollAdaptor.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,32 +24,31 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.helper
+package com.custardbelly.as3flobile.controls.viewport.adaptor
 {
-	import flash.display.InteractiveObject;
+	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
+	import com.custardbelly.as3flobile.model.IDisposable;
+	
+	import flash.display.DisplayObject;
+	import flash.geom.Point;
 
 	/**
-	 * ITapMediator mediates handling a tap gesture from a interactive object. A tap gesture can take on different contexts dependant on target device. 
+	 * ITargetScrollAdaptor is an optional adaptor for a scroll target that is used to determine the scroll position to a specified target position. 
 	 * @author toddanderson
 	 */
-	public interface ITapMediator
+	public interface ITargetScrollAdaptor extends IDisposable
 	{
 		/**
-		 * Initiates a session of mediating a tap gesture event.
-		 * @param display InteractiveObject The interactive display object that dispatches events recognized as a tap.
-		 * @param gestureHandler Function The delegate handler once the tap gesture is recieved.
+		 * Starts scroll animation toward a given target position. 
+		 * @param targetPosition Point The target position.
+		 * @param currentPosition Point The current position of scroll target display.
+		 * @param content DisplayObject The scroll target display.
+		 * @param delegate IScrollViewportDelegate The optional delegate that receievs notification on change to display position.
 		 */
-		function mediateTapGesture( display:InteractiveObject, gestureHandler:Function ):void;
+		function scrollToPosition( targetPosition:Point, currentPosition:Point, content:DisplayObject, delegate:IScrollViewportDelegate ):void;
 		/**
-		 * Ends a session of mediating a tap gesture event. 
-		 * @param display InteractiveObject The interactive display object of which to stop mediating tap events from.
+		 * Stops the scroll animation.
 		 */
-		function unmediateTapGesture( display:InteractiveObject ):void;
-		/**
-		 * Returns flag of medaiting a tap gesture with the target display. 
-		 * @param display InteractiveObject
-		 * @return Boolean
-		 */
-		function isMediating( display:InteractiveObject ):Boolean
+		function stop():void;
 	}
 }

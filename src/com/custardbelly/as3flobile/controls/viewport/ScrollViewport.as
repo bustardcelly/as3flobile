@@ -35,6 +35,7 @@ package com.custardbelly.as3flobile.controls.viewport
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	/**
@@ -201,6 +202,14 @@ package com.custardbelly.as3flobile.controls.viewport
 		{
 			if( contains( display ) )
 				removeChild( display );
+		}
+		
+		/**
+		 * @copy IScrollView#scrollToPosition()
+		 */
+		public function scrollToPosition( position:Point ):void
+		{
+			_context.position = position;
 		}
 		
 		/**

@@ -31,6 +31,7 @@ package com.custardbelly.as3flobile.controls.viewport
 	
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
 	/**
@@ -49,6 +50,12 @@ package com.custardbelly.as3flobile.controls.viewport
 		 * @return Boolean
 		 */
 		function isActiveOnDisplayList():Boolean;
+		
+		/**
+		 * Updates the display base on scroll position along the x and y axis. 
+		 * @param position Point
+		 */
+		function scrollToPosition( position:Point ):void;
 		
 		/**
 		 * Returns the bounding area for which the content is presented in a scrollable viewport.

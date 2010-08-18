@@ -29,10 +29,13 @@ package com.custardbelly.as3flobile.controls.list.layout
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
 	import com.custardbelly.as3flobile.controls.list.IScrollListLayoutTarget;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.util.DisplayPositionSearch;
 	
 	import flash.display.DisplayObject;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.getDefinitionByName;
 	
 	/**
 	 * ScrollListVerticalLayout is an IScrollListVerticalLayout implementation to layout children of a target IScrollListContainer along the y axis. 
@@ -45,7 +48,10 @@ package com.custardbelly.as3flobile.controls.list.layout
 		protected var _contentHeight:Number;
 		
 		protected var _itemHeight:Number;
+		protected var _padding:BoxPadding;
 		protected var _useVariableHeight:Boolean;
+		
+		protected var _indexPositionCache:Point;
 		
 		/**
 		 * @private
@@ -60,9 +66,50 @@ package com.custardbelly.as3flobile.controls.list.layout
 		 */
 		protected var _tallestRowHeight:Number;
 		
+		/**
+		 * Constructor.
+		 */
 		public function ScrollListVerticalLayout() 
 		{
 			_heightCache = new Vector.<int>();
+			_padding = new BoxPadding();
+			_indexPositionCache = new Point();
+		}
+		
+		/**
+		 * @private
+		 *  
+		 * Validates the box model padding between the list target edge and the renderers.
+		 */
+		protected function invalidatePadding():void
+		{
+			if( _target == null ) return;
+			
+			var renderers:Vector.<IScrollListItemRenderer> = _target.renderers;
+			var rect:Rectangle = _target.scrollBounds;
+			var i:int = 0;
+			var length:int = renderers.length;
+			var renderer:IScrollListItemRenderer;
+			var ypos:int = 0;
+			while( i < length )
+			{
+				renderer = renderers[i];
+				renderer.lock();
+				renderer.width = rect.width - _padding.left - _padding.right;
+				if( !isNaN( _itemHeight ) ) renderer.height = _itemHeight;
+				renderer.unlock();
+				
+				( renderer as DisplayObject ).y = ypos;
+				( renderer as DisplayObject ).x = 0;
+				ypos += renderer.height + _target.seperatorLength;
+				i++;
+			}
+			
+			// Cache the heights.
+			cacheHeights( _target.renderers );
+			// Update the determined width of the content.
+			_contentWidth = rect.width;
+			( _target as IScrollListLayoutTarget ).commitContentChange();
 		}
 		
 		/**
@@ -112,7 +159,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 				_contentHeight += h;
 				_heightCache[i] = h;
 			}
-			_contentHeight += ( ( _heightCache.length - 1 ) * seperator );
+			_contentHeight += ( ( _heightCache.length - 1 ) * seperator ) + ( _padding.top + _padding.bottom );
 			_tallestRowHeight = ( _heightCache.length > 0 ) ? _heightCache.sort( Array.NUMERIC )[_heightCache.length - 1] : 0;
 		}
 		
@@ -128,6 +175,18 @@ package com.custardbelly.as3flobile.controls.list.layout
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Factory method to create the IScrollListItemRenderer instance based on the item renderer class. 
+		 * @return IScrollListItemRenderer
+		 */
+		protected function createPaddingRenderer( rendererClass:Class ):IScrollListItemRenderer
+		{
+			var renderer:IScrollListItemRenderer = new rendererClass() as IScrollListItemRenderer;
+			return renderer;
+		}
+		
+		/**
 		 * @copy IScrollListLayout#updateDisplay()
 		 */
 		public function updateDisplay():void
@@ -138,14 +197,14 @@ package com.custardbelly.as3flobile.controls.list.layout
 			var i:int = 0;
 			var length:int = renderers.length;
 			var renderer:IScrollListItemRenderer;
-			var ypos:int = 0;
+			var ypos:int = _padding.top;
 			while( i < length )
 			{
 				renderer = renderers[i];
 				renderer.lock();
 				renderer.useVariableWidth = false;
 				renderer.useVariableHeight = _useVariableHeight;
-				renderer.width = rect.width;
+				renderer.width = rect.width - _padding.left - _padding.right;
 				if( !isNaN( _itemHeight ) ) renderer.height = _itemHeight;
 				renderer.data = data[i];
 				renderer.unlock();
@@ -161,6 +220,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			cacheHeights( _target.renderers );
 			// Update the determined width of the content.
 			_contentWidth = rect.width;
+			// Notify of commit change.
 			( _target as IScrollListLayoutTarget ).commitContentChange();
 		}
 		
@@ -225,6 +285,27 @@ package com.custardbelly.as3flobile.controls.list.layout
 		}
 		
 		/**
+		 * @copy IScrollListLayout#getPositionFromIndex()
+		 */
+		public function getPositionFromIndex( index:uint ):Point
+		{
+			// Find renderer y position based on index.
+			var cells:Vector.<IScrollListItemRenderer> = _target.renderers;
+			// Update cache position based on index.
+			if( index > cells.length - 1 )
+			{
+				_indexPositionCache.y = 0;
+			}
+			else
+			{
+				// Since we are scrolling content up, the value is always negative. Return it positive.
+				_indexPositionCache.y = -( ( cells[index] as DisplayObject ).y - _padding.top );
+			}
+			_indexPositionCache.x = 0;
+			return _indexPositionCache;
+		}
+		
+		/**
 		 * @copy IScrollListLayout#getChildIndexAtPosition()
 		 */
 		public function getChildIndexAtPosition( xposition:Number, yposition:Number ):int
@@ -258,13 +339,27 @@ package com.custardbelly.as3flobile.controls.list.layout
 		}
 		
 		/**
+		 * @copy IScrollListLayout#padding 
+		 */
+		public function get padding():BoxPadding
+		{
+			return _padding;
+		}
+		public function set padding( value:BoxPadding ):void
+		{
+			if( BoxPadding.equals( _padding, value ) ) return;
+			
+			_padding = value;
+			invalidatePadding();
+		}
+		
+		/**
 		 * @copy IScrollListLayout#target
 		 */
 		public function get target():IScrollListContainer
 		{
 			return _target;
 		}
-		
 		public function set target( value:IScrollListContainer ):void
 		{
 			_target = value;

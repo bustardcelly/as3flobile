@@ -1,6 +1,7 @@
 package com.custardbelly.as3flobile.example.web.view
 {
 	import com.custardbelly.as3flobile.example.web.view.component.DropDownExample;
+	import com.custardbelly.as3flobile.example.web.view.component.PickerExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollListExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollViewportExample;
 	import com.custardbelly.as3flobile.example.web.view.component.TextAreaExample;
@@ -25,14 +26,16 @@ package com.custardbelly.as3flobile.example.web.view
 		private var scrolllistexample:ScrollListExample; ScrollListExample;
 		private var dropdownexample:DropDownExample; DropDownExample;
 		private var textinputexample:TextInputExample; TextInputExample;
+		private var pickerexample:PickerExample; PickerExample;
 		
 		public function ComponentsPanel()
 		{
 			_displays = Vector.<String>(["com.custardbelly.as3flobile.example.web.view.component.ScrollViewportExample",
 										"com.custardbelly.as3flobile.example.web.view.component.ScrollListExample",
-										"com.custardbelly.as3flobile.example.web.view.component.TextAreaExample",
-										"com.custardbelly.as3flobile.example.web.view.component.TextInputExample",
+										"com.custardbelly.as3flobile.example.web.view.component.PickerExample",
 										"com.custardbelly.as3flobile.example.web.view.component.DropDownExample",
+										"com.custardbelly.as3flobile.example.web.view.component.TextInputExample",
+										"com.custardbelly.as3flobile.example.web.view.component.TextAreaExample",
 										"com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample"
 										]);
 			_displayMap = new Dictionary( true );
@@ -44,7 +47,7 @@ package com.custardbelly.as3flobile.example.web.view
 		protected function drawBackground():void
 		{
 			graphics.clear();
-			graphics.beginFill( 0xEEEEEE );
+			graphics.beginFill( 0xEEE9BF );
 			graphics.drawRoundRect( 0, 0, 320, 480, 5, 5 );
 			graphics.endFill();
 		}

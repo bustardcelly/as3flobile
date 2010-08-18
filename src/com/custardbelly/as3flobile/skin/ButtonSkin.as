@@ -124,8 +124,8 @@ package com.custardbelly.as3flobile.skin
 			if( label == null ) return;
 			
 			label.width = width - ( padding * 2 );
-			label.x = ( width - label.width ) / 2;
-			label.y = ( height - label.height ) / 2;
+			label.x = ( width - label.width ) * 0.5;
+			label.y = ( height - label.height ) * 0.5;
 		}
 		
 		/**

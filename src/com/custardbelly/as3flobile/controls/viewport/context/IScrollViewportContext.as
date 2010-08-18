@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
+	import com.custardbelly.as3flobile.model.IDisposable;
 	
 	import flash.display.InteractiveObject;
 	import flash.geom.Point;
@@ -37,7 +38,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	 * IScrollViewportContext provides a context for which a scrolling strategy can perform animation.  
 	 * @author toddanderson
 	 */
-	public interface IScrollViewportContext
+	public interface IScrollViewportContext extends IDisposable
 	{
 		/**
 		 * Initializes the context with a target IScrollViewport. 
@@ -56,10 +57,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 * Deactivates this context.
 		 */
 		function deactivate():void;
-		/**
-		 * Performs any clean up from the context.
-		 */
-		function dispose():void;
 		
 		/**
 		 * Accessor/Modifier for the coordinate position of the top/left corner of content within the viewport. 

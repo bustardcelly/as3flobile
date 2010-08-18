@@ -99,7 +99,7 @@ package com.custardbelly.as3flobile.controls.label.renderer
 						line.x = 0;
 						break;
 					case TextFormatAlign.CENTER:
-						line.x = ( width == 0 ) ? 0 : ( width - line.width ) / 2;
+						line.x = ( width == 0 ) ? 0 : ( width - line.width ) * 0.5;
 						break;
 					case TextFormatAlign.RIGHT:
 						line.x = ( width == 0 ) ? 0 : ( width - line.width );

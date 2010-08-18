@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ITapMediator.as</p>
+ * <p>Class File: BoxPadding.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,32 +24,48 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.helper
+package com.custardbelly.as3flobile.model
 {
-	import flash.display.InteractiveObject;
-
 	/**
-	 * ITapMediator mediates handling a tap gesture from a interactive object. A tap gesture can take on different contexts dependant on target device. 
+	 * BoxPadding represents the positional offset of padding for a control. 
 	 * @author toddanderson
 	 */
-	public interface ITapMediator
+	public class BoxPadding
 	{
+		public var left:int;
+		public var top:int;
+		public var right:int;
+		public var bottom:int;
+		
 		/**
-		 * Initiates a session of mediating a tap gesture event.
-		 * @param display InteractiveObject The interactive display object that dispatches events recognized as a tap.
-		 * @param gestureHandler Function The delegate handler once the tap gesture is recieved.
+		 * Constructor. 
+		 * @param left int Default 0.
+		 * @param top int Default 0.
+		 * @param right int Default 0.
+		 * @param bottom int Default 0.
 		 */
-		function mediateTapGesture( display:InteractiveObject, gestureHandler:Function ):void;
+		public function BoxPadding( left:int = 0, top:int = 0, right:int = 0, bottom:int = 0 )
+		{
+			this.left = left;
+			this.top = top;
+			this.right = right;
+			this.bottom = bottom;
+		}
+		
 		/**
-		 * Ends a session of mediating a tap gesture event. 
-		 * @param display InteractiveObject The interactive display object of which to stop mediating tap events from.
-		 */
-		function unmediateTapGesture( display:InteractiveObject ):void;
-		/**
-		 * Returns flag of medaiting a tap gesture with the target display. 
-		 * @param display InteractiveObject
+		 * Compares values of two BoxPadding models to determine if they are equivalient. 
+		 * @param padding BoxPadding
+		 * @param matchPadding BoxPadding
 		 * @return Boolean
 		 */
-		function isMediating( display:InteractiveObject ):Boolean
+		public static function equals( padding:BoxPadding, matchPadding:BoxPadding ):Boolean
+		{
+			if( padding == null || matchPadding == null ) return false;
+			
+			return 	matchPadding.left == padding.left && 
+					matchPadding.top == padding.top && 
+					matchPadding.right == padding.right && 
+					matchPadding.bottom == padding.bottom;
+		}
 	}
 }

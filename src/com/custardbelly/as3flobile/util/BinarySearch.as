@@ -46,7 +46,7 @@ package com.custardbelly.as3flobile.util
 			var mid:int;
 			while( low < high )
 			{
-				mid = ( low + high ) / 2;
+				mid = ( low + high ) * 0.5;
 				if( array[mid] < value )
 				{
 					low = mid + 1;

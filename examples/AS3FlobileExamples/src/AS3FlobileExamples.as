@@ -89,8 +89,8 @@ package
 			{
 				scale = Math.min( stage.stageWidth / 480, stage.stageHeight / h );
 			}
-			view.scaleX = scale;
-			view.scaleY = scale;
+			view.scaleX = ( scale > 1 ) ? 1 : scale;
+			view.scaleY = ( scale > 1 ) ? 1 : scale;
 			PrintLine.instance().print( "scale: " + scale );
 			PrintLine.instance().print( "stage: " + stage.stageWidth + ", " + stage.stageHeight, true );
 		}

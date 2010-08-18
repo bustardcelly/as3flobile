@@ -41,6 +41,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.helper.ITapMediator;
 	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.helper.TapMediator;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.skin.ScrollListSkin;
 	
 	import flash.display.DisplayObject;
@@ -77,6 +78,7 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _currentScrollPosition:Point;
 		protected var _isScrolling:Boolean;
 		
+		protected var _selectionEnabled:Boolean;
 		protected var _selectedRenderer:IScrollListItemRenderer;
 		
 		protected var _selectedIndex:int = -1;
@@ -120,6 +122,7 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_padding = 2;
 			_seperatorLength = 2;
+			_selectionEnabled = true;
 			
 			_bounds = new Rectangle( 0, 0, _width, _height );
 			
@@ -142,7 +145,7 @@ package com.custardbelly.as3flobile.controls.list
 		override protected function createChildren():void
 		{
 			// List holder will be managed by this ScrollList instance, but actually be on the display list of the viewport.
-			_listHolder = new ScrollListHolder();
+			createListHolderIfNotExist();
 			_listHolder.mouseChildren = false;
 			_listHolder.cacheAsBitmap = true;
 			
@@ -159,6 +162,21 @@ package com.custardbelly.as3flobile.controls.list
 			addChild( _viewport as DisplayObject );
 			
 			_tapMediator = getDefaultTapMediator( _listHolder, handleListTap );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * If not instantiated, creates an instance of a ScrollListHolder and returns the reference. 
+		 * @return ScrollListHolder
+		 */
+		protected function createListHolderIfNotExist():ScrollListHolder
+		{
+			// Create if not exists.
+			if( _listHolder == null )
+				_listHolder = new ScrollListHolder();
+			// Return instance.
+			return _listHolder;
 		}
 		
 		/**
@@ -389,6 +407,26 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * @private 
+		 * 
+		 * Validates the ability to make a selction within the list.
+		 */
+		protected function invalidateSelectionEnablement():void
+		{
+			if( _tapMediator.isMediating( _listHolder ) ) 
+			{
+				if( _selectionEnabled )
+				{
+					_tapMediator.mediateTapGesture( _listHolder, handleListTap );
+				}
+				else
+				{
+					_tapMediator.unmediateTapGesture( _listHolder );
+				}
+			}
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Factory method to create the IScrollListItemRenderer instance based on the item renderer class. 
@@ -492,7 +530,8 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function handleAddedToStage( evt:Event ):void
 		{
-			_tapMediator.mediateTapGesture( _listHolder, handleListTap );
+			if( _selectionEnabled )
+				_tapMediator.mediateTapGesture( _listHolder, handleListTap );
 		}
 		
 		/**
@@ -503,7 +542,8 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function handleRemovedFromStage( evt:Event ):void
 		{
-			_tapMediator.unmediateTapGesture( _listHolder );
+			if( _tapMediator.isMediating( _listHolder ) ) 
+				_tapMediator.unmediateTapGesture( _listHolder );
 		}
 		
 		/**
@@ -516,17 +556,24 @@ package com.custardbelly.as3flobile.controls.list
 		{
 			var tapEvent:MouseEvent = evt as MouseEvent;
 			var index:int = _layout.getChildIndexAtPosition( tapEvent.localX, tapEvent.localY );
-			if( !_isScrolling ) selectedIndex = index;
+			selectedIndex = index;
 		}
 		
 		/**
-		 * Returns the item renderer instance at the index within the list. 
-		 * @param index int
-		 * @return IScrollListItemRenderer
+		 * @copy IScrollListContainer#getRendererAt()
 		 */
-		public function getRendererAt( index:int ):IScrollListItemRenderer
+		public function getRendererAt( index:uint ):IScrollListItemRenderer
 		{
 			return _cells[index];
+		}
+		
+		/**
+		 * @copy IScrollListContainer#scrollPositionToIndex()
+		 */
+		public function scrollPositionToIndex( index:uint ):void
+		{
+			var position:Point = _layout.getPositionFromIndex( index );
+			_viewport.scrollToPosition( position );
 		}
 		
 		/**
@@ -536,6 +583,9 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		public function addRendererToDisplay( renderer:IScrollListItemRenderer ):void
 		{
+			// Create the list holder if it doesn't exist. the layout can start populating its display list prior to being add to the stage.
+			createListHolderIfNotExist();
+			
 			if( _listHolder.contains( renderer as DisplayObject ) )
 				( renderer as DisplayObject ).visible = true;
 			else
@@ -549,6 +599,9 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		public function removeRendererFromDisplay( renderer:IScrollListItemRenderer ):void
 		{
+			// Create the list holder if it doesn't exist. the layout can start populating its display list prior to being add to the stage.
+			createListHolderIfNotExist();
+			
 			if( _listHolder.contains( renderer as DisplayObject ) )
 				( renderer as DisplayObject ).visible = false;
 		}
@@ -650,7 +703,8 @@ package com.custardbelly.as3flobile.controls.list
 				_listHolder.removeChildAt( 0 );
 			
 			// Unmediate on tap gesture.
-			_tapMediator.unmediateTapGesture( _listHolder );
+			if( _tapMediator.isMediating( _listHolder ) )
+				_tapMediator.unmediateTapGesture( _listHolder );
 			
 			// Dispose of layout manager.
 			_layout.dispose();
@@ -781,6 +835,21 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_itemRenderer = value;
 			invalidateItemRenderer();
+		}
+		
+		/**
+		 * @copy IScrollListContainer#selectionEnabled
+		 */
+		public function get selectionEnabled():Boolean
+		{
+			return _selectionEnabled;
+		}
+		public function set selectionEnabled( value:Boolean ):void
+		{
+			if( _selectionEnabled == value ) return;
+			
+			_selectionEnabled = value;
+			invalidateSelectionEnablement();
 		}
 		
 		/**

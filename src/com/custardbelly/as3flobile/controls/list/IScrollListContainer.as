@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
+	import com.custardbelly.as3flobile.model.IDisposable;
 	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -37,14 +38,20 @@ package com.custardbelly.as3flobile.controls.list
 	 * IScrollListContainer is a list of data pbjects represented as IScrollListItemRenderer instances. 
 	 * @author toddanderson
 	 */
-	public interface IScrollListContainer
+	public interface IScrollListContainer extends IDisposable
 	{
 		/**
 		 * Returns the IScrollListItemRenderer instance that resides at the elemental index within the list.
-		 * @param index int
+		 * @param index uint
 		 * @return IScrollListItemRenderer
 		 */
-		function getRendererAt( index:int ):IScrollListItemRenderer;
+		function getRendererAt( index:uint ):IScrollListItemRenderer;
+		
+		/**
+		 * Scrolls the list to the specified index. 
+		 * @param index uint
+		 */
+		function scrollPositionToIndex( index:uint ):void;
 		
 		/**
 		 * Returns the list of IScrollListItemRenderers. 
@@ -91,11 +98,19 @@ package com.custardbelly.as3flobile.controls.list
 		function set scrollContext( value:IScrollViewportContext ):void;
 		
 		/**
+		 * Accessor/Modifier for the padding offset of the list content of item renderers and the border of this instance. 
+		 * Allows for rendering of lowest layer of Skin to be seen if value is above 0. 
+		 * @return int
+		 */
+		function get padding():int;
+		function set padding(value:int):void;
+		
+		/**
 		 * Accessor/Modifier for the seperator size between list items. 
 		 * @return int
 		 */
 		function get seperatorLength():int;
-		function set seperatorLength(value:int):void;
+		function set seperatorLength(value:int):void; 
 		
 		/**
 		 * Accessor/Modifier for the item renderer instance to represent the data. 
@@ -103,6 +118,13 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		function get itemRenderer():String;
 		function set itemRenderer( value:String ):void;
+		
+		/**
+		 * Accessor/Modfier for flag of being able to make a selection within the list. 
+		 * @return Boolean
+		 */
+		function get selectionEnabled():Boolean;
+		function set selectionEnabled( value:Boolean ):void;
 		
 		/**
 		 * Accessor/Modifier of the selected item within the list from the data provided. This is not the selected item renderer instance. 

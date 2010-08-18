@@ -30,7 +30,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			var multiInput:TextInput = new TextInput();
 			multiInput.y = 110;
 			multiInput.multiline = true;
-			multiInput.width = 200;
+			multiInput.width = 300;
 			multiInput.height = 240;
 			addChild( multiInput );
 		}

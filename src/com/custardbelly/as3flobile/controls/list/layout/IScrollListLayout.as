@@ -27,6 +27,9 @@
 package com.custardbelly.as3flobile.controls.list.layout
 {
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
+	import com.custardbelly.as3flobile.model.BoxPadding;
+	
+	import flash.geom.Point;
 
 	/**
 	 * IScrollListLayout is the layout manager that handles positioning display content for the target IScrollListContainer implementation. 
@@ -42,6 +45,13 @@ package com.custardbelly.as3flobile.controls.list.layout
 		 * Update request on the display of content for the target IScrollListContainer based on change to scroll position.
 		 */
 		function updateScrollPosition():void;
+		
+		/**
+		 * Returns the position of an item renderer at the given index. 
+		 * @param index uint
+		 * @return Point
+		 */
+		function getPositionFromIndex( index:uint ):Point;
 		
 		/**
 		 * Returns the index position of a child element on the target IScrollListContainer. 
@@ -66,6 +76,13 @@ package com.custardbelly.as3flobile.controls.list.layout
 		 * Performs any necessary clean up.
 		 */
 		function dispose():void;
+		
+		/**
+		 * Accessor/Modifier for the area padding between the edge of the list and its items. 
+		 * @param value BoxPadding
+		 */
+		function get padding():BoxPadding;
+		function set padding( value:BoxPadding ):void;
 		
 		/**
 		 * Accessor/Modifier of the target IScrollListContainer instance. 

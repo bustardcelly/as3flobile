@@ -186,9 +186,9 @@ package com.custardbelly.as3flobile.skin
 				// Base height on font size. This will be overwritten if multiline is true on input.
 				var fontSize:int = ( _target.skinState == BasicStateEnum.NORMAL ) ? int(_defaultFormat.size) : int(_boilerFormat.size);
 				inputDisplay.height = fontSize * 1.4;
-				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) / 2;
+				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) * 0.5;
 			}
-			inputDisplay.y = ( height - inputDisplay.height ) / 2;
+			inputDisplay.y = ( height - inputDisplay.height ) *0.5;
 		}
 		
 		/**

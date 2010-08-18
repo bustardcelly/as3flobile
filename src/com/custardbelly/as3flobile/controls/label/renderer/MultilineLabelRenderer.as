@@ -108,7 +108,7 @@ package com.custardbelly.as3flobile.controls.label.renderer
 					while( lines.length > 0 )
 					{
 						line = ( lines.shift() as TextLine );
-						line.x = ( maxWidth - line.width ) / 2;
+						line.x = ( maxWidth - line.width ) * 0.5;
 					}
 					break;
 				case TextFormatAlign.RIGHT:

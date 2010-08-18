@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ITapMediator.as</p>
+ * <p>Class File: IPickerSelectionDelegate.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,32 +24,20 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.helper
+package com.custardbelly.as3flobile.controls.picker
 {
-	import flash.display.InteractiveObject;
-
 	/**
-	 * ITapMediator mediates handling a tap gesture from a interactive object. A tap gesture can take on different contexts dependant on target device. 
+	 * IPickerSelectionDelegate represents a delegate requesting notifications of change to selection within a Picker control. 
 	 * @author toddanderson
 	 */
-	public interface ITapMediator
+	public interface IPickerSelectionDelegate
 	{
 		/**
-		 * Initiates a session of mediating a tap gesture event.
-		 * @param display InteractiveObject The interactive display object that dispatches events recognized as a tap.
-		 * @param gestureHandler Function The delegate handler once the tap gesture is recieved.
+		 * Notifies of change to selection. 
+		 * @param picker Picker The Picker control notifying the delegate.
+		 * @param column PickerColumn The PickerColumn instance that relates to the selected index.
+		 * @param index int The selected index within the PickerColumn.
 		 */
-		function mediateTapGesture( display:InteractiveObject, gestureHandler:Function ):void;
-		/**
-		 * Ends a session of mediating a tap gesture event. 
-		 * @param display InteractiveObject The interactive display object of which to stop mediating tap events from.
-		 */
-		function unmediateTapGesture( display:InteractiveObject ):void;
-		/**
-		 * Returns flag of medaiting a tap gesture with the target display. 
-		 * @param display InteractiveObject
-		 * @return Boolean
-		 */
-		function isMediating( display:InteractiveObject ):Boolean
+		function pickerSelectionDidChange( picker:Picker, column:PickerColumn, index:int ):void;
 	}
 }

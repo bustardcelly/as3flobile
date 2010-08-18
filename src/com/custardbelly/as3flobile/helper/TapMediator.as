@@ -95,5 +95,13 @@ package com.custardbelly.as3flobile.helper
 			_tapDisplay = null;
 			_isMediating = false;
 		}
+		
+		/**
+		 * @copy ITapMediator#isMediating()
+		 */
+		public function isMediating( display:InteractiveObject ):Boolean
+		{
+			return _isMediating && ( display == _tapDisplay );
+		}
 	}
 }

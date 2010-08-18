@@ -112,8 +112,8 @@ package com.custardbelly.as3flobile.skin
 			rightLabel.format = format;
 			leftLabel.x = padding;
 			rightLabel.x = width - rightLabel.width - padding;
-			leftLabel.y = ( height - leftLabel.height ) / 2;
-			rightLabel.y = ( height - rightLabel.height ) / 2;
+			leftLabel.y = ( height - leftLabel.height ) * 0.5;
+			rightLabel.y = ( height - rightLabel.height ) *0.5;
 		}
 		
 		/**

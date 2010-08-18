@@ -28,6 +28,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
+	import com.custardbelly.as3flobile.controls.viewport.adaptor.ITargetScrollAdaptor;
+	import com.custardbelly.as3flobile.model.IDisposable;
 	
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
@@ -37,7 +39,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	 * IScrollViewportStrategy is the strategy used to animate the scrolling of a viewport. 
 	 * @author toddanderson
 	 */
-	public interface IScrollViewportStrategy
+	public interface IScrollViewportStrategy extends IDisposable
 	{
 		/**
 		 * Begins a mediated animation sequence with a target IScrollViewport. 
@@ -71,5 +73,15 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		function get position():Point;
 		function set position( value:Point ):void;
+		
+		/**
+		 * Accessor/Modifier for the target scroll adaptor.
+		 * The ITargetScrollAdaptor assumes behaviour of scrolling to a target position.
+		 * Scrolling within this strategy is mainly loose scrolling based on user gestures.
+		 * When a defined position within the viewport is requested, this adaptor takes over control of seeking to that coordinate.  
+		 * @return ITargetScrollAdaptor
+		 */
+		function get targetScrollAdaptor():ITargetScrollAdaptor;
+		function set targetScrollAdaptor(value:ITargetScrollAdaptor):void;
 	}
 }

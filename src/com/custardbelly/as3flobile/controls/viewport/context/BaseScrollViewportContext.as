@@ -93,6 +93,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function dispose():void
 		{
 			deactivate();
+			_strategy.dispose();
 		}
 		
 		/**
