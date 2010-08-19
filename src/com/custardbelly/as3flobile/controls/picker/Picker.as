@@ -468,6 +468,9 @@ package com.custardbelly.as3flobile.controls.picker
 			_scrollBank.dispose();
 			
 			_dataProvider = null;
+			
+			// Null reference to delegate.
+			_delegate = null;
 		}
 		
 		/**

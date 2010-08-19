@@ -91,12 +91,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 		{
 			_labelButton = new Button();
 			_labelButton.label = _defaultLabel;
-			_labelButton.addEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false, 0, true );
 			addChild( _labelButton );
 			
 			_arrowButton = new Button();
 			_arrowButton.label = ">";
-			_arrowButton.addEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false, 0, true );
 			addChild( _arrowButton );
 			
 			_arrowButton.height = _height;
@@ -104,6 +102,24 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_labelButton.height = _height;
 			_labelButton.width = _width - _arrowButton.width;
+		}
+		
+		/**
+		 * @inherit
+		 */
+		override protected function addDisplayHandlers():void
+		{
+			_labelButton.addEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false, 0, true );
+			_arrowButton.addEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false, 0, true );
+		}
+		
+		/**
+		 * @inherit
+		 */
+		override protected function removeDisplayHandlers():void
+		{
+			_labelButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
+			_arrowButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
 		}
 		
 		/**
@@ -282,12 +298,10 @@ package com.custardbelly.as3flobile.controls.dropdown
 				removeChildAt( 0 );
 			
 			// Clear out label button.
-			_labelButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
 			_labelButton.dispose();
 			_labelButton = null;
 			
 			// Clear out arrow button.
-			_arrowButton.removeEventListener( MouseEvent.CLICK, handleButtonTriggerClick, false );
 			_arrowButton.dispose();
 			_arrowButton = null;
 			

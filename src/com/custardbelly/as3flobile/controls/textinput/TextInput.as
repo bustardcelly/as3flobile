@@ -58,16 +58,12 @@ package com.custardbelly.as3flobile.controls.textinput
 		protected var _defaultText:String = "";
 		protected var _text:String = "";
 		
+		protected var _delegate:ITextInputDelegate;
+		
 		/**
 		 * Constructor.
 		 */
-		public function TextInput() 
-		{ 
-			super();
-			
-			if( isActiveOnDisplayList() )
-				addDisplayHandlers();
-		}
+		public function TextInput() { super(); }
 		
 		/**
 		 * @inherit
@@ -83,8 +79,6 @@ package com.custardbelly.as3flobile.controls.textinput
 			
 			_skin = new TextInputSkin();
 			_skin.target = this;
-			
-			addHandlers();
 		}
 		
 		/**
@@ -106,33 +100,9 @@ package com.custardbelly.as3flobile.controls.textinput
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Adds handlers for stage presence.
+		 * @inherit
 		 */
-		protected function addHandlers():void
-		{
-			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
-			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Removes handlers for stage presence.
-		 */
-		protected function removeHandlers():void
-		{
-			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
-			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Adds handlers for display children present on stage.
-		 */
-		protected function addDisplayHandlers():void
+		override protected function addDisplayHandlers():void
 		{
 			_input.addEventListener( FocusEvent.FOCUS_IN, handleFocusIn, false, 0, true );
 			_input.addEventListener( FocusEvent.FOCUS_OUT, handleFocusOut, false, 0, true );
@@ -141,11 +111,9 @@ package com.custardbelly.as3flobile.controls.textinput
 		}
 		
 		/**
-		 * @private 
-		 * 
-		 * Removes handlers for display children present on stage.
+		 * @inherit
 		 */
-		protected function removeDisplayHandlers():void
+		override protected function removeDisplayHandlers():void
 		{
 			_input.removeEventListener( FocusEvent.FOCUS_IN, handleFocusIn, false );
 			_input.removeEventListener( FocusEvent.FOCUS_OUT, handleFocusOut, false );
@@ -166,6 +134,10 @@ package com.custardbelly.as3flobile.controls.textinput
 			_input.text = ( value.length > 0 ) ? value : _defaultText;
 			_input.displayAsPassword = ( _input.text == _defaultText ) ? false : _displayAsPassword;
 			updateDisplay();
+			
+			// Notify delegate.
+			if( _delegate )
+				_delegate.textInputTextChange( this, value );
 		}
 		
 		/**
@@ -241,28 +213,6 @@ package com.custardbelly.as3flobile.controls.textinput
 		/**
 		 * @private
 		 * 
-		 * Event handler for the control being added to the display list. 
-		 * @param evt Event
-		 */
-		protected function handleAddedToStage( evt:Event ):void
-		{
-			addDisplayHandlers();
-		}
-		
-		/**
-		 * @private
-		 * 
-		 * Event handler for control being removed from the display list. 
-		 * @param evt Event
-		 */
-		protected function handleRemovedFromStage( evt:Event ):void
-		{
-			removeDisplayHandlers();	
-		}
-		
-		/**
-		 * @private
-		 * 
 		 * Event handler for input field having gained focus. 
 		 * @param evt Event
 		 */
@@ -314,8 +264,8 @@ package com.custardbelly.as3flobile.controls.textinput
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
-			removeHandlers();
-			removeDisplayHandlers();
+			// Null reference to delegate.
+			_delegate = null;
 		}
 		
 		/**
@@ -428,5 +378,19 @@ package com.custardbelly.as3flobile.controls.textinput
 		{
 			invalidateMultiline( value );
 		}
+
+		/**
+		 * Accessor/Modifier for the ITextInputDelegate that requires notification of change to textual content. 
+		 * @return ITextInputDelegate
+		 */
+		public function get delegate():ITextInputDelegate
+		{
+			return _delegate;
+		}
+		public function set delegate( value:ITextInputDelegate ):void
+		{
+			_delegate = value;
+		}
+
 	}
 }

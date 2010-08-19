@@ -136,8 +136,6 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_skin = new ScrollListSkin();
 			_skin.target = this;
-			
-			addHandlers();
 		}
 		
 		/**
@@ -179,28 +177,6 @@ package com.custardbelly.as3flobile.controls.list
 				_listHolder = new ScrollListHolder();
 			// Return instance.
 			return _listHolder;
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Adds event handlers for addition and removal from parent display list.
-		 */
-		protected function addHandlers():void
-		{
-			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
-			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Removes event handlers.
-		 */
-		protected function removeHandlers():void
-		{
-			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
-			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
 		}
 		
 		/**
@@ -526,25 +502,23 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being added to the display list of parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleAddedToStage( evt:Event ):void
+		override protected function handleAddedToStage( evt:Event ):void
 		{
+			super.handleAddedToStage( evt );
+			
 			if( _selectionEnabled )
 				_tapMediator.mediateTapGesture( _listHolder, handleListTap );
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being removed from the display list of the parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleRemovedFromStage( evt:Event ):void
+		override protected function handleRemovedFromStage( evt:Event ):void
 		{
+			super.handleRemovedFromStage( evt );
+			
 			if( _tapMediator.isMediating( _listHolder ) ) 
 				_tapMediator.unmediateTapGesture( _listHolder );
 		}
@@ -694,9 +668,6 @@ package com.custardbelly.as3flobile.controls.list
 		override public function dispose():void
 		{
 			super.dispose();
-			
-			// Remove stage handlers.
-			removeHandlers();
 			
 			// Empty list.
 			_cells = new Vector.<IScrollListItemRenderer>();

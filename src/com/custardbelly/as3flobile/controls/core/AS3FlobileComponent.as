@@ -32,6 +32,7 @@ package com.custardbelly.as3flobile.controls.core
 	import com.custardbelly.as3flobile.skin.ISkinnable;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	
@@ -58,6 +59,9 @@ package com.custardbelly.as3flobile.controls.core
 			createChildren();
 			initializeDisplay();
 			updateDisplay();
+			
+			// Add existance handlers for this instance on the display list.
+			addStageHandlers();
 		}
 		
 		/**
@@ -79,6 +83,48 @@ package com.custardbelly.as3flobile.controls.core
 		protected function createChildren():void
 		{
 			// abstract. Meant for override. 
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Adds handlers for stage presence.
+		 */
+		protected function addStageHandlers():void
+		{
+			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
+			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Removes handlers for stage presence.
+		 */
+		protected function removeStageHandlers():void
+		{
+			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
+			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Adds event handlers for display instances on this dipslay list.
+		 */
+		protected function addDisplayHandlers():void
+		{
+			// Marked for override.
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Removes event handlers for display instance on this display list.
+		 */
+		protected function removeDisplayHandlers():void
+		{
+			// Marked for override.
 		}
 		
 		/**
@@ -152,6 +198,28 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Event handler for the control being added to the display list. 
+		 * @param evt Event
+		 */
+		protected function handleAddedToStage( evt:Event ):void
+		{
+			addDisplayHandlers();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Event handler for control being removed from the display list. 
+		 * @param evt Event
+		 */
+		protected function handleRemovedFromStage( evt:Event ):void
+		{
+			removeDisplayHandlers();	
+		}
+		
+		/**
 		 * Returns flag of this instance being on the display list. 
 		 * @return Boolean
 		 */
@@ -174,6 +242,9 @@ package com.custardbelly.as3flobile.controls.core
 		 */
 		public function dispose():void
 		{
+			removeStageHandlers();
+			removeDisplayHandlers();
+			
 			if( _skin != null )
 			{
 				_skin.dispose();

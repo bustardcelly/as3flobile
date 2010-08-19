@@ -71,12 +71,21 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		public function ToggleSwitch()
 		{
-//			initialize();
-//			createChildren();
 			super();
 			invalidateLabels();
 			toggleContext = getDefaultContext();
-//			initializeDisplay();
+		}
+		
+		/**
+		 * Static util function to create a new instance of a IToggleSwitch with IToggleSwitchDelegate reference. 
+		 * @param delegate IToggleSwitchDelegate
+		 * @return IToggleSwitch
+		 */
+		public static function initWithDelegate( delegate:IToggleSwitchDelegate ):IToggleSwitch
+		{
+			var toggle:IToggleSwitch = new ToggleSwitch();
+			toggle.delegate = delegate;
+			return toggle;
 		}
 		
 		/**
@@ -95,8 +104,6 @@ package com.custardbelly.as3flobile.controls.toggle
 			
 			_skin = new ToggleSwitchSkin();
 			_skin.target = this;
-			
-			addHandlers();
 		}
 		
 		/**
@@ -283,25 +290,21 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being added to the display list of parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleAddedToStage( evt:Event ):void
+		override protected function handleAddedToStage( evt:Event ):void
 		{
+			super.handleAddedToStage( evt );
 			if( _toggleContext )
 				_toggleContext.activate();
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being removed from the display list of the parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleRemovedFromStage( evt:Event ):void
+		override protected function handleRemovedFromStage( evt:Event ):void
 		{
+			super.handleRemovedFromStage( evt );
 			if( _toggleContext )
 				_toggleContext.deactivate();
 		}
@@ -323,8 +326,8 @@ package com.custardbelly.as3flobile.controls.toggle
 			_toggleContext.dispose();
 			_toggleContext = null;
 			
-			// Remove handlers.
-			removeHandlers();
+			// Null reference to delegate.
+			_delegate = null;
 		}
 		
 		/**

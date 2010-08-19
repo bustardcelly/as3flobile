@@ -249,6 +249,7 @@ package com.custardbelly.as3flobile.controls.text
 			_block.releaseLines( _block.firstLine, _block.lastLine );
 			_block = null;
 			
+			// Null reference to delegate.
 			_delegate = null;
 		}
 		

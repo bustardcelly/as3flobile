@@ -83,7 +83,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		override protected function initialize():void
 		{
 			_bounds = new Rectangle( 0, 0, _width, _height );
-			addHandlers();
+			addStageHandlers();
 		}
 		
 		/**
@@ -95,28 +95,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected function getDefaultViewportContext():IScrollViewportContext
 		{
 			return new ScrollViewportMouseContext( new BaseScrollViewportStrategy() );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Adds event handlers for addition and removal from parent display list.
-		 */
-		protected function addHandlers():void
-		{
-			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
-			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Removes event handlers.
-		 */
-		protected function removeHandlers():void
-		{
-			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
-			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
 		}
 		
 		/**
@@ -192,13 +170,11 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being added to the display list of parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleAddedToStage( evt:Event ):void
+		override protected function handleAddedToStage( evt:Event ):void
 		{
+			super.handleAddedToStage( evt );
 			if( _context )
 			{
 				_context.activate();
@@ -207,13 +183,11 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Event handler for being removed from the display list of the parent. 
-		 * @param evt Event
+		 * @inherit
 		 */
-		protected function handleRemovedFromStage( evt:Event ):void
+		override protected function handleRemovedFromStage( evt:Event ):void
 		{
+			super.handleRemovedFromStage( evt );
 			if( _context )
 			{
 				_context.deactivate();
@@ -279,8 +253,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		override public function dispose():void
 		{
 			super.dispose();
-			
-			removeHandlers();
 			
 			_context.dispose();
 			_context = null;
