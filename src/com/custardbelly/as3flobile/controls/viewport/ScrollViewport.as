@@ -30,6 +30,8 @@ package com.custardbelly.as3flobile.controls.viewport
 	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
+	import com.custardbelly.as3flobile.model.IPendingInitializationCommand;
+	import com.custardbelly.as3flobile.model.PendingInitializationCommand;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
@@ -48,6 +50,8 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected var _content:InteractiveObject;
 		protected var _context:IScrollViewportContext;
 		protected var _delegate:IScrollViewportDelegate;
+		
+		protected var _pendingContextActivationCommands:Vector.<IPendingInitializationCommand>;
 		
 		/**
 		 * Constructor.
@@ -141,6 +145,37 @@ package com.custardbelly.as3flobile.controls.viewport
 		/**
 		 * @private
 		 * 
+		 * Pushes an IPendingInitializationCommand to the queue to be executed on activation of context. 
+		 * @param command IPendingInitializationCommand
+		 */
+		protected function pushPendingContextActivationCommand( command:IPendingInitializationCommand ):void
+		{
+			if( _pendingContextActivationCommands == null )
+				_pendingContextActivationCommands = new Vector.<IPendingInitializationCommand>();
+			
+			_pendingContextActivationCommands.push( command );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Executes all IPendingInitializationCommand instances in queue for activation of context.
+		 */
+		protected function flushPendingContextActivateCommands():void
+		{
+			if( _pendingContextActivationCommands == null ) return;
+			
+			var command:IPendingInitializationCommand;
+			while( _pendingContextActivationCommands.length > 0 )
+			{
+				command = _pendingContextActivationCommands.shift();
+				command.execute();
+			}		
+		}
+		
+		/**
+		 * @private
+		 * 
 		 * Validates the IScrollViewportContext used in managing user action and strategy operations. 
 		 * @param oldContext IScrollViewportContext
 		 * @param newContext IScrollViewportContext
@@ -165,7 +200,10 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected function handleAddedToStage( evt:Event ):void
 		{
 			if( _context )
+			{
 				_context.activate();
+				flushPendingContextActivateCommands();
+			}
 		}
 		
 		/**
@@ -177,7 +215,9 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected function handleRemovedFromStage( evt:Event ):void
 		{
 			if( _context )
+			{
 				_context.deactivate();
+			}
 		}
 		
 		/**
@@ -209,7 +249,16 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		public function scrollToPosition( position:Point ):void
 		{
-			_context.position = position;
+			// If we have an active context we can go ahead with our operation.
+			if( _context && _context.isActive() )
+			{
+				_context.position = position;
+			}
+			// Else we push to operation queue when context becomes active.
+			else
+			{
+				pushPendingContextActivationCommand( new PendingInitializationCommand( scrollToPosition, position ) );
+			}
 		}
 		
 		/**

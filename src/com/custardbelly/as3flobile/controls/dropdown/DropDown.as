@@ -64,16 +64,15 @@ package com.custardbelly.as3flobile.controls.dropdown
 		/**
 		 * Constructor.
 		 */
-		public function DropDown()
-		{
-			super();
-		}
+		public function DropDown() { super(); }
 		
 		/**
 		 * @inherit
 		 */
 		override protected function initialize():void
 		{
+			super.initialize();
+			
 			_width = 160;
 			_height = 48;
 			

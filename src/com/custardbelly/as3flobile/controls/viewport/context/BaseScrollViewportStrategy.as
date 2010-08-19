@@ -67,6 +67,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		
 		protected var _marks:Vector.<ScrollMark>;
 		protected var _markIndex:uint;
+		protected var _markStoreKey:uint;
 		
 		protected var _coordinate:Point;
 		
@@ -87,6 +88,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function BaseScrollViewportStrategy() 
 		{
 			_targetAdaptor = getDefaultTargetScrollAdaptor();
+			_coordinate = new Point();
 		}
 		
 		/**
@@ -127,6 +129,9 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_thresholdX = BaseScrollViewportStrategy.THRESHOLD * _bounds.width;
 			_thresholdY = BaseScrollViewportStrategy.THRESHOLD * _bounds.height;
 			
+			// Get key for store.
+			_markStoreKey = ScrollMark.generateKey();
+			
 			// Create marks and fill with capacity.
 			if( _marks == null )
 				_marks = new Vector.<ScrollMark>( BaseScrollViewportStrategy.CAPACITY );
@@ -134,11 +139,9 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			var i:int;
 			for( i = 0; i < BaseScrollViewportStrategy.CAPACITY; i++ )
 			{
-				_marks[i] = ScrollMark.getScrollMark( 0, 0, 0 );
+				_marks[i] = ScrollMark.getScrollMark( _markStoreKey, 0, 0, 0 );
 			}
 			
-			// Crate coordinate point used in notify delegates of aniimation.
-			if( _coordinate == null ) _coordinate = new Point();
 			_coordinate.x = _currentScrollPositionX;
 			_coordinate.y = _currentScrollPositionY;
 		}
@@ -191,9 +194,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 				for( i = 0; i < length; i++ )
 				{
 					mark = _marks[i];
-					ScrollMark.returnScrollMark( mark );
+					ScrollMark.returnScrollMark( _markStoreKey, mark );
 				}
 			}
+			ScrollMark.flush( _markStoreKey );
 		}
 		
 		/**
@@ -244,6 +248,14 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			return ( from * ( 1 - percent ) ) + ( to * percent );
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Equates the values within the specified Points as being equal. 
+		 * @param point Point
+		 * @param matchPoint Point
+		 * @return Boolean
+		 */
 		protected function isPositionEqual( point:Point, matchPoint:Point ):Boolean
 		{
 			return Math.round(point.x) == Math.round(matchPoint.x) && Math.round(point.y) == Math.round(matchPoint.y);
@@ -560,6 +572,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		public function dispose():void
 		{
+			returnAllMarks();
+			
 			_targetAdaptor.dispose();
 			_targetAdaptor = null;
 			

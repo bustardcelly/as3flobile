@@ -23,9 +23,17 @@ package com.custardbelly.as3flobile.example.web.view.component
 			label.autosize = true;
 			addChild( label );
 			
+			label = new Label();
+			label.multiline = true;
+			label.autosize = true;
+			label.width = 300;
+			label.y = 30;
+			label.text = "A ScrollViewport is a viewport area that responds to mouse/touch gestures. The content of the viewport can be any InteractiveObject. This example loads an image from the web and places it as the content for the viewport.";
+			addChild( label );
+			
 			_progressField = new Label();
 			_progressField.text = "Loading...";
-			_progressField.y = 330;
+			_progressField.y = 445;
 			_progressField.autosize = true;
 			addChild( _progressField );
 			
@@ -51,7 +59,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			content.cacheAsBitmap = true;
 			
 			var viewport:ScrollViewport = new ScrollViewport();
-			viewport.y = 20;
+			viewport.y = 140;
 			viewport.width = 300;
 			viewport.height = 300;
 			viewport.content = content;

@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.skin
 {
 	import com.custardbelly.as3flobile.controls.textinput.TextInput;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	
 	import flash.display.Graphics;
 	import flash.display.Shape;
@@ -104,7 +105,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateBackground( display:Graphics, width:int, height:int ):void
 		{
-			var lineColor:uint = ( _target.skinState == BasicStateEnum.FOCUSED ) ? 0xFF7F00 : 0x666666;
+			var lineColor:uint = ( _target.skinState == BasicStateEnum.FOCUSED ) ? 0xFF7F00 : 0x999999;
 			display.clear();
 			display.beginFill( 0xFFFFFF );
 			display.lineStyle( 2, lineColor, 1, false, "normal", "square", "miter" );
@@ -165,30 +166,34 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updatePosition( width:int, height:int ):void
 		{
-			const offset:int = 4;
+			var padding:BoxPadding = _target.padding;
 			var inputTarget:TextInput = ( _target as TextInput );
 			var inputDisplay:TextField = inputTarget.inputDisplay;
 			var clearButtonDisplay:Sprite = inputTarget.clearButtonDisplay;
 			
 			// Update clear button display position.
-			clearButtonDisplay.x = width - clearButtonDisplay.width - offset;
+			clearButtonDisplay.x = width - clearButtonDisplay.width - padding.right;
 			// Update input size and position.
-			inputDisplay.width = clearButtonDisplay.x - offset;
+			inputDisplay.width = clearButtonDisplay.x - ( padding.right );
+			inputDisplay.x = padding.left;
 			
 			// Base height on multiline.
 			if( inputDisplay.multiline )
 			{
-				inputDisplay.height = height;
-				clearButtonDisplay.y = offset;
+				inputDisplay.height = height - ( padding.top + padding.bottom );
+				inputDisplay.y = padding.top;
+				clearButtonDisplay.y = padding.top;
 			}
 			else
 			{
+				// position clear button in the middle of height.
+				
+				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) * 0.5;
 				// Base height on font size. This will be overwritten if multiline is true on input.
 				var fontSize:int = ( _target.skinState == BasicStateEnum.NORMAL ) ? int(_defaultFormat.size) : int(_boilerFormat.size);
-				inputDisplay.height = fontSize * 1.4;
-				clearButtonDisplay.y = ( height - clearButtonDisplay.height ) * 0.5;
+				inputDisplay.height = ( fontSize * 2 );
+				inputDisplay.y = ( height - ( fontSize * 1.5 ) ) * 0.5;
 			}
-			inputDisplay.y = ( height - inputDisplay.height ) *0.5;
 		}
 		
 		/**

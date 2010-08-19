@@ -47,7 +47,7 @@ package com.custardbelly.as3flobile.controls.button
 		protected var _labelDisplay:Label;
 		
 		protected var _label:String;
-		protected var _padding:int = 5;
+		protected var _labelPadding:int;
 		
 		/**
 		 * Constructor.
@@ -63,8 +63,12 @@ package com.custardbelly.as3flobile.controls.button
 		 */
 		override protected function initialize():void
 		{
+			super.initialize();
+			
 			_width = 100;
 			_height = 48;
+			
+			_labelPadding = 5;
 			
 			_skin = new ButtonSkin();
 			_skin.target = this;
@@ -125,13 +129,13 @@ package com.custardbelly.as3flobile.controls.button
 		 */
 		public function get labelPadding():int
 		{
-			return _padding;
+			return _labelPadding;
 		}
 		public function set labelPadding( value:int ):void
 		{
-			if( _padding == value ) return;
+			if( _labelPadding == value ) return;
 			
-			_padding = value;
+			_labelPadding = value;
 			updateDisplay();
 		}
 		

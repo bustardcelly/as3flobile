@@ -12,7 +12,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	public class TextAreaExample extends Sprite
 	{
 		protected var _textArea:TextArea;
-		protected var text:String = "1. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n2. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n3. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+		protected var text:String = "1. Pack my box with five dozen liquor jugs. Big fjords vex quick waltz nymph.\n\n2. The jay, pig, fox, zebra, and my wolves quack! Vexed nymphs go for quick waltz job. Jack fox bids ivy-strewn phlegm quiz.\n\n3. The big plump jowls of zany Dick Nixon quiver.\n\n4. My girl wove six dozen plaid jackets before she quit.\n\n5. Jaded zombies acted quietly but kept driving their oxen forward. Two driven jocks help fax my big quiz.\n\nWhen the oak is before the ash, then you will only get a splash; when the ash is before the oak, then you may expect a soak"
 		
 		public function TextAreaExample()
 		{
@@ -21,11 +21,19 @@ package com.custardbelly.as3flobile.example.web.view.component
 			label.autosize = true;
 			addChild( label );
 			
-			var format:ElementFormat = new ElementFormat( new FontDescription( "DroidSans" ), 20 );
+			label = new Label();
+			label.multiline = true;
+			label.autosize = true;
+			label.width = 300;
+			label.y = 30;
+			label.text = "A TextArea control is a non-editable display of textual content. Editable text areas are available by using a multiline TextInput control.";
+			addChild( label );
+			
+			var format:ElementFormat = new ElementFormat( new FontDescription( "DroidSans" ), 18 );
 			_textArea = new TextArea();
-			_textArea.y = 30;
+			_textArea.y = 110;
 			_textArea.width = 300;
-			_textArea.height = 340;
+			_textArea.height = 300;
 			_textArea.format = format;
 			_textArea.text = text;
 			addChild( _textArea );

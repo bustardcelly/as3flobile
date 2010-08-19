@@ -30,6 +30,7 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	
 	import flash.display.Graphics;
 	import flash.text.engine.ElementFormat;
@@ -92,9 +93,15 @@ package com.custardbelly.as3flobile.skin
 		protected function updateLabel( display:Label, width:int, height:int ):void
 		{
 			var format:ElementFormat = getDefaultFormat();
-			var padding:int = ( _target as DefaultScrollListItemRenderer ).padding;
 			display.format = format;
-			display.x = display.y = padding;
+		}
+		
+		protected function updatePosition( width:int, height:int ):void
+		{
+			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
+			var padding:BoxPadding = _target.padding;
+			(itemTarget as DefaultScrollListItemRenderer).labelDisplay.x = padding.left;
+			(itemTarget as DefaultScrollListItemRenderer).labelDisplay.y = padding.top;
 		}
 		
 		/**
@@ -107,6 +114,7 @@ package com.custardbelly.as3flobile.skin
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
 			updateBackground( itemTarget.backgroundDisplay, width, height );
 			updateLabel( (itemTarget as DefaultScrollListItemRenderer).labelDisplay, width, height );
+			updatePosition( width, height );
 		}
 		
 		/**
@@ -119,6 +127,7 @@ package com.custardbelly.as3flobile.skin
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
 			updateBackground( itemTarget.backgroundDisplay, width, height );
 			updateLabel( (itemTarget as DefaultScrollListItemRenderer).labelDisplay, width, height );
+			updatePosition( width, height );
 		}
 	}
 }

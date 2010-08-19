@@ -75,6 +75,8 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _cells:Vector.<IScrollListItemRenderer>;
 		protected var _cellAmount:int;
 		
+		protected var _seperatorLength:int;
+		
 		protected var _currentScrollPosition:Point;
 		protected var _isScrolling:Boolean;
 		
@@ -83,9 +85,6 @@ package com.custardbelly.as3flobile.controls.list
 		
 		protected var _selectedIndex:int = -1;
 		protected var _dataProvider:Array;
-		
-		protected var _padding:int;
-		protected var _seperatorLength:int;
 		
 		/**
 		 * Constructor.
@@ -117,10 +116,12 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		override protected function initialize():void
 		{
+			super.initialize();
+			
 			_width = 100; 
 			_height = 100;
 			
-			_padding = 2;
+			updatePadding( 2, 2, 2, 2 );
 			_seperatorLength = 2;
 			_selectionEnabled = true;
 			
@@ -150,15 +151,16 @@ package com.custardbelly.as3flobile.controls.list
 			_listHolder.cacheAsBitmap = true;
 			
 			// Create the viewport and point to the list holder target.
-			var doublePadding:int = ( _padding * 2 );
+			var horizPadding:int = ( _padding.left + _padding.right );
+			var vertPadding:int = ( _padding.top + _padding.bottom );
 			_viewport = new ScrollViewport();
 			_viewport.delegate = this;
 			_viewport.context = _scrollContext;
 			_viewport.content = _listHolder;
-			_viewport.width = _width - doublePadding;
-			_viewport.height = _height - doublePadding;
-			_viewport.x = _padding;
-			_viewport.y = _padding;
+			_viewport.width = _width - horizPadding;
+			_viewport.height = _height - vertPadding;
+			_viewport.x = _padding.left;
+			_viewport.y = _padding.top;
 			addChild( _viewport as DisplayObject );
 			
 			_tapMediator = getDefaultTapMediator( _listHolder, handleListTap );
@@ -269,18 +271,19 @@ package com.custardbelly.as3flobile.controls.list
 		{
 			super.invalidateSize();
 			
-			var doublePadding:int = ( _padding * 2 );
+			var horizPadding:int = ( _padding.left + _padding.right );
+			var vertPadding:int = ( _padding.top + _padding.bottom );
 			// Set new scroll rect area.
-			_bounds.width = _width - doublePadding;
-			_bounds.height = _height - doublePadding;
+			_bounds.width = _width - horizPadding;
+			_bounds.height = _height - vertPadding;
 			// Apply new values to the viewport instance.
-			_viewport.width = _width - doublePadding;
-			_viewport.height = _height - doublePadding;
-			_viewport.x = _padding;
-			_viewport.y = _padding;
+			_viewport.width = _width - horizPadding;
+			_viewport.height = _height - vertPadding;
+			_viewport.x = _padding.left;
+			_viewport.y = _padding.top;
 			// Update visible dimensions on scroll list holder
-			_listHolder.visibleWidth = _width - doublePadding;
-			_listHolder.visibleHeight = _height - doublePadding;
+			_listHolder.visibleWidth = _width - horizPadding;
+			_listHolder.visibleHeight = _height - vertPadding;
 			// Run refresh on display.
 			invalidateDisplay();
 		}
@@ -739,23 +742,6 @@ package com.custardbelly.as3flobile.controls.list
 		public function get backgroundDisplay():Graphics
 		{
 			return graphics;
-		}
-		
-		/**
-		 * Accessor/Modifier for the padding offset of the list content of item renderers and the border of this instance. 
-		 * Allows for rendering of lowest layer of Skin to be seen if value is above 0. 
-		 * @return int
-		 */
-		public function get padding():int
-		{
-			return _padding;
-		}
-		public function set padding(value:int):void
-		{
-			if( _padding == value ) return;
-			
-			_padding = ( value < 0 ) ? 0 : value;
-			invalidateSize();
 		}
 		
 		/**

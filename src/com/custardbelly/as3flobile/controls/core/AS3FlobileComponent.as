@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.core
 {
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.model.IDisposable;
 	import com.custardbelly.as3flobile.skin.ISkin;
 	import com.custardbelly.as3flobile.skin.ISkinnable;
@@ -40,6 +41,8 @@ package com.custardbelly.as3flobile.controls.core
 	 */
 	public class AS3FlobileComponent extends Sprite implements IDisposable, ISkinnable
 	{
+		protected var _padding:BoxPadding;
+		
 		protected var _skin:ISkin;
 		protected var _skinState:int;
 		
@@ -65,6 +68,7 @@ package com.custardbelly.as3flobile.controls.core
 		protected function initialize():void
 		{
 			// abstract. Meant for override. 
+			_padding = new BoxPadding();
 		}
 		
 		/**
@@ -130,6 +134,24 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Convenience method to update the padding between the edges of this instance and its content, so as not to create a new instance of BoxPadding each time. 
+		 * @param left int
+		 * @param top int
+		 * @param right int
+		 * @param bottom int
+		 */
+		protected function updatePadding( left:int, top:int, right:int, bottom:int ):void
+		{
+			_padding.left = left;
+			_padding.top = top;
+			_padding.right = right;
+			_padding.bottom = bottom;
+			updateDisplay();
+		}
+		
+		/**
 		 * Returns flag of this instance being on the display list. 
 		 * @return Boolean
 		 */
@@ -157,6 +179,7 @@ package com.custardbelly.as3flobile.controls.core
 				_skin.dispose();
 				_skin = null;
 			}
+			_padding = null;
 		}
 		
 		/**
@@ -175,7 +198,7 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
-		 * @opy ISkinnable#skinState
+		 * @copy ISkinnable#skinState
 		 */
 		public function get skinState():int
 		{
@@ -187,6 +210,21 @@ package com.custardbelly.as3flobile.controls.core
 			
 			_skinState = value;
 			invalidateSkinState();
+		}
+		
+		/**
+		 * @copy ISkinnable#padding
+		 */
+		public function get padding():BoxPadding
+		{
+			return _padding;
+		}
+		public function set padding( value:BoxPadding ):void
+		{
+			if( BoxPadding.equals( _padding, value ) ) return;
+			
+			_padding = value;
+			invalidateSize();
 		}
 		
 		/**

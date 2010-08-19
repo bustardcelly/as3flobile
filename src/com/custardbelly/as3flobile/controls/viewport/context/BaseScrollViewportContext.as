@@ -79,12 +79,19 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		
 		/**
 		 * Deactivates the mediating IScrollViewportStrategy handling scroll operations. 
-		 * 
 		 */
 		public function deactivate():void
 		{
 			_isActive = false;	
 			_strategy.unmediate();
+		}
+		
+		/**
+		 * @copy IScrollViewportContext#isActive()
+		 */
+		public function isActive():Boolean
+		{
+			return _isActive;
 		}
 		
 		/**

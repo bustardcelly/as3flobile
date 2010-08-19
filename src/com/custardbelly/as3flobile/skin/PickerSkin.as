@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
 	import com.custardbelly.as3flobile.controls.picker.Picker;
 	import com.custardbelly.as3flobile.controls.picker.PickerColumn;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
@@ -83,8 +84,8 @@ package com.custardbelly.as3flobile.skin
 		protected function updateBackground( display:Graphics, width:int, height:int ):void
 		{
 			display.clear();
-//			display.lineStyle( 2, 0x999999, 1, true, "normal", "square", "miter" );
-			display.beginFill( 0xFF0000 );
+			display.beginFill( 0x999999 );
+			display.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
 			display.drawRect( 0, 0, width, height );
 			display.endFill();
 		}
@@ -104,6 +105,14 @@ package com.custardbelly.as3flobile.skin
 			display.graphics.beginFill( 0xFF7F00, 0.3 );
 			display.graphics.drawRect( 0, 0, width, barHeight );
 			display.graphics.endFill();
+			display.graphics.lineStyle( 1, 0xFF7F00, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( width - 1, 1 );
+			display.graphics.lineTo( width - 1, barHeight - 1 );
+			display.graphics.lineTo( 1, barHeight - 1 );
+			display.graphics.lineStyle( 2, 0xFF7F00, 0.5, true, "normal", "square", "miter" );
+			display.graphics.moveTo( 1, barHeight - 1 );
+			display.graphics.lineTo( 1, 1 );
+			display.graphics.lineTo( width - 1, 1 );
 		}
 		
 		/**
@@ -115,8 +124,13 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updatePosition( width:int, height:int ):void
 		{
+			var padding:BoxPadding = _target.padding;
+			var horizPadding:int = padding.left + padding.right;
+			var vertPadding:int = padding.top + padding.bottom;
+			
 			var pickerTarget:Picker = ( _target as Picker );
 			var selectionBar:DisplayObject = pickerTarget.selectionBarDisplay;
+			var columnSeperator:int = pickerTarget.columnSeperatorLength;
 			var columnPickerWidths:Vector.<Number> = pickerTarget.columnWidths;
 			var columnLists:Vector.<IScrollListContainer> = pickerTarget.columnLists;
 			var itemHeight:int = pickerTarget.itemHeight;
@@ -127,7 +141,7 @@ package com.custardbelly.as3flobile.skin
 			// Find the available percentage dimensions for column lists based on theri specified width and the alloted width fo the target.
 			var i:int;
 			var length:int = columnPickerWidths.length;
-			var availableWidth:Number = width;
+			var availableWidth:Number = ( width - horizPadding ) - ( ( length - 1 ) * columnSeperator );
 			var columnAmountForPercentage:int = columnLists.length;
 			var columnWidth:Number;
 			// Remove available width from defined column widths.
@@ -143,16 +157,17 @@ package com.custardbelly.as3flobile.skin
 			// Update the column widths with the available and defined widths.
 			var percentageWidth:int = ( availableWidth > 0 ) ? ( availableWidth / columnAmountForPercentage ) : 0;
 			var columnList:DisplayObject;
-			var xpos:int;
+			var xpos:int = padding.left;
 			length = columnLists.length;
 			for( i = 0; i < length; i++ )
 			{
 				columnList = columnLists[i] as DisplayObject;
 				columnWidth = columnPickerWidths[i];
 				columnList.width = ( isNaN( columnWidth ) ) ? percentageWidth : columnWidth;
-				columnList.height = height;
+				columnList.height = height - vertPadding;
 				columnList.x = xpos;
-				xpos += columnList.width;
+				columnList.y = padding.top;
+				xpos += columnList.width + columnSeperator;
 			}
 		}
 		

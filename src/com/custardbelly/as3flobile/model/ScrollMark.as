@@ -26,6 +26,8 @@
  */
 package com.custardbelly.as3flobile.model
 {
+	import flash.utils.Dictionary;
+
 	/**
 	 * ScrollMark is a model class representing a point in time at which a scroll action has occured.  
 	 * @author toddanderson
@@ -36,12 +38,14 @@ package com.custardbelly.as3flobile.model
 		public var y:Number;
 		public var time:Number;
 		
+		private static var KEY_INCREMENT:uint = 0;
+		
 		/**
 		 * @private
 		 * 
 		 * Internally managed pool of ScrollMark instances. 
 		 */
-		private static var _pool:Vector.<ScrollMark>;
+		private static var _pool:Dictionary;
 		
 		/**
 		 * Constructor 
@@ -57,21 +61,49 @@ package com.custardbelly.as3flobile.model
 		}
 		
 		/**
+		 * @private
+		 * 
+		 * Fail safe method to retrieve the mark list related to the unique key in the pool. 
+		 * @param key uint
+		 * @return Vector.<ScrollMark>
+		 */
+		static private function getMarksFromKey( key:uint ):Vector.<ScrollMark>
+		{
+			// If pool not created, create it.
+			if( _pool == null )
+				_pool = new Dictionary( true );
+			// If associated list of marks not available, create it.
+			if( _pool[key] == null )
+				_pool[key] = new Vector.<ScrollMark>();
+			// Return list based on key.
+			return _pool[key];
+		}
+		
+		/**
+		 * Generates and returns a unique key to use when working with mark pools. 
+		 * @return uint
+		 */
+		static public function generateKey():uint
+		{
+			// Simple, simple increment. We're not doing web security here, people. We just playing.
+			return ScrollMark.KEY_INCREMENT++;
+		}
+		
+		/**
 		 * Utility factory method to access a ScrollMark instance. Checks if ScrollMark is available in pool of instances. If not creates a new one. 
+		 * @param key uint The unique key associated with the pool request. Keys can first be obtained using ScrollMark#generateKey().
 		 * @param x Number The position along the x axis that the scroll action occured.
 		 * @param y Number The position along the y axis that the scroll action occured.
 		 * @param time Number The time at which the scroll action occured.
 		 * @return ScrollMark
 		 */
-		static public function getScrollMark( x:Number, y:Number, time:Number ):ScrollMark
+		static public function getScrollMark( key:uint, x:Number, y:Number, time:Number ):ScrollMark
 		{
-			if( _pool == null )
-				_pool = new Vector.<ScrollMark>();
+			var marks:Vector.<ScrollMark> = ScrollMark.getMarksFromKey( key );
+			if( marks.length == 0 )
+				marks[0] = new ScrollMark();
 			
-			if( _pool.length == 0 )
-				_pool[0] = new ScrollMark();
-			
-			var mark:ScrollMark = _pool.shift();
+			var mark:ScrollMark = marks.shift();
 			mark.x = x;
 			mark.y = y;
 			mark.time = time;
@@ -80,20 +112,41 @@ package com.custardbelly.as3flobile.model
 		
 		/**
 		 * Utility method to return a ScrollMark instance to the internally managed pool of ScrollMarks. 
+		 * @param key uint
 		 * @param mark ScrollMark
 		 */
-		static public function returnScrollMark( mark:ScrollMark ):void
+		static public function returnScrollMark( key:uint, mark:ScrollMark ):void
 		{
+			var marks:Vector.<ScrollMark> = ScrollMark.getMarksFromKey( key );
 			mark.x = mark.y = mark.time = 0;
-			_pool[_pool.length] = mark;
+			marks[marks.length] = mark;
 		}
 		
 		/**
 		 * Utility method to flush the internally managed pool of ScrollMark references.
+		 * @param key uint The unique key to the mark pool.
 		 */
-		static public function flush():void
+		static public function flush( key:uint ):void
 		{
-			_pool = new Vector.<ScrollMark>();
+			if( _pool == null ) return;
+			
+			var marks:Vector.<ScrollMark> = ScrollMark.getMarksFromKey( key );
+			while( marks.length > 0 )
+				marks.shift();
+		}
+		
+		/**
+		 * Utility method to flush all internally managed pools of ScrollMark references. 
+		 */
+		static public function flushAll():void
+		{
+			if( _pool == null ) return;
+			
+			var key:uint;
+			for each( key in _pool )
+			{
+				ScrollMark.flush( key );
+			}
 		}
 	}
 }

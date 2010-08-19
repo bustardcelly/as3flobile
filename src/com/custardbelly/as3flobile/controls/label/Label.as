@@ -69,16 +69,15 @@ package com.custardbelly.as3flobile.controls.label
 		/**
 		 * Constructor.
 		 */
-		public function Label()
-		{
-			super();
-		}
+		public function Label() { super(); }
 		
 		/**
 		 * @inherit
 		 */
 		override protected function initialize():void
 		{	
+			super.initialize();
+			
 			_width = 100;
 			_height = 20;
 			

@@ -30,6 +30,7 @@ package com.custardbelly.as3flobile.controls.list
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.model.IDisposable;
+	import com.custardbelly.as3flobile.skin.ISkinnable;
 	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -38,7 +39,7 @@ package com.custardbelly.as3flobile.controls.list
 	 * IScrollListContainer is a list of data pbjects represented as IScrollListItemRenderer instances. 
 	 * @author toddanderson
 	 */
-	public interface IScrollListContainer extends IDisposable
+	public interface IScrollListContainer extends ISkinnable, IDisposable
 	{
 		/**
 		 * Returns the IScrollListItemRenderer instance that resides at the elemental index within the list.
@@ -96,14 +97,6 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		function get scrollContext():IScrollViewportContext;
 		function set scrollContext( value:IScrollViewportContext ):void;
-		
-		/**
-		 * Accessor/Modifier for the padding offset of the list content of item renderers and the border of this instance. 
-		 * Allows for rendering of lowest layer of Skin to be seen if value is above 0. 
-		 * @return int
-		 */
-		function get padding():int;
-		function set padding(value:int):void;
 		
 		/**
 		 * Accessor/Modifier for the seperator size between list items. 

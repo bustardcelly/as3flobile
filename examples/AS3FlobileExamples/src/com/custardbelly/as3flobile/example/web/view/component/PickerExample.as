@@ -1,19 +1,31 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
+	import com.custardbelly.as3flobile.controls.button.Button;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.picker.IPickerSelectionDelegate;
 	import com.custardbelly.as3flobile.controls.picker.Picker;
 	import com.custardbelly.as3flobile.controls.picker.PickerColumn;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
 	public class PickerExample extends Sprite implements IPickerSelectionDelegate
 	{
+		protected var picker:Picker;
 		public function PickerExample()
 		{
 			var label:Label = new Label();
-			label.text = "DropDown Example:";
+			label.text = "Picker Example:";
 			label.autosize = true;
+			addChild( label );
+			
+			label = new Label();
+			label.multiline = true;
+			label.autosize = true;
+			label.width = 300;
+			label.y = 30;
+			label.text = "A Picker control is a collection of scroll lists allowing you do select multiple items. The following is an example of a Date Chooser using the Picker control.";
 			addChild( label );
 			
 			var dataProvider:Vector.<PickerColumn> = new Vector.<PickerColumn>();
@@ -21,11 +33,26 @@ package com.custardbelly.as3flobile.example.web.view.component
 			dataProvider.push( getPickerColumnDays( 50 ) );
 			dataProvider.push( getPickerColumnYears( 80 ) );
 			
-			var picker:Picker = Picker.initWithDelegate( this );
-			picker.y = 30;
+			picker = Picker.initWithDelegate( this );
+			picker.y = 110;
 			picker.dataProvider = dataProvider;
 			picker.itemHeight = 50;
 			addChild( picker );
+			
+			var date:Date = new Date();
+			picker.setSelectedIndex( date.getMonth(), 0 );
+			picker.setSelectedIndex( date.getDate() - 1, 1 );
+			picker.setSelectedIndex( getIndexFromYear( date.getFullYear(), dataProvider[2].data ), 2 );
+		}
+		
+		protected function getIndexFromYear( year:Number, data:Array ):int
+		{
+			var i:int = data.length;
+			while( --i > -1 )
+			{
+				if( data[i].label == year.toString() ) return i;
+			}
+			return 0;
 		}
 		
 		protected function getPickerColumnDays( width:Number = Number.NaN ):PickerColumn
@@ -54,7 +81,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			var i:int = 50;
 			while( --i > -1 )
 			{
-				column.data.push( {label: (1973 + i).toString()} );
+				column.data.push( {label:(1973 + i).toString()} );
 			}
 			column.width = width;
 			return column;

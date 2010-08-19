@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.skin.ScrollListItemRendererSkin;
 	
 	import flash.display.Graphics;
@@ -60,7 +61,6 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		
 		protected var _data:Object;
 		protected var _selected:Boolean;
-		protected var _padding:int;
 		
 		/**
 		 * Constructor.
@@ -75,6 +75,8 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		 */
 		override protected function initialize():void
 		{
+			super.initialize();
+			
 			this.cacheAsBitmap = true;
 			this.mouseChildren = false;
 			this.mouseEnabled = false;
@@ -82,7 +84,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			_width = 100;
 			_height = 48;
 			
-			_padding = 3;
+			updatePadding( 3, 3, 3, 3 );
 			
 			_skin = new ScrollListItemRendererSkin();
 			_skin.target = this;
@@ -130,9 +132,8 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			_label.text = _data.label;
 			
-			var doublePadding:int = _padding * 2;
-			if( _useVariableHeight ) _height = _label.height + doublePadding;
-			if( _useVariableWidth ) _width = _label.width + doublePadding;
+			if( _useVariableHeight ) _height = _label.height + _padding.top + _padding.bottom;
+			if( _useVariableWidth ) _width = _label.width + _padding.left + _padding.right;
 			
 			_isDirty = false;
 			updateDisplay();
@@ -143,7 +144,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		 */
 		override protected function invalidateSize():void
 		{
-			_label.width = _width - ( _padding * 2 );
+			_label.width = _width - ( _padding.left + _padding.right );
 			super.invalidateSize();
 		}
 		
@@ -269,16 +270,11 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 
 		/**
-		 * Accessor/Modifier for the offset set padding between the instance's edge and the default content label. Default is 3. 
-		 * @return String
+		 * @inherit
 		 */
-		public function get padding():int
+		override public function set padding( value:BoxPadding ):void
 		{
-			return _padding;
-		}
-		public function set padding(value:int):void
-		{
-			if( _padding == value ) return;
+			if( BoxPadding.equals( _padding, value ) ) return;
 			
 			_padding = value;
 			invalidateProperty( invalidateData );

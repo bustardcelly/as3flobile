@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ISkinnable.as</p>
+ * <p>Class File: IPendingInitializationCommand.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,35 +24,18 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.skin
+package com.custardbelly.as3flobile.model
 {
-	import com.custardbelly.as3flobile.model.BoxPadding;
-
 	/**
-	 * ISkinnable is a display that can be skinned using an ISkin. 
+	 * IPendingInitializationCommand is a simple command model for invoking a target function with specified arguments.
+	 * Usually created and queued by a client that needs to run some property updates after it has completed a specific phase in its initialization. 
 	 * @author toddanderson
 	 */
-	public interface ISkinnable
+	public interface IPendingInitializationCommand
 	{
 		/**
-		 * Accessor/Modifier for the ease-of-use model of padding between the esge of the skinnable control and the content. 
-		 * @return BoxPadding
+		 * Invokes the target initialziation operations.
 		 */
-		function get padding():BoxPadding;
-		function set padding( value:BoxPadding ):void;
-		
-		/**
-		 * Accessor/Modifier to the skin instance that updates graphical content. 
-		 * @return ISkin
-		 */
-		function get skin():ISkin;
-		function set skin( value:ISkin ):void;
-		
-		/**
-		 * Accesor/Modifier for the state of the control as it relates to the graphic display (skin). 
-		 * @return int
-		 */
-		function get skinState():int;
-		function set skinState( value:int ):void;
+		function execute():void;
 	}
 }

@@ -84,6 +84,8 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		override protected function initialize():void
 		{
+			super.initialize();
+			
 			_width = 100;
 			_height = 40;
 			

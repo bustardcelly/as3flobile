@@ -31,6 +31,7 @@ package com.custardbelly.as3flobile.controls.text
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.skin.TextAreaSkin;
 	
 	import flash.display.DisplayObject;
@@ -67,8 +68,6 @@ package com.custardbelly.as3flobile.controls.text
 		protected var _scrollContext:IScrollViewportContext;
 		protected var _delegate:ITextAreaDelegate;
 		
-		protected var _padding:int;
-		
 		/**
 		 * Constructor.
 		 */
@@ -82,6 +81,8 @@ package com.custardbelly.as3flobile.controls.text
 		 */
 		override protected function initialize():void
 		{	
+			super.initialize();
+			
 			_width = 100;
 			_height = 100;
 			
@@ -92,7 +93,7 @@ package com.custardbelly.as3flobile.controls.text
 			
 			_linePositions = new Vector.<int>(1);
 			
-			_padding = 5;
+			updatePadding( 5, 5, 5, 5 );
 			
 			_skin = new TextAreaSkin();
 			_skin.target = this;
@@ -110,13 +111,14 @@ package com.custardbelly.as3flobile.controls.text
 			_lineHolder.mouseChildren = false;
 			_lineHolder.cacheAsBitmap = true;
 			
-			var doublePadding:int = _padding * 2;
+			var horizPadding:int = ( _padding.left + _padding.right );
+			var vertPadding:int = ( _padding.top + _padding.bottom );
 			_viewport = new ScrollViewport();
 			_viewport.delegate = this;
-			_viewport.width = _width - doublePadding;
-			_viewport.height = _height - doublePadding;
-			_viewport.x = _padding;
-			_viewport.y = _padding;
+			_viewport.width = _width - horizPadding;
+			_viewport.height = _height - vertPadding;
+			_viewport.x = _padding.left;
+			_viewport.y = _padding.top;
 			_viewport.content = _lineHolder;
 			addChild( _viewport as DisplayObject );
 		}
@@ -130,12 +132,12 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			_lineHolder.clear();
 			
-			var doublePadding:int = _padding * 2;
+			var horizPadding:int = ( _padding.left + _padding.right );
 			// Use TextBlock factory to create TextLines and add to the display.
 			_block.content = new TextElement( _text, _format );
 			_numLines = 0;
-			var line:TextLine = _block.createTextLine( null, _width - doublePadding );
-			var ypos:int = 0;
+			var line:TextLine = _block.createTextLine( null, _width - horizPadding );
+			var ypos:int = _padding.top;
 			while( line )
 			{
 				ypos += line.height;
@@ -148,11 +150,11 @@ package com.custardbelly.as3flobile.controls.text
 				
 				_numLines++;
 				// Get next line from factory.
-				line = _block.createTextLine( line, _width - doublePadding );
+				line = _block.createTextLine( line, _width - horizPadding );
 			}
 			
 			// Update dimensions and viewport.
-			_lineHolder.width = _width - doublePadding;
+			_lineHolder.width = _width - horizPadding;
 			_lineHolder.height = ypos;
 			_viewport.refresh();
 			
@@ -169,11 +171,12 @@ package com.custardbelly.as3flobile.controls.text
 		{
 			super.invalidateSize();
 			
-			var doublePadding:int = _padding * 2;
-			_viewport.width = _width - doublePadding;
-			_viewport.height = _height - doublePadding;
-			_viewport.x = _padding;
-			_viewport.y = _padding;
+			var horizPadding:int = ( _padding.left + _padding.right );
+			var vertPadding:int = ( _padding.top + _padding.bottom );
+			_viewport.width = _width - horizPadding;
+			_viewport.height = _height - vertPadding;
+			_viewport.x = _padding.left;
+			_viewport.y = _padding.top;
 			invalidateTextDisplay();
 		}
 		
@@ -292,16 +295,15 @@ package com.custardbelly.as3flobile.controls.text
 		}
 		
 		/**
-		 * Accessor/Modifier for the padding offset of the textual content and the bounds of this control. 
-		 * @return int
+		 * @inherit
 		 */
-		public function get padding():int
+		override public function set padding( value:BoxPadding ):void
 		{
-			return _padding;
-		}
-		public function set padding(value:int):void
-		{
+			if( BoxPadding.equals( _padding, value ) ) return;
+			
 			_padding = value;
+			invalidateTextDisplay();
+			invalidateSize();
 		}
 		
 		/**

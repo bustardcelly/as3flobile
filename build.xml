@@ -64,6 +64,7 @@
 			<arg line="-library-path+=${air.lib.dir}" />
 			<arg line="-source-path ${src.dir}" />
 			<arg line="-doc-sources ${src.dir} " />
+			<arg line="-lenient" />
 			<arg line="-output ${doc.dir}" />
 			<arg line="-window-title 'AS3Flobile Library - ${library.name}' "/>
 		</exec>

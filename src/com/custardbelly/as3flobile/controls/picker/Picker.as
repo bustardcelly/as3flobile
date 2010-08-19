@@ -29,7 +29,6 @@ package com.custardbelly.as3flobile.controls.picker
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
 	import com.custardbelly.as3flobile.controls.list.IScrollListDelegate;
-	import com.custardbelly.as3flobile.controls.list.layout.IScrollListHorizontalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
@@ -49,6 +48,7 @@ package com.custardbelly.as3flobile.controls.picker
 		protected var _columns:Vector.<IScrollListContainer>;
 		protected var _scrollBank:PickerScrollBank;
 		protected var _columnWidthCache:Vector.<Number>;
+		protected var _columnSeperatorLength:int;
 		
 		protected var _selectedItemOffsetForCompare:Number;
 		
@@ -79,18 +79,22 @@ package com.custardbelly.as3flobile.controls.picker
 		override protected function initialize():void
 		{
 			super.initialize();
-			
+			// My size.
 			_width = 300;
 			_height = 180;
-			
+			// Default item height in each column list.
 			_itemHeight = 48;
 			
 			// Picker scroll bank is a bank to retrieve and return IScrollContainer instance as needed.
 			_scrollBank = new PickerScrollBank();
-			
+			// Create empty vectors.
 			_columns = new Vector.<IScrollListContainer>();
 			_columnWidthCache = new Vector.<Number>();
-			
+			// Set seperation length
+			_columnSeperatorLength = 4;
+			// Update BoxPadding model.
+			updatePadding( 4, 4, 4, 4 );
+			// SKin it.
 			_skin = new PickerSkin();
 			_skin.target = this;
 		}
@@ -159,7 +163,7 @@ package com.custardbelly.as3flobile.controls.picker
 			// Fill column width cache for layout.
 			fillColumnWidthCache();
 			// Update padding and display.
-			updatePadding();
+			updatePaddingOnColumnLists();
 			updateDisplay();
 		}
 		
@@ -177,8 +181,8 @@ package com.custardbelly.as3flobile.controls.picker
 				list = _columns[i];
 				setListLayoutItemHeight( list, _itemHeight );	
 			}
-			
-			updatePadding();
+			// Update padding and display.
+			updatePaddingOnColumnLists();
 			updateDisplay();
 		}
 		
@@ -200,7 +204,7 @@ package com.custardbelly.as3flobile.controls.picker
 		override protected function invalidateSize():void
 		{
 			// Update box padding for each scroll list.
-			updatePadding();
+			updatePaddingOnColumnLists();
 			super.invalidateSize();
 		}
 		
@@ -209,7 +213,7 @@ package com.custardbelly.as3flobile.controls.picker
 		 * 
 		 * Updates the box padding for each scroll list. This is needed as the list should scroll to the target of the selection bar, not to position and height of this control.
 		 */
-		protected function updatePadding():void
+		protected function updatePaddingOnColumnLists():void
 		{
 			var offset:int = ( _height - _itemHeight ) * 0.5;
 			var i:int = _columns.length;
@@ -241,10 +245,16 @@ package com.custardbelly.as3flobile.controls.picker
 			list.itemRenderer = column.itemRenderer;
 			list.delegate = this;
 			list.seperatorLength = 1;
-			list.padding = 0;
+			list.padding = getDefaultColumnListPadding( list.padding );
 			list.selectionEnabled = false;
 			setListLayoutItemHeight( list, _itemHeight );
 			return list;
+		}
+		
+		protected function getDefaultColumnListPadding( padding:BoxPadding ):BoxPadding
+		{
+			padding.left = padding.top = padding.right = padding.bottom = 0;
+			return padding;
 		}
 		
 		/**
@@ -417,6 +427,34 @@ package com.custardbelly.as3flobile.controls.picker
 		}
 		
 		/**
+		 * Returns the selected index of a specific column list by target index. 
+		 * @param columnIndex int The target column list at index.
+		 * @return int The selected index of the column list.
+		 */
+		public function getSelectedIndex( columnIndex:int ):int
+		{
+			if( columnIndex > _columns.length - 1 ) return -1;
+			
+			return _columns[columnIndex].selectedIndex;
+		}
+		
+		/**
+		 * Sets and scrolls to position in column list at target index. 
+		 * @param index int The desired selected index of the column list.
+		 * @param columnIndex The index of the column list within this control.
+		 * @return Boolean Flag of successfully selecting index.
+		 */
+		public function setSelectedIndex( index:int, columnIndex:int ):Boolean
+		{
+			if( columnIndex > _columns.length - 1 ) return false;
+			
+			var columnList:IScrollListContainer = _columns[columnIndex];
+			columnList.selectedIndex = index;
+			columnList.scrollPositionToIndex( index );
+			return true;
+		}
+		
+		/**
 		 * @copy IDisposable#dispose()
 		 */
 		override public function dispose():void
@@ -431,6 +469,25 @@ package com.custardbelly.as3flobile.controls.picker
 			
 			_dataProvider = null;
 		}
+		
+		/**
+		 * Accessor/Modifier for the seperation space between column lists. 
+		 * @return 
+		 * 
+		 */
+		public function get columnSeperatorLength():int
+		{
+			return _columnSeperatorLength;
+		}
+		public function set columnSeperatorLength(value:int):void
+		{
+			if( _columnSeperatorLength == value ) return;
+			
+			_columnSeperatorLength = value;
+			updateDisplay();
+		}
+		
+		
 		
 		/**
 		 * Accessor/Modifier for the item height of the layout for each column scroll list. 

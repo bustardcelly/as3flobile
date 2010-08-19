@@ -59,6 +59,12 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		function deactivate():void;
 		
 		/**
+		 * Returns flag of content being active. 
+		 * @return Boolean
+		 */
+		function isActive():Boolean;
+		
+		/**
 		 * Accessor/Modifier for the coordinate position of the top/left corner of content within the viewport. 
 		 * @return Point
 		 */

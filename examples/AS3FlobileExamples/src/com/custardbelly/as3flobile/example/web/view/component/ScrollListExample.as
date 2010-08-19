@@ -32,6 +32,14 @@ package com.custardbelly.as3flobile.example.web.view.component
 			label.text = "ScrollList Example:";
 			label.autosize = true;
 			addChild( label );
+			
+			label = new Label();
+			label.multiline = true;
+			label.autosize = true;
+			label.width = 300;
+			label.y = 30;
+			label.text = "A ScrollList control is a list that reponds to mouse/touch gestures to traverse through a list of items.";
+			addChild( label );
 				
 			_verticalLayout = new ScrollListVerticalLayout();
 			_verticalLayout.itemHeight = 60;
@@ -46,7 +54,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_list = new ScrollList();
 			_list.width = 300;
 			_list.height = 300;
-			_list.y = 30;
+			_list.y = 90;
 			_list.layout = _verticalLayout
 			addChild( _list );
 			
@@ -55,14 +63,14 @@ package com.custardbelly.as3flobile.example.web.view.component
 			var button:Button = new Button();
 			button.label = "switch layout";
 			button.x = 0;
-			button.y = 340;
+			button.y = 400;
 			button.addEventListener( MouseEvent.CLICK, handleSwitchLayout );
 			addChild( button );
 			
 			button = new Button();
 			button.label = "toggle variable size";
 			button.x = 110;
-			button.y = 340;
+			button.y = 400;
 			button.addEventListener( MouseEvent.CLICK, handleVariableSize );
 			addChild( button );
 		}

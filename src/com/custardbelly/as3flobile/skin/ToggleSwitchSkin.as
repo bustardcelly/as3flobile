@@ -72,7 +72,8 @@ package com.custardbelly.as3flobile.skin
 		protected function updateBackground( display:Sprite, width:int, height:int ):void
 		{
 			display.graphics.clear();
-			display.graphics.beginFill( 0x333333 );
+			display.graphics.beginFill( 0x666666 );
+			display.graphics.lineStyle( 2, 0xAAAAAA, 1, true, "normal", "square", "miter" );
 			display.graphics.drawRect( 0, 0, width, height );
 			display.graphics.endFill();
 		}
@@ -92,6 +93,14 @@ package com.custardbelly.as3flobile.skin
 			display.graphics.beginFill( 0xAAAAAA );
 			display.graphics.drawRect( 0, 0, halfWidth, height );
 			display.graphics.endFill();
+			display.graphics.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( halfWidth - 1, 1 );
+			display.graphics.lineTo( halfWidth - 1, height );
+			display.graphics.lineTo( 1, height - 1 );
+			display.graphics.lineStyle( 2, 0xCCCCCC, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( 1, height - 1 );
+			display.graphics.lineTo( 1, 1 );
+			display.graphics.lineTo( halfWidth - 1, 1 );
 		}
 		
 		/**
