@@ -1,7 +1,9 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
+	import com.custardbelly.as3flobile.controls.checkbox.CheckBox;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
 	
 	import flash.display.Sprite;
 	
@@ -23,10 +25,16 @@ package com.custardbelly.as3flobile.example.web.view.component
 			addChild( label );
 			
 			var toggleButton:ToggleButton = new ToggleButton();
-			toggleButton.y = 105;
+			toggleButton.y = 120;
 			toggleButton.width = 180;
 			toggleButton.label = "i am a toggle button!";
 			addChild( toggleButton );
+			
+			var checkBox:CheckBox = new CheckBox();
+			checkBox.label = "i am a check box!";
+			checkBox.y = 190;
+			addChild( checkBox );
+			
 		}
 	}
 }
