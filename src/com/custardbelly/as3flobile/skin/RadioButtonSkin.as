@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: CheckBoxSkin.as</p>
+ * <p>Class File: RadioButtonSkin.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,20 +27,20 @@
 package com.custardbelly.as3flobile.skin
 {
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
-	import com.custardbelly.as3flobile.controls.checkbox.CheckBox;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.controls.radiobutton.RadioButton;
 	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
 
 	/**
-	 * CheckBoxSkin is the base class for skinning a CheckBox control. 
+	 * RadioButtonSkin is a basic skin for a RadioButton control. 
 	 * @author toddanderson
 	 */
-	public class CheckBoxSkin extends Skin
+	public class RadioButtonSkin extends Skin
 	{
 		/**
 		 * Constructor.
 		 */
-		public function CheckBoxSkin() { super(); }
+		public function RadioButtonSkin() { super(); }
 		
 		/**
 		 * @private
@@ -81,27 +81,30 @@ package com.custardbelly.as3flobile.skin
 		protected function updatePosition( width:int, height:int ):void
 		{
 			const offset:int = 10;
-			var checkBoxTarget:CheckBox = ( _target as CheckBox );
-			var boxDisplay:ToggleButton = checkBoxTarget.boxDisplay;
-			var labelDisplay:Label = checkBoxTarget.labelDisplay;
-			var labelPlacement:int = checkBoxTarget.labelPlacement;
-						
-			labelDisplay.width = width - boxDisplay.width - offset;
+			var radioTarget:RadioButton = ( _target as RadioButton );
+			var radioDisplay:ToggleButton = radioTarget.radioDisplay;
+			var labelDisplay:Label = radioTarget.labelDisplay;
+			var labelPlacement:int = radioTarget.labelPlacement;
+			
+			// update label width.
+			labelDisplay.width = width - radioDisplay.width - offset;
+			// Update placement along x axis.
 			if( labelPlacement == BoxPositionEnum.LEFT )
 			{
 				labelDisplay.x = 0;
-				boxDisplay.x = labelDisplay.x + labelDisplay.width + offset;
+				radioDisplay.x = labelDisplay.x + labelDisplay.width + offset;
 			}
 			else
 			{
-				boxDisplay.x = 0;
-				labelDisplay.x = boxDisplay.x + boxDisplay.width + offset;
+				radioDisplay.x = 0;
+				labelDisplay.x = radioDisplay.x + radioDisplay.width + offset;
 			}
 			
-			boxDisplay.y = ( height - boxDisplay.height ) * 0.5;
+			// Update placement along y-axis.
+			radioDisplay.y = ( height - radioDisplay.height ) * 0.5;
 			if( labelDisplay.height > height )
 			{
-				labelDisplay.y = 0;	
+				labelDisplay.y = 0;
 			}
 			else
 			{
@@ -116,9 +119,9 @@ package com.custardbelly.as3flobile.skin
 		{
 			super.initializeDisplay( width, height );
 			
-			var checkBoxTarget:CheckBox = ( _target as CheckBox );
-			initializeBoxToggle( checkBoxTarget.boxDisplay, width, height );
-			updateLabelDisplay( checkBoxTarget.labelDisplay, width, height );
+			var radioTarget:RadioButton = ( _target as RadioButton );
+			initializeBoxToggle( radioTarget.radioDisplay, width, height );
+			updateLabelDisplay( radioTarget.labelDisplay, width, height );
 			updatePosition( width, height );
 		}
 		
@@ -129,8 +132,8 @@ package com.custardbelly.as3flobile.skin
 		{
 			super.updateDisplay( width, height );
 			
-			var checkBoxTarget:CheckBox = ( _target as CheckBox );
-			updateLabelDisplay( checkBoxTarget.labelDisplay, width, height );
+			var radioTarget:RadioButton = ( _target as RadioButton );
+			updateLabelDisplay( radioTarget.labelDisplay, width, height );
 			updatePosition( width, height );
 		}
 	}

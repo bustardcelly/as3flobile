@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: CheckBox.as</p>
+ * <p>Class File: RadioButton.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +24,7 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.checkbox
+package com.custardbelly.as3flobile.controls.radiobutton
 {
 	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
@@ -32,18 +32,20 @@ package com.custardbelly.as3flobile.controls.checkbox
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
-	import com.custardbelly.as3flobile.skin.CheckBoxSkin;
-	import com.custardbelly.as3flobile.skin.CheckBoxToggleSkin;
+	import com.custardbelly.as3flobile.skin.RadioButtonSkin;
+	import com.custardbelly.as3flobile.skin.RadioButtonToggleSkin;
 	
 	import flash.events.MouseEvent;
 	
 	/**
-	 * CheckBox is a control display for a user to change selection on a model. 
+	 * RadioButton is a control that toggles the selection of a model.
+	 * Though it is possible to create and add a RadioButton to a display directly, it is more common to use a RadioGroup to manage the selection of a model across multiple RadioButtons.
+	 * @see RadioGroup
 	 * @author toddanderson
 	 */
-	public class CheckBox extends AS3FlobileComponent implements IToggleButtonDelegate
+	public class RadioButton extends AS3FlobileComponent implements IToggleButtonDelegate
 	{
-		protected var _boxDisplay:ToggleButton;
+		protected var _radioDisplay:ToggleButton;
 		protected var _labelDisplay:Label;
 		
 		protected var _currentState:int;
@@ -51,23 +53,23 @@ package com.custardbelly.as3flobile.controls.checkbox
 		protected var _label:String;
 		protected var _multiline:Boolean;
 		protected var _labelPlacement:int;
-		protected var _delegate:ICheckBoxDelegate;
+		protected var _delegate:IRadioButtonDelegate;
 		
 		/**
 		 * Constructor.
 		 */
-		public function CheckBox() { super(); }
+		public function RadioButton() { super(); }
 		
 		/**
-		 * Status util method to create a new CheckBox with a specific ICheckBoxDelegate reference. 
-		 * @param delegate ICheckBoxDelegate
-		 * @return CheckBox
+		 * Static util function to create a new RadioButton instance with an IRadioButtonDelegate reference.
+		 * @param delegate IRadioButtonDelegate
+		 * @return RadioButton
 		 */
-		static public function initWithDelegate( delegate:ICheckBoxDelegate ):CheckBox
+		static public function initWithDelegate( delegate:IRadioButtonDelegate ):RadioButton
 		{
-			var checkBox:CheckBox = new CheckBox();
-			checkBox.delegate = delegate;
-			return checkBox;
+			var radio:RadioButton = new RadioButton();
+			radio.delegate = delegate;
+			return radio;
 		}
 		
 		/**
@@ -77,12 +79,10 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			super.initialize();
 			
-			// *Note: 	The height property is regardless in this context.
-			//			The height will be updated once the group is filled with content.
 			_width = 180;
 			_height = 28;
 			
-			_skin = new CheckBoxSkin();
+			_skin = new RadioButtonSkin();
 			_skin.target = this;
 			
 			_labelPlacement = BoxPositionEnum.RIGHT;
@@ -95,21 +95,21 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			super.createChildren();
 			
-			_boxDisplay = ToggleButton.initWithDelegate( this );
-			_boxDisplay.skin = new CheckBoxToggleSkin();
-			addChild( _boxDisplay );
+			_radioDisplay = ToggleButton.initWithDelegate( this );
+			_radioDisplay.skin = new RadioButtonToggleSkin();
+			addChild( _radioDisplay );
 			
 			_labelDisplay = new Label();
 			_labelDisplay.autosize = true;
-			_labelDisplay.mouseChildren = false;
 			_labelDisplay.mouseEnabled = true;
+			_labelDisplay.mouseChildren = false;
 			addChild( _labelDisplay );
 		}
 		
 		/**
 		 * @private 
 		 * 
-		 * Validates the textual content of the label.
+		 * Validate the textual content to display.
 		 */
 		protected function invalidateLabel():void
 		{
@@ -120,14 +120,17 @@ package com.custardbelly.as3flobile.controls.checkbox
 		/**
 		 * @private 
 		 * 
-		 * Validates the multiline flag for the label display.
+		 * Validates the flag toshow mutliline text in the display.
 		 */
 		protected function invalidateMultiline():void
 		{
-			_labelDisplay.multiline = true;
+			_labelDisplay.multiline = _multiline;
 			invalidateSize();
 		}
 		
+		/**
+		 * @inherit
+		 */
 		override protected function invalidateSize():void
 		{
 			// The true size of this control is actually based on the size of the label if it.
@@ -163,11 +166,11 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			_currentState = value ? BasicStateEnum.SELECTED : BasicStateEnum.NORMAL;
 			_skinState = _currentState;
-			_boxDisplay.selected = value;
+			_radioDisplay.selected = value;
 			updateDisplay();
 			
 			if( _delegate )
-				_delegate.checkBoxSelectionChange( this, value );
+				_delegate.radioButtonSelectionChange( this, value );
 		}
 		
 		/**
@@ -186,7 +189,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		/**
 		 * @private
 		 * 
-		 * Event handle for click detection on label display. 
+		 * Event handler for click on the labell display. 
 		 * @param evt MouseEvent
 		 */
 		protected function handleLabelClick( evt:MouseEvent ):void
@@ -195,7 +198,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		}
 		
 		/**
-		 * IToggleButtonDelegate implementation for selection change on the box display. 
+		 * IToggleButtonDelegate implementation for the toggle button of this control. 
 		 * @param toggleButton ToggleButton
 		 * @param selected Boolean
 		 */
@@ -214,22 +217,21 @@ package com.custardbelly.as3flobile.controls.checkbox
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
-			_boxDisplay = null;
+			_radioDisplay = null;
 			_labelDisplay = null;
-			_delegate = null;
 		}
-		
+
 		/**
-		 * Returns the toggle box display instance for skinning. 
+		 * Returns the toggle button radio display for skinning. 
 		 * @return ToggleButton
 		 */
-		public function get boxDisplay():ToggleButton
+		public function get radioDisplay():ToggleButton
 		{
-			return _boxDisplay;
+			return _radioDisplay;
 		}
 		
 		/**
-		 * Returns the label display instance for skinning. 
+		 * Returns the label display for skinnning. 
 		 * @return Label
 		 */
 		public function get labelDisplay():Label
@@ -238,40 +240,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		}
 		
 		/**
-		 * Accessor/Modifier for the label diplay to render text acorss multiple lines. 
-		 * @return Boolean
-		 */
-		public function get multiline():Boolean
-		{
-			return _multiline;
-		}
-		public function set multiline( value:Boolean ):void
-		{
-			if( _multiline == value ) return;
-			
-			_multiline = value;
-			invalidateMultiline();
-		}
-		
-		/**
-		 * Accessor/Modifier for the placement of the label within this control. Valid values are on BoxPositionEnum. 
-		 * @return int
-		 * @see BoxPositionEnum
-		 */
-		public function get labelPlacement():int
-		{
-			return _labelPlacement;
-		}
-		public function set labelPlacement( value:int ):void
-		{
-			if( _labelPlacement == value ) return;
-			
-			_labelPlacement = value;
-			invalidateSize();
-		}
-
-		/**
-		 * Accessor/Modifier for the textusl content to display. 
+		 * Accessor/Modifier for the textual content of the display. 
 		 * @return String
 		 */
 		public function get label():String
@@ -287,14 +256,46 @@ package com.custardbelly.as3flobile.controls.checkbox
 		}
 		
 		/**
-		 * Accessor/Modifier for the ICheckBoxDelegate client requiring notification on check to selection.  
-		 * @return ICheckBoxDelegate
+		 * Accessor/Modifier for flag to show multiline text. 
+		 * @return Boolean
 		 */
-		public function get delegate():ICheckBoxDelegate
+		public function get multiline():Boolean
+		{
+			return _multiline;
+		}
+		public function set multiline( value:Boolean ):void
+		{
+			if( _multiline == value ) return;
+			
+			_multiline = value;
+			invalidateMultiline();
+		}
+		
+		/**
+		 * Accessor/Modifier for positon of label within this control display. 
+		 * @return int
+		 */
+		public function get labelPlacement():int
+		{
+			return _labelPlacement;
+		}
+		public function set labelPlacement( value:int ):void
+		{
+			if( _labelPlacement == value ) return;
+			
+			_labelPlacement = value;
+			invalidateSize();
+		}
+
+		/**
+		 * Accessor/Modifier for the client that requires notification of changes to this control. 
+		 * @return IRadioButtonDelegate
+		 */
+		public function get delegate():IRadioButtonDelegate
 		{
 			return _delegate;
 		}
-		public function set delegate(value:ICheckBoxDelegate):void
+		public function set delegate( value:IRadioButtonDelegate ):void
 		{
 			_delegate = value;
 		}
@@ -310,7 +311,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		public function set selected( value:Boolean ):void
 		{
 			if( isStateEqual( value ) ) return;
-			
+			// Toggle.
 			toggleState( value );
 		}
 	}

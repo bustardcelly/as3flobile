@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: CheckBoxToggleSkin.as</p>
+ * <p>Class File: RadioButtonToggleSkin.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,15 +31,15 @@ package com.custardbelly.as3flobile.skin
 	import flash.display.Graphics;
 
 	/**
-	 * CheckBoxToggleSkin is a skin class for the toggle display in a CheckBox control. 
+	 * RadioButtonToggleSkin is a base skin class for the toggle control on a RadioButton control. 
 	 * @author toddanderson
 	 */
-	public class CheckBoxToggleSkin extends ToggleButtonSkin
+	public class RadioButtonToggleSkin extends ToggleButtonSkin
 	{
 		/**
 		 * Constructor.
 		 */
-		public function CheckBoxToggleSkin() { super(); }
+		public function RadioButtonToggleSkin() { super(); }
 		
 		/**
 		 * @inherit
@@ -48,15 +48,28 @@ package com.custardbelly.as3flobile.skin
 		{
 			if( display == null ) return;
 			
-			super.updateBackground( display, width, height );
+			var size:int = ( ( width > height ) ? height : width ) * 0.5;
+			var halfSize:int = size * 0.5;
 			
+			display.clear();
 			if( _target.skinState == BasicStateEnum.SELECTED )
 			{	
-				var position:Number = height * 0.25;
-				display.lineStyle( 4, 0xFF7F00 );
-				display.moveTo( position, position );
-				display.lineTo( width * 0.5, height - position );
-				display.lineTo( width + position, -position );
+				display.beginFill( 0xEEEEEE );
+				display.lineStyle( 2, 0x999999 );
+				display.drawCircle( size, size, size );
+				display.endFill();
+				
+				display.beginFill( 0xFF7F00 );
+				display.lineStyle( 2, 0xDDDDDD );
+				display.drawCircle( size, size, halfSize );
+				display.endFill();
+			}
+			else
+			{
+				display.beginFill( 0xAAAAAA );
+				display.lineStyle( 2, 0xCCCCCC );
+				display.drawCircle( size, size, size );
+				display.endFill();
 			}
 		}
 	}

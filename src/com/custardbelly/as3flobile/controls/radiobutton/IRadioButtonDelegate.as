@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: CheckBoxToggleSkin.as</p>
+ * <p>Class File: IRadioButtonDelegate.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,40 +24,19 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.skin
+package com.custardbelly.as3flobile.controls.radiobutton
 {
-	import com.custardbelly.as3flobile.enum.BasicStateEnum;
-	
-	import flash.display.Graphics;
-
 	/**
-	 * CheckBoxToggleSkin is a skin class for the toggle display in a CheckBox control. 
+	 * IRadioButtonDelegate is an object requiring notifications from a RadioButton control. 
 	 * @author toddanderson
 	 */
-	public class CheckBoxToggleSkin extends ToggleButtonSkin
+	public interface IRadioButtonDelegate
 	{
 		/**
-		 * Constructor.
+		 * Notify of change to selection flag. 
+		 * @param radioButton RadioButton
+		 * @param selected Boolean
 		 */
-		public function CheckBoxToggleSkin() { super(); }
-		
-		/**
-		 * @inherit
-		 */
-		override protected function updateBackground( display:Graphics, width:int, height:int ):void
-		{
-			if( display == null ) return;
-			
-			super.updateBackground( display, width, height );
-			
-			if( _target.skinState == BasicStateEnum.SELECTED )
-			{	
-				var position:Number = height * 0.25;
-				display.lineStyle( 4, 0xFF7F00 );
-				display.moveTo( position, position );
-				display.lineTo( width * 0.5, height - position );
-				display.lineTo( width + position, -position );
-			}
-		}
+		function radioButtonSelectionChange( radioButton:RadioButton, selected:Boolean ):void;
 	}
 }
