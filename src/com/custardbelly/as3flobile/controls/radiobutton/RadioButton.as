@@ -52,6 +52,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		
 		protected var _label:String;
 		protected var _multiline:Boolean;
+		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
 		protected var _delegate:IRadioButtonDelegate;
 		
@@ -82,6 +83,9 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			_width = 180;
 			_height = 28;
 			
+			_multiline = false;
+			_autosize = false;
+			
 			_skin = new RadioButtonSkin();
 			_skin.target = this;
 			
@@ -100,7 +104,8 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			addChild( _radioDisplay );
 			
 			_labelDisplay = new Label();
-			_labelDisplay.autosize = true;
+			_labelDisplay.multiline = _multiline;
+			_labelDisplay.autosize = _autosize;
 			_labelDisplay.mouseEnabled = true;
 			_labelDisplay.mouseChildren = false;
 			addChild( _labelDisplay );
@@ -125,6 +130,17 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		protected function invalidateMultiline():void
 		{
 			_labelDisplay.multiline = _multiline;
+			invalidateSize();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Validates the autosize flag for the label display.
+		 */
+		protected function invalidateAutosize():void
+		{
+			_labelDisplay.autosize = _autosize;
 			invalidateSize();
 		}
 		
@@ -269,6 +285,22 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			
 			_multiline = value;
 			invalidateMultiline();
+		}
+		
+		/**
+		 * Accessor/Modifier for the label display to auto size based on supplied dimensions. 
+		 * @return Boolean
+		 */
+		public function get autosize():Boolean
+		{
+			return _autosize;
+		}
+		public function set autosize( value:Boolean ):void
+		{
+			if( _autosize == value ) return;
+			
+			_autosize = value;
+			invalidateAutosize();
 		}
 		
 		/**

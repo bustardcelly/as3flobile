@@ -50,6 +50,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		
 		protected var _label:String;
 		protected var _multiline:Boolean;
+		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
 		protected var _delegate:ICheckBoxDelegate;
 		
@@ -82,6 +83,9 @@ package com.custardbelly.as3flobile.controls.checkbox
 			_width = 180;
 			_height = 28;
 			
+			_multiline = false;
+			_autosize = false;
+			
 			_skin = new CheckBoxSkin();
 			_skin.target = this;
 			
@@ -100,7 +104,8 @@ package com.custardbelly.as3flobile.controls.checkbox
 			addChild( _boxDisplay );
 			
 			_labelDisplay = new Label();
-			_labelDisplay.autosize = true;
+			_labelDisplay.multiline = _multiline;
+			_labelDisplay.autosize = _autosize;
 			_labelDisplay.mouseChildren = false;
 			_labelDisplay.mouseEnabled = true;
 			addChild( _labelDisplay );
@@ -124,10 +129,24 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 */
 		protected function invalidateMultiline():void
 		{
-			_labelDisplay.multiline = true;
+			_labelDisplay.multiline = _multiline;
 			invalidateSize();
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Validates the autosize flag for the label display.
+		 */
+		protected function invalidateAutosize():void
+		{
+			_labelDisplay.autosize = _autosize;
+			invalidateSize();
+		}
+		
+		/**
+		 * @inherit
+		 */
 		override protected function invalidateSize():void
 		{
 			// The true size of this control is actually based on the size of the label if it.
@@ -251,6 +270,22 @@ package com.custardbelly.as3flobile.controls.checkbox
 			
 			_multiline = value;
 			invalidateMultiline();
+		}
+		
+		/**
+		 * Accessor/Modifier for the label display to auto size based on supplied dimensions. 
+		 * @return Boolean
+		 */
+		public function get autosize():Boolean
+		{
+			return _autosize;
+		}
+		public function set autosize( value:Boolean ):void
+		{
+			if( _autosize == value ) return;
+			
+			_autosize = value;
+			invalidateAutosize();
 		}
 		
 		/**

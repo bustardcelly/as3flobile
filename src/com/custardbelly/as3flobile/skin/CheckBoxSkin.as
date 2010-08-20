@@ -90,7 +90,7 @@ package com.custardbelly.as3flobile.skin
 			if( labelPlacement == BoxPositionEnum.LEFT )
 			{
 				labelDisplay.x = 0;
-				boxDisplay.x = labelDisplay.x + labelDisplay.width + offset;
+				boxDisplay.x = labelDisplay.x + labelDisplay.measuredWidth + offset;
 			}
 			else
 			{
@@ -105,7 +105,7 @@ package com.custardbelly.as3flobile.skin
 			}
 			else
 			{
-				labelDisplay.y = ( height - labelDisplay.height ) * 0.5;
+				labelDisplay.y = ( height - labelDisplay.measuredHeight ) * 0.5;
 			}
 		}
 		

@@ -243,6 +243,7 @@ package com.custardbelly.as3flobile.controls.picker
 			var list:IScrollListContainer = _scrollBank.getScrollListContainer();
 			list.dataProvider = column.data;
 			list.itemRenderer = column.itemRenderer;
+			list.layout = column.layout;
 			list.delegate = this;
 			list.seperatorLength = 1;
 			list.padding = getDefaultColumnListPadding( list.padding );
@@ -449,7 +450,7 @@ package com.custardbelly.as3flobile.controls.picker
 			if( columnIndex > _columns.length - 1 ) return false;
 			
 			var columnList:IScrollListContainer = _columns[columnIndex];
-			columnList.selectedIndex = index;
+//			columnList.selectedIndex = index;
 			columnList.scrollPositionToIndex( index );
 			return true;
 		}

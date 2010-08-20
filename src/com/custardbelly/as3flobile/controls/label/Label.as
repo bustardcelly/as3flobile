@@ -66,6 +66,9 @@ package com.custardbelly.as3flobile.controls.label
 		protected var _rendererWidth:int;
 		protected var _rendererHeight:int;
 		
+		protected var _measuredWidth:int;
+		protected var _measuredHeight:int;
+		
 		/**
 		 * Constructor.
 		 */
@@ -110,16 +113,20 @@ package com.custardbelly.as3flobile.controls.label
 			_rendererHeight = ( _autosize ) ? 0 : _height;
 			_renderer.render( _textElement, _rendererWidth, _rendererHeight );
 			
-			// update held height.
-			if( _autosize && numChildren > 0 )
+			if( numChildren > 0 )
 			{
+				// Updates measured bounds.
 				var bounds:Rectangle = getBounds(this);
 				var lastChild:TextLine = getChildAt( numChildren - 1 ) as TextLine;
-				_width = bounds.width;
-				_height = bounds.height + ( lastChild.ascent - lastChild.descent );
+				_measuredWidth = bounds.width;
+				_measuredHeight = bounds.height + ( lastChild.ascent - ( lastChild.descent * 2 ) );
+				if( _autosize )
+				{
+					_width = _measuredWidth;
+					_height = _measuredHeight;
+				}
 			}
 		}
-		
 		/**
 		 * @private 
 		 * 
@@ -127,6 +134,8 @@ package com.custardbelly.as3flobile.controls.label
 		 */
 		override protected function invalidateSize():void
 		{
+			_measuredWidth = _width;
+			_measuredHeight = _height;
 			invalidateTextDisplay();
 		}
 		
@@ -157,6 +166,26 @@ package com.custardbelly.as3flobile.controls.label
 			_truncationRenderer = null;
 			
 			_renderer = null;
+		}
+		
+		/**
+		 * Retruns the measured width of this instance based on autosize flag. 
+		 * If autosize is set to true the measured width of this control is based on the content.
+		 * @return int
+		 */
+		public function get measuredWidth():int
+		{
+			return _measuredWidth;
+		}
+		
+		/**
+		 * Returns the measured height of this instance based on autosize flag.
+		 * If autosize is set to true and multiline set to true the measured height of this control is based on the content. 
+		 * @return int
+		 */
+		public function get measuredHeight():int
+		{
+			return _measuredHeight;
 		}
 		
 		/**
@@ -274,6 +303,6 @@ package com.custardbelly.as3flobile.controls.label
 			_truncationRenderer.textAlign = _textAlign;
 			_multilineRenderer.textAlign = _textAlign;
 			if( _text != null ) invalidateTextDisplay();
-		}
+		}		
 	}
 }

@@ -175,18 +175,6 @@ package com.custardbelly.as3flobile.controls.list.layout
 		}
 		
 		/**
-		 * @private
-		 * 
-		 * Factory method to create the IScrollListItemRenderer instance based on the item renderer class. 
-		 * @return IScrollListItemRenderer
-		 */
-		protected function createPaddingRenderer( rendererClass:Class ):IScrollListItemRenderer
-		{
-			var renderer:IScrollListItemRenderer = new rendererClass() as IScrollListItemRenderer;
-			return renderer;
-		}
-		
-		/**
 		 * @copy IScrollListLayout#updateDisplay()
 		 */
 		public function updateDisplay():void

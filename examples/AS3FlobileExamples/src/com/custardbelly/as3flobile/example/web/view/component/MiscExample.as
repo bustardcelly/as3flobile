@@ -35,7 +35,6 @@ package com.custardbelly.as3flobile.example.web.view.component
 			var checkBox:CheckBox = new CheckBox();
 			checkBox.label = "i am a check box!";
 			checkBox.width = 240;
-			checkBox.multiline = true;
 			checkBox.y = 190;
 			addChild( checkBox );
 			
@@ -61,6 +60,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			var button:RadioButton = new RadioButton();
 			button.label = label;
 			button.multiline = true;
+			button.autosize = true;
 			return button;
 		}
 	}

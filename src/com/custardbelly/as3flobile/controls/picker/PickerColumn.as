@@ -26,7 +26,9 @@
  */
 package com.custardbelly.as3flobile.controls.picker
 {
+	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
+	import com.custardbelly.as3flobile.controls.picker.layout.PickerColumnVerticalLayout;
 	
 	import flash.utils.getQualifiedClassName;
 
@@ -38,8 +40,10 @@ package com.custardbelly.as3flobile.controls.picker
 	{
 		protected var _width:Number;
 		protected var _itemRenderer:String;
+		protected var _layout:IScrollListVerticalLayout;
 		protected var _data:Array;
 		
+		protected var _defaultLayout:IScrollListVerticalLayout;
 		protected var _defaultItemRenderer:String;
 		
 		/**
@@ -48,10 +52,11 @@ package com.custardbelly.as3flobile.controls.picker
 		 * @param itemRenderer String The fully-qualified classname of the itemRenderer.
 		 * @param width Number The optional defined width of the column
 		 */
-		public function PickerColumn( data:Array = null, itemRenderer:String = null, width:Number = Number.NaN )
+		public function PickerColumn( data:Array = null, itemRenderer:String = null, layout:IScrollListVerticalLayout = null, width:Number = Number.NaN )
 		{
 			_width = width;
 			_itemRenderer = ( itemRenderer ) ? itemRenderer : getDefaultItemRenderer();
+			_layout = ( layout ) ? layout : getDefaultLayout();
 			_data = ( data ) ? data : [];
 		}
 		
@@ -66,6 +71,19 @@ package com.custardbelly.as3flobile.controls.picker
 				_defaultItemRenderer = getQualifiedClassName( DefaultScrollListItemRenderer );
 			}
 			return _defaultItemRenderer;
+		}
+		
+		/**
+		 * Returns the default layout to display items in a column list. 
+		 * @return IScrollListVerticalLayout
+		 */
+		public function getDefaultLayout():IScrollListVerticalLayout
+		{
+			if( _defaultLayout == null )
+			{
+				_defaultLayout = new PickerColumnVerticalLayout();
+			}
+			return _defaultLayout;
 		}
 
 		/**
@@ -92,6 +110,19 @@ package com.custardbelly.as3flobile.controls.picker
 		public function set itemRenderer( value:String ):void
 		{
 			_itemRenderer = value;
+		}
+		
+		/**
+		 * Accessor/Modifier of the layout instance to used when displaying items within a column list. Default is null. 
+		 * @return IScrollListVerticalLayout
+		 */
+		public function get layout():IScrollListVerticalLayout
+		{
+			return _layout;
+		}
+		public function set layout(value:IScrollListVerticalLayout):void
+		{
+			_layout = value;
 		}
 
 		/**
