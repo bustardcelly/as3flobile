@@ -81,7 +81,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			// *Note: 	The height property is regardless in this context.
 			//			The height will be updated once the group is filled with content.
 			_width = 180;
-			_height = 28;
+			_height = 34;
 			
 			_multiline = false;
 			_autosize = false;

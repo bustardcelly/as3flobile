@@ -52,7 +52,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function initializeBoxToggle( display:ToggleButton, width:int, height:int ):void
 		{
-			const maxSize:int = 28;
+			const maxSize:int = 34;
 			var size:int = ( height > maxSize ) ? maxSize : height;
 			display.width = size;
 			display.height = size;

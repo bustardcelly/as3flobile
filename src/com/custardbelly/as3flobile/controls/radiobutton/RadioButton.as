@@ -81,7 +81,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			super.initialize();
 			
 			_width = 180;
-			_height = 28;
+			_height = 34;
 			
 			_multiline = false;
 			_autosize = false;

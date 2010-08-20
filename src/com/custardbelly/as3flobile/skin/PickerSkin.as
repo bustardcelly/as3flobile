@@ -136,7 +136,7 @@ package com.custardbelly.as3flobile.skin
 			var itemHeight:int = pickerTarget.itemHeight;
 			
 			// Position selection bar in the middle of the target.
-			selectionBar.y = ( height - selectionBar.height ) * 0.5;
+			selectionBar.y = ( ( height + (padding.top + padding.bottom) ) - selectionBar.height ) * 0.5;
 			
 			// Find the available percentage dimensions for column lists based on theri specified width and the alloted width fo the target.
 			var i:int;

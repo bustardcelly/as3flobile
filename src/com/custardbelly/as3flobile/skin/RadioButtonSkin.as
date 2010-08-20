@@ -29,7 +29,11 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.radiobutton.RadioButton;
+	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
+	
+	import flash.text.engine.ElementFormat;
+	import flash.text.engine.FontDescription;
 
 	/**
 	 * RadioButtonSkin is a basic skin for a RadioButton control. 
@@ -37,10 +41,18 @@ package com.custardbelly.as3flobile.skin
 	 */
 	public class RadioButtonSkin extends Skin
 	{
+		protected var _normalLabelFormat:ElementFormat;
+		protected var _selectedLabelFormat:ElementFormat;
+		
 		/**
 		 * Constructor.
 		 */
-		public function RadioButtonSkin() { super(); }
+		public function RadioButtonSkin() 
+		{ 
+			super();
+			_normalLabelFormat = new ElementFormat( new FontDescription( "DroidSans" ), 14 );
+			_selectedLabelFormat = new ElementFormat( new FontDescription( "DroidSans" ), 14, 0x668014 );
+		}
 		
 		/**
 		 * @private
@@ -52,7 +64,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function initializeBoxToggle( display:ToggleButton, width:int, height:int ):void
 		{
-			const maxSize:int = 28;
+			const maxSize:int = 34;
 			var size:int = ( height > maxSize ) ? maxSize : height;
 			display.width = size;
 			display.height = size;
@@ -68,7 +80,11 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateLabelDisplay( display:Label, width:int, height:int ):void
 		{
-			
+			var isSelected:Boolean = _target.skinState == BasicStateEnum.SELECTED;
+			if( !isSelected )
+				display.format = _normalLabelFormat;
+			else
+				display.format = _selectedLabelFormat;
 		}
 		
 		/**

@@ -287,7 +287,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			else
 			{
 				// Since we are scrolling content up, the value is always negative. Return it positive.
-				_indexPositionCache.y = -( ( cells[index] as DisplayObject ).y - _padding.top );
+				_indexPositionCache.y = -( ( cells[index] as DisplayObject ).y - _padding.top ) - _target.padding.top;
 			}
 			_indexPositionCache.x = 0;
 			return _indexPositionCache;

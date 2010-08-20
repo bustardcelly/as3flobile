@@ -254,7 +254,8 @@ package com.custardbelly.as3flobile.controls.picker
 		
 		protected function getDefaultColumnListPadding( padding:BoxPadding ):BoxPadding
 		{
-			padding.left = padding.top = padding.right = padding.bottom = 0;
+			padding.left = padding.right = 0;
+			padding.top = padding.bottom = 0;
 			return padding;
 		}
 		
@@ -450,7 +451,6 @@ package com.custardbelly.as3flobile.controls.picker
 			if( columnIndex > _columns.length - 1 ) return false;
 			
 			var columnList:IScrollListContainer = _columns[columnIndex];
-//			columnList.selectedIndex = index;
 			columnList.scrollPositionToIndex( index );
 			return true;
 		}
