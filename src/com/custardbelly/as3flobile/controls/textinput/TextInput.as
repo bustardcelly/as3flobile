@@ -66,6 +66,18 @@ package com.custardbelly.as3flobile.controls.textinput
 		public function TextInput() { super(); }
 		
 		/**
+		 * Static util method to create a new instance of TextInput with a specified ITextInputDelegate instance. 
+		 * @param delegate ITextInputDelegate
+		 * @return TextInput
+		 */
+		static public function initWithDelegate( delegate:ITextInputDelegate ):TextInput
+		{
+			var input:TextInput = new TextInput();
+			input.delegate = delegate;
+			return input;
+		}
+		
+		/**
 		 * @inherit
 		 */
 		override protected function initialize():void

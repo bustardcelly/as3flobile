@@ -172,8 +172,11 @@ package com.custardbelly.as3flobile.controls.core
 		 * 
 		 * Invalidates the supplied skin through the skin modifier.
 		 */
-		protected function invalidateSkin():void
+		protected function invalidateSkin( newValue:ISkin ):void
 		{
+			if( _skin != null ) _skin.dispose();
+			
+			_skin = newValue;
 			_skin.target = this;
 			initializeDisplay();
 			updateDisplay();
@@ -264,8 +267,7 @@ package com.custardbelly.as3flobile.controls.core
 		{
 			if( _skin == value ) return;
 			
-			_skin = value;
-			invalidateSkin();
+			invalidateSkin( value );
 		}
 		
 		/**

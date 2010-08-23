@@ -252,6 +252,13 @@ package com.custardbelly.as3flobile.controls.picker
 			return list;
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Returns the default BoxPadding model for each IScrollListContainer. 
+		 * @param padding BoxPadding
+		 * @return BoxPadding
+		 */
 		protected function getDefaultColumnListPadding( padding:BoxPadding ):BoxPadding
 		{
 			padding.left = padding.right = 0;

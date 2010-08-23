@@ -60,6 +60,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 		
 		protected var _selectedIndex:int;
 		protected var _dataProvider:Array;
+		protected var _delegate:IDropDownDelegate;
 		
 		/**
 		 * Constructor.
@@ -207,6 +208,9 @@ package com.custardbelly.as3flobile.controls.dropdown
 			list.selectedIndex = _selectedIndex;
 			// Update label button to selection or default.
 			_labelButton.label = ( _selectedIndex >= 0 && _selectedIndex < _dataProvider.length ) ? _dataProvider[_selectedIndex].label : _defaultLabel;
+			// Notify delegate.
+			if( _delegate )
+				_delegate.dropDownSelectionChange( this, _selectedIndex );
 		}
 		
 		/**
@@ -433,6 +437,19 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_dataProvider = value;
 			invalidateDataProvider();
+		}
+
+		/**
+		 * Accessor/Modifier for client to notify on change to selection in this control. 
+		 * @return IDropDownDelegate
+		 */
+		public function get delegate():IDropDownDelegate
+		{
+			return _delegate;
+		}
+		public function set delegate(value:IDropDownDelegate):void
+		{
+			_delegate = value;
 		}
 	}
 }

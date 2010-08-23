@@ -77,6 +77,18 @@ package com.custardbelly.as3flobile.controls.text
 		}
 		
 		/**
+		 * Static convenience method to create a new instance of TextArea with target ITextAreaDelegate reference. 
+		 * @param delegate ITextAreaDelegate
+		 * @return TextArea
+		 */
+		static public function initWithDelegate( delegate:ITextAreaDelegate ):TextArea
+		{
+			var textArea:TextArea = new TextArea();
+			textArea.delegate = delegate;
+			return textArea;
+		}
+		
+		/**
 		 * @inherit
 		 */
 		override protected function initialize():void

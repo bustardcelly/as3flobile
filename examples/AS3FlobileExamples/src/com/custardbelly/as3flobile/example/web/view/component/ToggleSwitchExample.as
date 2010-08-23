@@ -35,6 +35,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_toggleSwitch.y = 90;
 			_toggleSwitch.width = 180;
 			_toggleSwitch.height = 80;
+			_toggleSwitch.labels = Vector.<String>(["yes", "no"]);
 //			_toggleSwitch.format = new ElementFormat( new FontDescription( "Arial" ), 20, 0xFFFFFF );
 			addChild( _toggleSwitch );
 			

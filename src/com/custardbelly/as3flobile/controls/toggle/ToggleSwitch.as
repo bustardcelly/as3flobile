@@ -407,7 +407,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		{
 			if( _labels == value ) return;
 			
-			_labels = value.slice( 0, 1 );
+			_labels = value.slice( 0, 2 );
 			invalidateLabels();
 		}
 		
