@@ -11,6 +11,4 @@ There is also an extension project for as3flobile ([as3flobile-air](http://githu
 
 as3flobile aims to provide a set of components that function within the paradigm of a mobile user interface where a mouse and keyboard are not the primary source of interaction.
 
-# Components
-
-# Roadmap
+Visit the ([main wiki page](http://wiki.github.com/bustardcelly/as3flobile/)) for a full explanation and a list of the available controls. 
