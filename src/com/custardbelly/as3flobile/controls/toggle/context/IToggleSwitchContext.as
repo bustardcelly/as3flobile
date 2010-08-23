@@ -26,46 +26,19 @@
  */
 package com.custardbelly.as3flobile.controls.toggle.context
 {
+	import com.custardbelly.as3flobile.controls.slider.context.ISliderContext;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 
 	/**
 	 * IToggleSwitchContext provides a context for an IToggleSwitchStrategy instance to track the position of a switch.  
 	 * @author toddanderson
 	 */
-	public interface IToggleSwitchContext
+	public interface IToggleSwitchContext extends ISliderContext
 	{
 		/**
-		 * Initializes the context with an IToggleSwitch instance. 
-		 * @param target IToggleSwitch
-		 */
-		function initialize( target:IToggleSwitch ):void;
-		/**
-		 * Runs an update based on the nw selected index of the IToggleSwitch target. 
+		 * Runs an update based on the new selected index of the IToggleSwitch target. 
 		 * @param value uint
 		 */
 		function updateSelectedIndex( value:uint ):void;
-		/**
-		 * Updates the context and strategy.
-		 */
-		function update():void;
-		/**
-		 * Activates the context and strategy.
-		 */
-		function activate():void;
-		/**
-		 * Deactivates the context and strategy.
-		 */
-		function deactivate():void;
-		/**
-		 * Performs any cleanup.
-		 */
-		function dispose():void;
-		
-		/**
-		 * Accessor/Modifier to the IToggleSwitchStrategy that manages a switch position. 
-		 * @return IToggleSwitchStrategy
-		 */
-		function get strategy():IToggleSwitchStrategy;
-		function set strategy( value:IToggleSwitchStrategy ):void;
 	}
 }

@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.toggle.context
 {
+	import com.custardbelly.as3flobile.controls.slider.context.ISliderStrategy;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 	
 	import flash.geom.Point;
@@ -34,42 +35,12 @@ package com.custardbelly.as3flobile.controls.toggle.context
 	 * IToggleSwitchStrategy is a stategy to manage the position of a toggle switch. 
 	 * @author toddanderson
 	 */
-	public interface IToggleSwitchStrategy
+	public interface IToggleSwitchStrategy extends ISliderStrategy
 	{
-		/**
-		 * Starts a mediating session for events from IToggleSwitch. 
-		 * @param target IToggleSwitch
-		 */
-		function mediate( target:IToggleSwitch ):void;
-		/**
-		 * Ends a mediating session for events form IToggleSwitch.
-		 */
-		function unmediate():void;
-		
 		/**
 		 * Updates position based on selected index of IToggleSwitch target. 
 		 * @param value uint
 		 */
 		function selectIndex( value:uint ):void;
-		/**
-		 * Responds to a click gesture. 
-		 * @param position Point
-		 */
-		function click( position:Point ):void;
-		/**
-		 * Responds to the beginning of a sequence. 
-		 * @param position Point
-		 */
-		function start( position:Point ):void;
-		/**
-		 * Responds to a change in sequence. 
-		 * @param position Point
-		 */
-		function move( position:Point ):void;
-		/**
-		 * Responds to an end in a sequence. 
-		 * @param position Point
-		 */
-		function end( position:Point ):void;
 	}
 }

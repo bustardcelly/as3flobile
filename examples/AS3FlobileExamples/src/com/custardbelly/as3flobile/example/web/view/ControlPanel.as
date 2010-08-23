@@ -37,8 +37,9 @@ package com.custardbelly.as3flobile.example.web.view
 			createButton( "drop down", 5, 229 );
 			createButton( "text input", 5, 287 );
 			createButton( "text area", 5, 345 );
-			createButton( "toggle switch", 5, 403 );
-			createButton( "miscellany", 5, 461 );
+			createButton( "sliders", 5, 403 );
+			createButton( "toggle switch", 5, 461 );
+			createButton( "miscellany", 5, 519 );
 		}
 		
 		protected function createButton( label:String, xpos:int, ypos:int ):void
@@ -53,7 +54,7 @@ package com.custardbelly.as3flobile.example.web.view
 		
 		protected function drawBackground():void
 		{
-			var height:int = 474;
+			var height:int = 536;
 			graphics.clear();
 			graphics.beginFill( 0xE8C782 );
 			graphics.drawRoundRect( 0, 45, 110, height, 5, 5 );

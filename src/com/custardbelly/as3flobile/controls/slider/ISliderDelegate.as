@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: BaseToggleSwitchContext.as</p>
+ * <p>Class File: ISliderDelegate.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,39 +24,19 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.toggle.context
+package com.custardbelly.as3flobile.controls.slider
 {
-	import com.custardbelly.as3flobile.controls.slider.context.BaseSliderContext;
-	import com.custardbelly.as3flobile.controls.slider.context.ISliderStrategy;
-	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
-	
 	/**
-	 * BaseToggleSwitchContext is a base context to manage a IToggleSwitch based on a strategy. 
+	 * ISliderDelegate is an object that requires notification from a Slider control based on a change to value. 
 	 * @author toddanderson
 	 */
-	public class BaseToggleSwitchContext extends BaseSliderContext implements IToggleSwitchContext
+	public interface ISliderDelegate
 	{
-		protected var _toggleStrategy:IToggleSwitchStrategy;
-		
 		/**
-		 * Constructor. 
-		 * @param strategy IToggleSwitchStrategy
+		 * Notify client of change to value. 
+		 * @param slider Slider
+		 * @param value Number
 		 */
-		public function BaseToggleSwitchContext( strategy:ISliderStrategy )
-		{
-			super( strategy );
-			_toggleStrategy = ( strategy as IToggleSwitchStrategy );
-		}
-		
-		/**
-		 * @copy IToggleSwitchContext#updateSelectedIndex()
-		 */
-		public function updateSelectedIndex( value:uint ):void
-		{
-			if( _isActive && _toggleStrategy != null )
-			{
-				_toggleStrategy.selectIndex( value );
-			}
-		}
+		function sliderValueDidChange( slider:Slider, value:Number ):void;
 	}
 }

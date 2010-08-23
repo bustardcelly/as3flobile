@@ -1,7 +1,6 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
-	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitchDelegate;
@@ -10,8 +9,6 @@ package com.custardbelly.as3flobile.example.web.view.component
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.text.engine.ElementFormat;
-	import flash.text.engine.FontDescription;
 	
 	public class ToggleSwitchExample extends Sprite implements IToggleSwitchDelegate
 	{

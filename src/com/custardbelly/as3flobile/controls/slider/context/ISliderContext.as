@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: BaseToggleSwitchContext.as</p>
+ * <p>Class File: ISliderContext.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,39 +24,40 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.toggle.context
+package com.custardbelly.as3flobile.controls.slider.context
 {
-	import com.custardbelly.as3flobile.controls.slider.context.BaseSliderContext;
-	import com.custardbelly.as3flobile.controls.slider.context.ISliderStrategy;
-	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
-	
+	import com.custardbelly.as3flobile.controls.slider.ISlider;
+	import com.custardbelly.as3flobile.model.IDisposable;
+
 	/**
-	 * BaseToggleSwitchContext is a base context to manage a IToggleSwitch based on a strategy. 
+	 * ISliderContext provides a context for an ISliderStrategy instance to track the position of a slider control.  
 	 * @author toddanderson
 	 */
-	public class BaseToggleSwitchContext extends BaseSliderContext implements IToggleSwitchContext
+	public interface ISliderContext extends IDisposable
 	{
-		protected var _toggleStrategy:IToggleSwitchStrategy;
+		/**
+		 * Initializes the context with an ISlider instance. 
+		 * @param target ISlider
+		 */
+		function initialize( target:ISlider ):void;
+		/**
+		 * Updates the context and strategy.
+		 */
+		function update():void;
+		/**
+		 * Activates the context and strategy.
+		 */
+		function activate():void;
+		/**
+		 * Deactivates the context and strategy.
+		 */
+		function deactivate():void;
 		
 		/**
-		 * Constructor. 
-		 * @param strategy IToggleSwitchStrategy
+		 * Accessor/Modifier to the ISliderStrategy that manages a switch position. 
+		 * @return ISliderStrategy
 		 */
-		public function BaseToggleSwitchContext( strategy:ISliderStrategy )
-		{
-			super( strategy );
-			_toggleStrategy = ( strategy as IToggleSwitchStrategy );
-		}
-		
-		/**
-		 * @copy IToggleSwitchContext#updateSelectedIndex()
-		 */
-		public function updateSelectedIndex( value:uint ):void
-		{
-			if( _isActive && _toggleStrategy != null )
-			{
-				_toggleStrategy.selectIndex( value );
-			}
-		}
+		function get strategy():ISliderStrategy;
+		function set strategy( value:ISliderStrategy ):void;
 	}
 }

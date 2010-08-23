@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: ToggleSwitchMouseContext.as</p>
+ * <p>Class File: SliderMouseContext.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,22 +24,19 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.toggle.context
+package com.custardbelly.as3flobile.controls.slider.context
 {
 	import com.custardbelly.as3flobile.controls.slider.ISlider;
-	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 	
-	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
-	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
 	/**
-	 * ToggleSwitchMouseContext is an extension of BaseToggleSwitchContext to provide stategy context based on mouse gestures. 
+	 * SliderMouseContext is an extension of BaseSliderContext to provide stategy context based on mouse gestures. 
 	 * @author toddanderson
 	 */
-	public class ToggleSwitchMouseContext extends BaseToggleSwitchContext
+	public class SliderMouseContext extends BaseSliderContext
 	{
 		protected var _point:Point;
 		protected var _mouseTarget:InteractiveObject;
@@ -48,9 +45,9 @@ package com.custardbelly.as3flobile.controls.toggle.context
 		
 		/**
 		 * Constructor. 
-		 * @param strategy IToggleSwitchStrategy
+		 * @param strategy ISliderStrategy
 		 */
-		public function ToggleSwitchMouseContext(strategy:IToggleSwitchStrategy)
+		public function SliderMouseContext( strategy:ISliderStrategy )
 		{
 			super( strategy );
 			_point = new Point();

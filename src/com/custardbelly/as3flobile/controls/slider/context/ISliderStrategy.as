@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: BaseToggleSwitchContext.as</p>
+ * <p>Class File: ISliderStrategy.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,39 +24,47 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.toggle.context
+package com.custardbelly.as3flobile.controls.slider.context
 {
-	import com.custardbelly.as3flobile.controls.slider.context.BaseSliderContext;
-	import com.custardbelly.as3flobile.controls.slider.context.ISliderStrategy;
-	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
+	import com.custardbelly.as3flobile.controls.slider.ISlider;
 	
+	import flash.geom.Point;
+
 	/**
-	 * BaseToggleSwitchContext is a base context to manage a IToggleSwitch based on a strategy. 
+	 * ISliderStrategy is a stategy to manage the position of a slider. 
 	 * @author toddanderson
 	 */
-	public class BaseToggleSwitchContext extends BaseSliderContext implements IToggleSwitchContext
+	public interface ISliderStrategy
 	{
-		protected var _toggleStrategy:IToggleSwitchStrategy;
+		/**
+		 * Starts a mediating session for events from ISlider. 
+		 * @param target ISlider
+		 */
+		function mediate( target:ISlider ):void;
+		/**
+		 * Ends a mediating session for events form ISlider.
+		 */
+		function unmediate():void;
 		
 		/**
-		 * Constructor. 
-		 * @param strategy IToggleSwitchStrategy
+		 * Responds to a click gesture. 
+		 * @param position Point
 		 */
-		public function BaseToggleSwitchContext( strategy:ISliderStrategy )
-		{
-			super( strategy );
-			_toggleStrategy = ( strategy as IToggleSwitchStrategy );
-		}
-		
+		function click( position:Point ):void;
 		/**
-		 * @copy IToggleSwitchContext#updateSelectedIndex()
+		 * Responds to the beginning of a sequence. 
+		 * @param position Point
 		 */
-		public function updateSelectedIndex( value:uint ):void
-		{
-			if( _isActive && _toggleStrategy != null )
-			{
-				_toggleStrategy.selectIndex( value );
-			}
-		}
+		function start( position:Point ):void;
+		/**
+		 * Responds to a change in sequence. 
+		 * @param position Point
+		 */
+		function move( position:Point ):void;
+		/**
+		 * Responds to an end in a sequence. 
+		 * @param position Point
+		 */
+		function end( position:Point ):void;
 	}
 }

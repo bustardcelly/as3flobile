@@ -28,7 +28,7 @@ package com.custardbelly.as3flobile.controls.toggle
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.controls.toggle.context.BaseToggleSwitchStrategy;
+	import com.custardbelly.as3flobile.controls.toggle.context.HorizontalToggleSwitchStrategy;
 	import com.custardbelly.as3flobile.controls.toggle.context.IToggleSwitchContext;
 	import com.custardbelly.as3flobile.controls.toggle.context.ToggleSwitchMouseContext;
 	import com.custardbelly.as3flobile.skin.ToggleSwitchSkin;
@@ -38,6 +38,7 @@ package com.custardbelly.as3flobile.controls.toggle
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -81,9 +82,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		 * @param delegate IToggleSwitchDelegate
 		 * @return IToggleSwitch
 		 */
-		public static function initWithDelegate( delegate:IToggleSwitchDelegate ):IToggleSwitch
+		public static function initWithDelegate( delegate:IToggleSwitchDelegate ):ToggleSwitch
 		{
-			var toggle:IToggleSwitch = new ToggleSwitch();
+			var toggle:ToggleSwitch = new ToggleSwitch();
 			toggle.delegate = delegate;
 			return toggle;
 		}
@@ -111,6 +112,8 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		override protected function createChildren():void
 		{
+			super.createChildren();
+			
 			_background = new Sprite();
 			addChild( _background );
 			
@@ -128,28 +131,6 @@ package com.custardbelly.as3flobile.controls.toggle
 			
 			_thumb = new Sprite();
 			addChild( _thumb );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Adds event handlers for addition and removal from parent display list.
-		 */
-		protected function addHandlers():void
-		{
-			addEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false, 0, true );
-			addEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false, 0, true );
-		}
-		
-		/**
-		 * @private 
-		 * 
-		 * Removes event handlers.
-		 */
-		protected function removeHandlers():void
-		{
-			removeEventListener( Event.ADDED_TO_STAGE, handleAddedToStage, false );
-			removeEventListener( Event.REMOVED_FROM_STAGE, handleRemovedFromStage, false );
 		}
 		
 		/**
@@ -171,7 +152,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		protected function getDefaultContext():IToggleSwitchContext
 		{
-			return new ToggleSwitchMouseContext( new BaseToggleSwitchStrategy() );
+			return new ToggleSwitchMouseContext( new HorizontalToggleSwitchStrategy() );
 		}
 		
 		/**
@@ -183,7 +164,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		{
 			_bounds.width = _width;
 			_bounds.height = _height;
-			updateDisplay();
+			super.invalidateSize();
 		}
 		
 		/**
@@ -310,11 +291,22 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
+		 * @copy ISlider#commitOnPositionChange
+		 */
+		public function commitOnPositionChange( position:Point ):void
+		{
+			selectedIndex = ( position.x == ( _width - _thumb.width ) ) ? 1 : 0;
+		}
+		
+		/**
 		 * @inherit
 		 */
 		override public function dispose():void
 		{
 			super.dispose();
+			
+			while( numChildren )
+				removeChildAt( 0 );
 			
 			_leftLabel.dispose();
 			_leftLabel = null;
@@ -347,9 +339,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		}
 		
 		/**
-		 * @copy IToggleSwitch#toggleBounds
+		 * @copy ISlider#sliderBounds
 		 */
-		public function get toggleBounds():Rectangle
+		public function get sliderBounds():Rectangle
 		{
 			return _bounds;
 		}

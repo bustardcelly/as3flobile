@@ -26,49 +26,20 @@
  */
 package com.custardbelly.as3flobile.controls.toggle
 {
+	import com.custardbelly.as3flobile.controls.slider.ISlider;
 	import com.custardbelly.as3flobile.controls.toggle.context.IToggleSwitchContext;
 	
 	import flash.display.InteractiveObject;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
 
-	public interface IToggleSwitch extends IEventDispatcher
+	public interface IToggleSwitch extends ISlider, IEventDispatcher
 	{
-		/**
-		 * Returns a reference to the background target for IToggleContext to reference. 
-		 * @return InteractiveObject
-		 */
-		function get backgroundTarget():InteractiveObject;
-		/**
-		 * Returns a reference to the thumb target for IToggleContext to reference. 
-		 * @return InteractiveObject
-		 */
-		function get thumbTarget():InteractiveObject;
-		/**
-		 * Returns the bounding area of the togglable display.
-		 * @return Rectangle
-		 */
-		function get toggleBounds():Rectangle;
-		
 		/**
 		 * Accessor/Modifier for the selected index of the switch. Either 0 or 1. Default is 0.
 		 * @return uint
 		 */
 		function get selectedIndex():uint;
 		function set selectedIndex( value:uint ):void;
-		
-		/**
-		 * Accessor/Modifier for the IToggleContext instance that handles user interaction. 
-		 * @return IToggleContext
-		 */
-		function get toggleContext():IToggleSwitchContext;
-		function set toggleContext( value:IToggleSwitchContext ):void;
-		
-		/**
-		 * Accessor/Modifier for the IToggleSwitchDelegate that recieves notification of operations related to IToggleSwitch. 
-		 * @return IToggleSwitchDelegate
-		 */
-		function get delegate():IToggleSwitchDelegate;
-		function set delegate( value:IToggleSwitchDelegate ):void;
 	}
 }

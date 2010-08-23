@@ -5,6 +5,7 @@ package com.custardbelly.as3flobile.example.web.view
 	import com.custardbelly.as3flobile.example.web.view.component.PickerExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollListExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollViewportExample;
+	import com.custardbelly.as3flobile.example.web.view.component.SliderExample;
 	import com.custardbelly.as3flobile.example.web.view.component.TextAreaExample;
 	import com.custardbelly.as3flobile.example.web.view.component.TextInputExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample;
@@ -29,6 +30,7 @@ package com.custardbelly.as3flobile.example.web.view
 		private var textinputexample:TextInputExample; TextInputExample;
 		private var pickerexample:PickerExample; PickerExample;
 		private var miscexample:MiscExample; MiscExample;
+		private var sliderexample:SliderExample; SliderExample;
 		
 		public function ComponentsPanel()
 		{
@@ -38,6 +40,7 @@ package com.custardbelly.as3flobile.example.web.view
 										"com.custardbelly.as3flobile.example.web.view.component.DropDownExample",
 										"com.custardbelly.as3flobile.example.web.view.component.TextInputExample",
 										"com.custardbelly.as3flobile.example.web.view.component.TextAreaExample",
+										"com.custardbelly.as3flobile.example.web.view.component.SliderExample",
 										"com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample",
 										"com.custardbelly.as3flobile.example.web.view.component.MiscExample"
 										]);

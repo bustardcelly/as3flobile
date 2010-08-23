@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: BaseToggleSwitchContext.as</p>
+ * <p>Class File: ISlider.as</p>
  * <p>Version: 0.1</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,39 +24,40 @@
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
  */
-package com.custardbelly.as3flobile.controls.toggle.context
+package com.custardbelly.as3flobile.controls.slider
 {
-	import com.custardbelly.as3flobile.controls.slider.context.BaseSliderContext;
-	import com.custardbelly.as3flobile.controls.slider.context.ISliderStrategy;
-	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
+	import com.custardbelly.as3flobile.controls.slider.context.ISliderContext;
 	
+	import flash.display.InteractiveObject;
+	import flash.events.IEventDispatcher;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+
 	/**
-	 * BaseToggleSwitchContext is a base context to manage a IToggleSwitch based on a strategy. 
+	 * ISlider represents a slider control whose position and animation based on value is managed by a ISliderStrategy. 
 	 * @author toddanderson
 	 */
-	public class BaseToggleSwitchContext extends BaseSliderContext implements IToggleSwitchContext
+	public interface ISlider extends IEventDispatcher
 	{
-		protected var _toggleStrategy:IToggleSwitchStrategy;
-		
 		/**
-		 * Constructor. 
-		 * @param strategy IToggleSwitchStrategy
+		 * Returns a reference to the background target for IToggleContext to reference. 
+		 * @return InteractiveObject
 		 */
-		public function BaseToggleSwitchContext( strategy:ISliderStrategy )
-		{
-			super( strategy );
-			_toggleStrategy = ( strategy as IToggleSwitchStrategy );
-		}
-		
+		function get backgroundTarget():InteractiveObject;
 		/**
-		 * @copy IToggleSwitchContext#updateSelectedIndex()
+		 * Returns a reference to the thumb target for IToggleContext to reference. 
+		 * @return InteractiveObject
 		 */
-		public function updateSelectedIndex( value:uint ):void
-		{
-			if( _isActive && _toggleStrategy != null )
-			{
-				_toggleStrategy.selectIndex( value );
-			}
-		}
+		function get thumbTarget():InteractiveObject;
+		/**
+		 * Returns the bounding area of the togglable display.
+		 * @return Rectangle
+		 */
+		function get sliderBounds():Rectangle;
+		/**
+		 * Runs a refresh on the control due to a change in properties or child properties.
+		 * @param Point
+		 */
+		function commitOnPositionChange( position:Point ):void;
 	}
 }
