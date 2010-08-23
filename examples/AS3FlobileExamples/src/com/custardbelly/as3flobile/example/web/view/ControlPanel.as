@@ -7,14 +7,22 @@ package com.custardbelly.as3flobile.example.web.view
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
+	import flash.text.engine.TextBlock;
+	import flash.text.engine.TextElement;
+	import flash.text.engine.TextLine;
 	import flash.utils.getTimer;
 	
 	public class ControlPanel extends Sprite
 	{
 		protected var _delegate:IControlPanelDelegate;
+		private var _gitRepo:String = "http://github.com/bustardcelly/as3flobile";
+		
 		public function ControlPanel( delegate:IControlPanelDelegate )
 		{
 			_delegate = delegate;
@@ -40,6 +48,17 @@ package com.custardbelly.as3flobile.example.web.view
 			createButton( "sliders", 5, 403 );
 			createButton( "toggle switch", 5, 461 );
 			createButton( "miscellany", 5, 519 );
+			
+			var linkFormat:ElementFormat = new ElementFormat( new FontDescription( "DroidSans" ), 14, 0x0000FF );
+			var linkHandler:EventDispatcher = new EventDispatcher();
+			linkHandler.addEventListener( MouseEvent.CLICK, handleLink );
+			var link:TextElement = new TextElement( "http://github.com/bustardcelly/as3flobile", linkFormat, linkHandler );
+			var block:TextBlock = new TextBlock();
+			block.content = link;
+			var line:TextLine = block.createTextLine();
+			line.y = 55;
+			line.x = 163;
+			addChild( line );
 		}
 		
 		protected function createButton( label:String, xpos:int, ypos:int ):void
@@ -66,6 +85,11 @@ package com.custardbelly.as3flobile.example.web.view
 			var target:DisplayObject = evt.target as DisplayObject;
 			var index:int = getChildIndex( target );
 			_delegate.controlPanelSelectionChange( this, index - 1 );
+		}
+		
+		protected function handleLink( evt:MouseEvent ):void
+		{
+			navigateToURL( new URLRequest( _gitRepo ) );
 		}
 	}
 }

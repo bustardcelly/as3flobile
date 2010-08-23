@@ -26,16 +26,17 @@
  */
 package com.custardbelly.as3flobile.controls.radiobutton
 {
-	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
+	import com.custardbelly.as3flobile.helper.ITapMediator;
+	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.skin.RadioButtonSkin;
 	import com.custardbelly.as3flobile.skin.RadioButtonToggleSkin;
 	
-	import flash.events.MouseEvent;
+	import flash.events.Event;
 	
 	/**
 	 * RadioButton is a control that toggles the selection of a model.
@@ -43,7 +44,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 	 * @see RadioGroup
 	 * @author toddanderson
 	 */
-	public class RadioButton extends AS3FlobileComponent implements IToggleButtonDelegate
+	public class RadioButton extends AS3FlobileComponent
 	{
 		protected var _radioDisplay:ToggleButton;
 		protected var _labelDisplay:Label;
@@ -54,12 +55,19 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		protected var _multiline:Boolean;
 		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
+		protected var _tapMediator:ITapMediator;
 		protected var _delegate:IRadioButtonDelegate;
 		
 		/**
 		 * Constructor.
 		 */
-		public function RadioButton() { super(); }
+		public function RadioButton() 
+		{ 
+			super();
+			mouseChildren = false;
+			mouseEnabled = true;
+			_tapMediator = new MouseTapMediator();
+		}
 		
 		/**
 		 * Static util function to create a new RadioButton instance with an IRadioButtonDelegate reference.
@@ -99,16 +107,35 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		{
 			super.createChildren();
 			
-			_radioDisplay = ToggleButton.initWithDelegate( this );
+			_radioDisplay = new ToggleButton();
 			_radioDisplay.skin = new RadioButtonToggleSkin();
 			addChild( _radioDisplay );
 			
 			_labelDisplay = new Label();
 			_labelDisplay.multiline = _multiline;
 			_labelDisplay.autosize = _autosize;
-			_labelDisplay.mouseEnabled = true;
+			_labelDisplay.mouseEnabled = false;
 			_labelDisplay.mouseChildren = false;
 			addChild( _labelDisplay );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Validates the ITapMediator instance used in deiscovering a tap gestue on this control. 
+		 * @param newValue ITapMediator
+		 */
+		protected function invalidateTapMediator( newValue:ITapMediator ):void
+		{
+			// Clear out mediation on old ITapMediator instance if currently mediating.
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
+			// Set new ITapMediator instance reference.
+			_tapMediator = newValue;
+			// Start mediating if we are on the display list.
+			if( isActiveOnDisplayList() )
+				_tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
 		/**
@@ -161,7 +188,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		 */
 		override protected function addDisplayHandlers():void
 		{
-			_labelDisplay.addEventListener( MouseEvent.CLICK, handleLabelClick, false, 0, true );
+			if( !_tapMediator.isMediating( this ) ) _tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
 		/**
@@ -169,7 +196,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		 */
 		override protected function removeDisplayHandlers():void
 		{
-			_labelDisplay.removeEventListener( MouseEvent.CLICK, handleLabelClick, false );
+			if( _tapMediator.isMediating( this ) ) _tapMediator.unmediateTapGesture( this );
 		}
 		
 		/**
@@ -208,19 +235,9 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		 * Event handler for click on the labell display. 
 		 * @param evt MouseEvent
 		 */
-		protected function handleLabelClick( evt:MouseEvent ):void
+		protected function handleTap( evt:Event ):void
 		{
 			this.selected = !this.selected;
-		}
-		
-		/**
-		 * IToggleButtonDelegate implementation for the toggle button of this control. 
-		 * @param toggleButton ToggleButton
-		 * @param selected Boolean
-		 */
-		public function toggleButtonSelectionChange( toggleButton:ToggleButton, selected:Boolean ):void
-		{
-			this.selected = selected;
 		}
 		
 		/**
@@ -317,6 +334,21 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			
 			_labelPlacement = value;
 			invalidateSize();
+		}
+		
+		/**
+		 * Accessor/Modifier for the ITapMediator implementation that recognizes a tap gesture. 
+		 * @return ITapMediator
+		 */
+		public function get tapMediator():ITapMediator
+		{
+			return _tapMediator;
+		}
+		public function set tapMediator(value:ITapMediator):void
+		{
+			if( _tapMediator == value ) return;
+			
+			invalidateTapMediator( value );
 		}
 
 		/**

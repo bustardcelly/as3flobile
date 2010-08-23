@@ -2,6 +2,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.bit101.components.PushButton;
 	import com.custardbelly.as3flobile.controls.button.Button;
+	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
+	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.list.ScrollList;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListHorizontalLayout;
@@ -14,7 +16,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class ScrollListExample extends Sprite
+	public class ScrollListExample extends Sprite implements IToggleButtonDelegate
 	{
 		protected var _list:ScrollList;
 		protected var _verticalLayout:IScrollListVerticalLayout;
@@ -67,12 +69,11 @@ package com.custardbelly.as3flobile.example.web.view.component
 			button.addEventListener( MouseEvent.CLICK, handleSwitchLayout );
 			addChild( button );
 			
-			button = new Button();
-			button.label = "toggle variable size";
-			button.x = 110;
-			button.y = 400;
-			button.addEventListener( MouseEvent.CLICK, handleVariableSize );
-			addChild( button );
+			var tbutton:ToggleButton = ToggleButton.initWithDelegate( this );
+			tbutton.label = "toggle variable size";
+			tbutton.x = 110;
+			tbutton.y = 400;
+			addChild( tbutton );
 		}
 		
 		protected function randomRange( min:int, max:int ):int
@@ -103,11 +104,9 @@ package com.custardbelly.as3flobile.example.web.view.component
 			}
 		}
 		
-		protected function handleVariableSize( evt:Event ):void
+		public function toggleButtonSelectionChange( toggleButton:ToggleButton, selected:Boolean ):void
 		{
-			_isVariableSize = !_isVariableSize;
-			_list.seperatorLength = 0;
-			_list.seperatorLength = 2;
+			_isVariableSize = selected;
 			_verticalLayout.useVariableHeight = _isVariableSize;
 			_horizontalLayout.useVariableWidth = _isVariableSize;
 		}

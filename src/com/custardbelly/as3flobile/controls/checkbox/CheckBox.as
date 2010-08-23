@@ -26,22 +26,23 @@
  */
 package com.custardbelly.as3flobile.controls.checkbox
 {
-	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.enum.BoxPositionEnum;
+	import com.custardbelly.as3flobile.helper.ITapMediator;
+	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.skin.CheckBoxSkin;
 	import com.custardbelly.as3flobile.skin.CheckBoxToggleSkin;
 	
-	import flash.events.MouseEvent;
+	import flash.events.Event;
 	
 	/**
 	 * CheckBox is a control display for a user to change selection on a model. 
 	 * @author toddanderson
 	 */
-	public class CheckBox extends AS3FlobileComponent implements IToggleButtonDelegate
+	public class CheckBox extends AS3FlobileComponent
 	{
 		protected var _boxDisplay:ToggleButton;
 		protected var _labelDisplay:Label;
@@ -52,12 +53,19 @@ package com.custardbelly.as3flobile.controls.checkbox
 		protected var _multiline:Boolean;
 		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
+		protected var _tapMediator:ITapMediator;
 		protected var _delegate:ICheckBoxDelegate;
 		
 		/**
 		 * Constructor.
 		 */
-		public function CheckBox() { super(); }
+		public function CheckBox() 
+		{ 
+			super();
+			mouseChildren = false;
+			mouseEnabled = true;
+			_tapMediator = new MouseTapMediator();
+		}
 		
 		/**
 		 * Status util method to create a new CheckBox with a specific ICheckBoxDelegate reference. 
@@ -99,7 +107,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			super.createChildren();
 			
-			_boxDisplay = ToggleButton.initWithDelegate( this );
+			_boxDisplay = new ToggleButton();
 			_boxDisplay.skin = new CheckBoxToggleSkin();
 			addChild( _boxDisplay );
 			
@@ -107,8 +115,27 @@ package com.custardbelly.as3flobile.controls.checkbox
 			_labelDisplay.multiline = _multiline;
 			_labelDisplay.autosize = _autosize;
 			_labelDisplay.mouseChildren = false;
-			_labelDisplay.mouseEnabled = true;
+			_labelDisplay.mouseEnabled = false;
 			addChild( _labelDisplay );
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Validates the ITapMediator instance used in deiscovering a tap gestue on this control. 
+		 * @param newValue ITapMediator
+		 */
+		protected function invalidateTapMediator( newValue:ITapMediator ):void
+		{
+			// Clear out mediation on old ITapMediator instance if currently mediating.
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
+			// Set new ITapMediator instance reference.
+			_tapMediator = newValue;
+			// Start mediating if we are on the display list.
+			if( isActiveOnDisplayList() )
+				_tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
 		/**
@@ -161,7 +188,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 */
 		override protected function addDisplayHandlers():void
 		{
-			_labelDisplay.addEventListener( MouseEvent.CLICK, handleLabelClick, false, 0, true );
+			if( !_tapMediator.isMediating( this ) ) _tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
 		/**
@@ -169,7 +196,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 */
 		override protected function removeDisplayHandlers():void
 		{
-			_labelDisplay.removeEventListener( MouseEvent.CLICK, handleLabelClick, false );
+			if( _tapMediator.isMediating( this ) ) _tapMediator.unmediateTapGesture( this );
 		}
 		
 		/**
@@ -208,19 +235,9 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 * Event handle for click detection on label display. 
 		 * @param evt MouseEvent
 		 */
-		protected function handleLabelClick( evt:MouseEvent ):void
+		protected function handleTap( evt:Event ):void
 		{
 			this.selected = !this.selected;
-		}
-		
-		/**
-		 * IToggleButtonDelegate implementation for selection change on the box display. 
-		 * @param toggleButton ToggleButton
-		 * @param selected Boolean
-		 */
-		public function toggleButtonSelectionChange( toggleButton:ToggleButton, selected:Boolean ):void
-		{
-			this.selected = selected;
 		}
 		
 		/**
@@ -332,6 +349,21 @@ package com.custardbelly.as3flobile.controls.checkbox
 		public function set delegate(value:ICheckBoxDelegate):void
 		{
 			_delegate = value;
+		}
+		
+		/**
+		 * Accessor/Modifier for the ITapMediator implementation that recognizes a tap gesture. 
+		 * @return ITapMediator
+		 */
+		public function get tapMediator():ITapMediator
+		{
+			return _tapMediator;
+		}
+		public function set tapMediator(value:ITapMediator):void
+		{
+			if( _tapMediator == value ) return;
+			
+			invalidateTapMediator( value );
 		}
 		
 		/**

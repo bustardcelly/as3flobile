@@ -58,7 +58,7 @@ package
 			
 			_componentPanel = new ComponentsPanel();
 			_componentPanel.x = 140;
-			_componentPanel.y = 55;
+			_componentPanel.y = 75;
 			view.addChild( _componentPanel );
 			
 			new FPSMeter( view, 15, 30 );
