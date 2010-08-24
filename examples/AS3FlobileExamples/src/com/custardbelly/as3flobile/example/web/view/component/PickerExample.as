@@ -12,6 +12,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	
 	public class PickerExample extends Sprite implements IPickerSelectionDelegate
 	{
+		protected var labels:Array;
 		protected var picker:Picker;
 		public function PickerExample()
 		{
@@ -28,13 +29,36 @@ package com.custardbelly.as3flobile.example.web.view.component
 			label.text = "A Picker control is a collection of scroll lists allowing you do select multiple items. The following is an example of a Date Chooser using the Picker control.";
 			addChild( label );
 			
+			labels = [];
+			
+			label = new Label();
+			label.autosize = true;
+			label.x = 4;
+			label.y = 120;
+			addChild( label );
+			labels.push( label );
+			
+			label = new Label();
+			label.autosize = true;
+			label.y = 120;
+			label.x = 165;
+			addChild( label );
+			labels.push( label );
+			
+			label = new Label();
+			label.autosize = true;
+			label.y = 120;
+			label.x = 220;
+			addChild( label );
+			labels.push( label );
+			
 			var dataProvider:Vector.<PickerColumn> = new Vector.<PickerColumn>();
 			dataProvider.push( getPickerColumnMonths() );
 			dataProvider.push( getPickerColumnDays( 50 ) );
 			dataProvider.push( getPickerColumnYears( 80 ) );
 			
 			picker = Picker.initWithDelegate( this );
-			picker.y = 110;
+			picker.y = 150;
 			picker.dataProvider = dataProvider;
 			picker.itemHeight = 50;
 			addChild( picker );
@@ -89,6 +113,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 		
 		public function pickerSelectionDidChange( picker:Picker, column:PickerColumn, index:int ):void
 		{
+			var columnIndex:int = picker.dataProvider.indexOf( column );
+			labels[columnIndex].text = column.data[index].label;
 			trace( "picker selection change: " + column.data[index].label );
 		}
 	}

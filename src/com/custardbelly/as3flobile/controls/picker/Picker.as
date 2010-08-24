@@ -40,6 +40,7 @@ package com.custardbelly.as3flobile.controls.picker
 	import flash.display.Graphics;
 	import flash.display.Shape;
 	import flash.geom.Point;
+	import flash.utils.Dictionary;
 	
 	public class Picker extends AS3FlobileComponent implements IScrollListDelegate
 	{
@@ -50,6 +51,7 @@ package com.custardbelly.as3flobile.controls.picker
 		protected var _columnWidthCache:Vector.<Number>;
 		protected var _columnSeperatorLength:int;
 		
+		protected var _columnSelectionIndices:Dictionary;
 		protected var _selectedItemOffsetForCompare:Number;
 		
 		protected var _itemHeight:int;
@@ -59,7 +61,11 @@ package com.custardbelly.as3flobile.controls.picker
 		/**
 		 * Constructor.
 		 */
-		public function Picker() { super(); }
+		public function Picker() 
+		{ 
+			super();
+			_columnSelectionIndices = new Dictionary( true );
+		}
 		
 		/**
 		 * Static method to create a new instance of Picker control filled with target IPickerSelectionDelegate. 
@@ -375,8 +381,13 @@ package com.custardbelly.as3flobile.controls.picker
 			var index:int = DisplayPositionSearch.findCellIndexInPosition( list.renderers, center, compareItemPosition, isWithinRange );
 			// Scroll to the position of the index.
 			list.scrollPositionToIndex( index );
+			
+			// Verify that the index of the notifying column has changed. If it has notify any clients of change.
+			var hasSelectionChange:Boolean = ( _columnSelectionIndices[list] == null || _columnSelectionIndices[list] == index );
 			// Notify delegate if available.
-			if( _delegate ) _delegate.pickerSelectionDidChange( this, getPickerColumnFromList( list ), index ); 
+			if( _delegate && hasSelectionChange ) _delegate.pickerSelectionDidChange( this, getPickerColumnFromList( list ), index ); 
+			// Mark selected index.
+			_columnSelectionIndices[list] = index;
 		}
 		/**
 		 * @copy IScrollListDelegate#listSelectionChange()

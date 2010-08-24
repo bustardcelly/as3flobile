@@ -47,6 +47,8 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		protected var _targetPositionX:int;
 		protected var _targetPositionY:int;
 		
+		protected var _isAnimating:Boolean;
+		
 		protected var _content:DisplayObject;
 		protected var _coordinate:Point;
 		protected var _delegate:IScrollViewportDelegate;
@@ -63,10 +65,17 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		 */
 		protected function startAnimate():void
 		{
+			// Add handlers.
 			if( _content )
 			{
+				_isAnimating = true;
 				_content.removeEventListener( Event.ENTER_FRAME, animate, false );
 				_content.addEventListener( Event.ENTER_FRAME, animate, false, 0, true );
+			}
+			// Notify delegate.
+			if( _isAnimating && _delegate )
+			{
+				_delegate.scrollViewDidStart( _coordinate );
 			}
 		}
 		
@@ -77,7 +86,12 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		 */
 		protected function stopAnimate():void
 		{
-			if( _content ) _content.removeEventListener( Event.ENTER_FRAME, animate, false );
+			// Remove handlers.
+			if( _content ) 
+			{
+				_content.removeEventListener( Event.ENTER_FRAME, animate, false );	
+			}
+			_isAnimating = false;
 		}
 		
 		/**
@@ -119,6 +133,11 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 			if( _velocityX == 0 && _velocityY == 0 )
 			{
 				stopAnimate();
+				// If we have stopped animating, notify delegate.
+				if( _delegate )
+				{
+					_delegate.scrollViewDidEnd( _coordinate );
+				}
 			}
 		}
 		
@@ -141,7 +160,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		 */
 		public function stop():void
 		{
-			stopAnimate();	
+			if( _isAnimating ) stopAnimate();	
 		}
 		
 		/**

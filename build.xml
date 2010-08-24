@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="as3couchdb" basedir="." default="build-project">
+<project name="as3flobile" basedir="." default="build-project">
 	
 	<!-- as3flobile is a library of components intended to be used in mobile browsers	-->
 	<!-- and applications targeting the Flash Platform.									-->

@@ -37,5 +37,6 @@ package com.custardbelly.as3flobile.enum
 		public static const DISABLED:int = 1;
 		public static const SELECTED:int = 2;
 		public static const FOCUSED:int = 3;
+		public static const DOWN:int = 4;
 	}
 }

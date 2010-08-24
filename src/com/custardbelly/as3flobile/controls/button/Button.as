@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.controls.button
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.skin.ButtonSkin;
 	import com.custardbelly.as3flobile.skin.ISkin;
 	import com.custardbelly.as3flobile.skin.Skin;
@@ -35,6 +36,7 @@ package com.custardbelly.as3flobile.controls.button
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
 	
@@ -93,6 +95,32 @@ package com.custardbelly.as3flobile.controls.button
 		protected function invalidateLabel():void
 		{
 			_labelDisplay.text = _label;
+			updateDisplay();
+		}
+		
+		override protected function addDisplayHandlers():void
+		{
+			addEventListener( MouseEvent.MOUSE_DOWN, handleDown, false, 0, true );
+			addEventListener( MouseEvent.MOUSE_OUT, handleOut, false, 0, true );
+			addEventListener( MouseEvent.MOUSE_UP, handleOut, false, 0, true );
+		}
+		
+		override protected function removeDisplayHandlers():void
+		{
+			removeEventListener( MouseEvent.MOUSE_DOWN, handleDown, false );
+			removeEventListener( MouseEvent.MOUSE_OUT, handleOut, false );
+			removeEventListener( MouseEvent.MOUSE_UP, handleOut, false );
+		}
+		
+		protected function handleDown( evt:MouseEvent ):void
+		{
+			_skinState = BasicStateEnum.DOWN;
+			updateDisplay();
+		}
+		
+		protected function handleOut( evt:MouseEvent ):void
+		{
+			_skinState = BasicStateEnum.NORMAL;
 			updateDisplay();
 		}
 		

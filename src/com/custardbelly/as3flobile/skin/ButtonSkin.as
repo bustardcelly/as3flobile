@@ -28,6 +28,7 @@ package com.custardbelly.as3flobile.skin
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
 	import com.custardbelly.as3flobile.controls.label.Label;
+	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
@@ -72,15 +73,20 @@ package com.custardbelly.as3flobile.skin
 		{
 			if( display == null ) return;
 			
+			var isSelected:Boolean = _target.skinState == BasicStateEnum.DOWN;
+			var color:uint = ( isSelected ) ? 0xCCCCCC : 0xFFFFFF;
+			var topLeftColor:uint = ( isSelected ) ? 0xAAAAAA : 0x666666;
+			var bottomRightColor:uint = ( isSelected ) ? 0x666666 : 0xAAAAAA;
+			
 			display.clear();
-			display.beginFill( 0xFFFFFF );
+			display.beginFill( color );
 			display.drawRect( 0, 0, width, height );
 			display.endFill();
-			display.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
+			display.lineStyle( 2, topLeftColor, 1, true, "normal", "square", "miter" );
 			display.moveTo( width, 0 );
 			display.lineTo( width, height );
 			display.lineTo( 0, height );
-			display.lineStyle( 2, 0xAAAAAA, 1, true, "normal", "square", "miter" );
+			display.lineStyle( 2, bottomRightColor, 1, true, "normal", "square", "miter" );
 			display.moveTo( 0, height );
 			display.lineTo( 0, 0 );
 			display.lineTo( width, 0 );
