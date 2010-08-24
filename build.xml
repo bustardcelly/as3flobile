@@ -61,8 +61,7 @@
 	<!-- Create the ASDocs for the library project. -->
 	<target name="doc" depends="clean-doc" description="Creates the ASDoc files for the library project.">
 		<exec executable="${asdoc.loc}" spawn="no">
-			<arg line="-library-path+=${air.lib.dir}" />
-			<arg line="-source-path ${src.dir}" />
+			<arg line="-source-path ${src.dir} " />
 			<arg line="-doc-sources ${src.dir} " />
 			<arg line="-lenient" />
 			<arg line="-output ${doc.dir}" />

@@ -584,7 +584,7 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
-		 * copy @IScrollListLayoutTarget#commitContentChange()
+		 * @copy IScrollListLayoutTarget#commitContentChange()
 		 */
 		public function commitContentChange():void
 		{
