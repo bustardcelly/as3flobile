@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: AS3FlobileComponent.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.core
 {
+	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.model.IDisposable;
 	import com.custardbelly.as3flobile.skin.ISkin;
@@ -40,15 +41,22 @@ package com.custardbelly.as3flobile.controls.core
 	 * AS3FlobileComponent is a base component for all components in the as3flobile package. 
 	 * @author toddanderson
 	 */
-	public class AS3FlobileComponent extends Sprite implements IDisposable, ISkinnable
+	public class AS3FlobileComponent extends Sprite implements ISimpleDisplayObject, IDisposable, ISkinnable
 	{
 		protected var _padding:BoxPadding;
 		
 		protected var _skin:ISkin;
 		protected var _skinState:int;
+		/**
+		 * @private
+		 * Previous skin state is held when switching enabled property. 
+		 */
+		protected var _previousSkinState:int;
 		
-		protected var _width:int = 100;
-		protected var _height:int = 100;
+		protected var _enabled:Boolean;
+		
+		protected var _width:Number = 100;
+		protected var _height:Number = 100;
 		
 		/**
 		 * Constructor. 
@@ -59,7 +67,6 @@ package com.custardbelly.as3flobile.controls.core
 			createChildren();
 			initializeDisplay();
 			updateDisplay();
-			
 			// Add existance handlers for this instance on the display list.
 			addStageHandlers();
 		}
@@ -73,6 +80,10 @@ package com.custardbelly.as3flobile.controls.core
 		{
 			// abstract. Meant for override. 
 			_padding = new BoxPadding();
+			// Default skin state.
+			_skinState = BasicStateEnum.NORMAL;
+			// Default enablement.
+			_enabled = true;
 		}
 		
 		/**
@@ -150,6 +161,28 @@ package com.custardbelly.as3flobile.controls.core
 		/**
 		 * @private 
 		 * 
+		 * Validates the enablement of this control.
+		 */
+		protected function invalidateEnablement( oldValue:Boolean, newValue:Boolean ):void
+		{
+			_enabled = newValue;
+			// Add display handlers based on being enabled.
+			if( _enabled ) 
+			{
+				skinState = _previousSkinState;
+				addDisplayHandlers();	
+			}
+			else
+			{
+				_previousSkinState = _skinState;
+				skinState = ( _previousSkinState == BasicStateEnum.SELECTED ) ? BasicStateEnum.SELECTED_DISABLED : BasicStateEnum.DISABLED;
+				removeDisplayHandlers();
+			}
+		}
+		
+		/**
+		 * @private 
+		 * 
 		 * Handles any operations related to size change.
 		 */
 		protected function invalidateSize():void
@@ -208,7 +241,7 @@ package com.custardbelly.as3flobile.controls.core
 		 */
 		protected function handleAddedToStage( evt:Event ):void
 		{
-			addDisplayHandlers();
+			if( _enabled ) addDisplayHandlers();
 		}
 		
 		/**
@@ -298,6 +331,20 @@ package com.custardbelly.as3flobile.controls.core
 			
 			_padding = value;
 			invalidateSize();
+		}
+		
+		/**
+		 * @copy ISimpleDisplayObject#enabled
+		 */
+		public function get enabled():Boolean
+		{
+			return _enabled;
+		}
+		public function set enabled(value:Boolean):void
+		{
+			if( _enabled == value ) return;
+			
+			invalidateEnablement( _enabled, value );
 		}
 		
 		/**

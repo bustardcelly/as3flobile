@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollList.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -677,8 +677,10 @@ package com.custardbelly.as3flobile.controls.list
 				_listHolder.removeChildAt( 0 );
 			
 			// Unmediate on tap gesture.
-			if( _tapMediator.isMediating( _listHolder ) )
+			if( _tapMediator && _tapMediator.isMediating( _listHolder ) )
 				_tapMediator.unmediateTapGesture( _listHolder );
+			
+			_tapMediator = null;
 			
 			// Dispose of layout manager.
 			_layout.dispose();

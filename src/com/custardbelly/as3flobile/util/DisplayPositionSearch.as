@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: DisplayPositionSearch.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,8 @@
  *
  * <p>Licensed under The MIT License</p>
  * <p>Redistributions of files must retain the above copyright notice.</p>
- */package com.custardbelly.as3flobile.util
+ */
+package com.custardbelly.as3flobile.util
 {
 	import flash.display.DisplayObject;
 

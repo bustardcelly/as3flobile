@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Button.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,8 @@ package com.custardbelly.as3flobile.controls.button
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.helper.ITapMediator;
+	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.skin.ButtonSkin;
 	import com.custardbelly.as3flobile.skin.ISkin;
 	import com.custardbelly.as3flobile.skin.Skin;
@@ -36,6 +38,7 @@ package com.custardbelly.as3flobile.controls.button
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -51,6 +54,9 @@ package com.custardbelly.as3flobile.controls.button
 		protected var _label:String;
 		protected var _labelPadding:int;
 		
+		protected var _delegate:IButtonDelegate;
+		protected var _tapMediator:ITapMediator;
+		
 		/**
 		 * Constructor.
 		 */
@@ -58,6 +64,15 @@ package com.custardbelly.as3flobile.controls.button
 		{
 			super();
 			mouseChildren = false;
+			mouseEnabled = true;
+			_tapMediator = new MouseTapMediator();
+		}
+		
+		static public function initWithDelegate( delegate:IButtonDelegate ):Button
+		{
+			var button:Button = new Button();
+			button.delegate = delegate;
+			return button;
 		}
 		
 		/**
@@ -98,30 +113,80 @@ package com.custardbelly.as3flobile.controls.button
 			updateDisplay();
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Validates the ITapMediator instance used in deiscovering a tap gestue on this control. 
+		 * @param newValue ITapMediator
+		 */
+		protected function invalidateTapMediator( newValue:ITapMediator ):void
+		{
+			// Clear out mediation on old ITapMediator instance if currently mediating.
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
+			// Set new ITapMediator instance reference.
+			_tapMediator = newValue;
+			// Start mediating if we are on the display list.
+			if( isActiveOnDisplayList() )
+				_tapMediator.mediateTapGesture( this, handleTap );
+		}
+		
+		/**
+		 * @inherit
+		 */
 		override protected function addDisplayHandlers():void
 		{
 			addEventListener( MouseEvent.MOUSE_DOWN, handleDown, false, 0, true );
 			addEventListener( MouseEvent.MOUSE_OUT, handleOut, false, 0, true );
 			addEventListener( MouseEvent.MOUSE_UP, handleOut, false, 0, true );
+			if( _tapMediator && !_tapMediator.isMediating( this ) ) _tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
+		/**
+		 * @inherit
+		 */
 		override protected function removeDisplayHandlers():void
 		{
 			removeEventListener( MouseEvent.MOUSE_DOWN, handleDown, false );
 			removeEventListener( MouseEvent.MOUSE_OUT, handleOut, false );
 			removeEventListener( MouseEvent.MOUSE_UP, handleOut, false );
+			if( _tapMediator && _tapMediator.isMediating( this ) ) _tapMediator.unmediateTapGesture( this );
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Event handler for down state of button. 
+		 * @param evt MouseEvent
+		 */
 		protected function handleDown( evt:MouseEvent ):void
 		{
 			_skinState = BasicStateEnum.DOWN;
 			updateDisplay();
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Event handler for mouse out of button. 
+		 * @param evt MouseEvent
+		 */
 		protected function handleOut( evt:MouseEvent ):void
 		{
 			_skinState = BasicStateEnum.NORMAL;
 			updateDisplay();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Event handle for click detection on label display. 
+		 * @param evt Event
+		 */
+		protected function handleTap( evt:Event ):void
+		{
+			if( _delegate ) _delegate.buttonTapped( this );
 		}
 		
 		/**
@@ -133,6 +198,11 @@ package com.custardbelly.as3flobile.controls.button
 			
 			while( numChildren > 0 )
 				removeChildAt( 0 );
+			
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
+			_delegate = null;
 		}
 		
 		/**
@@ -183,6 +253,34 @@ package com.custardbelly.as3flobile.controls.button
 		public function get backgroundDisplay():Graphics
 		{
 			return graphics;
+		}
+		
+		/**
+		 * Accessor/Modifier for the IButtonDelegate client requiring notification on tap.  
+		 * @return ICheckBoxDelegate
+		 */
+		public function get delegate():IButtonDelegate
+		{
+			return _delegate;
+		}
+		public function set delegate( value:IButtonDelegate ):void
+		{
+			_delegate = value;
+		}
+
+		/**
+		 * Accessor/Modifier for the mediator for a tap gesture. Default MouseTapMediator. 
+		 * @return ITapMediator
+		 */
+		public function get tapMediator():ITapMediator
+		{
+			return _tapMediator;
+		}
+		public function set tapMediator( value:ITapMediator ):void
+		{
+			if( _tapMediator == value ) return;
+			
+			invalidateTapMediator( value );
 		}
 	}
 }

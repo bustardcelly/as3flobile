@@ -2,6 +2,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.bit101.components.PushButton;
 	import com.custardbelly.as3flobile.controls.button.Button;
+	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
@@ -16,7 +17,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class ScrollListExample extends Sprite implements IToggleButtonDelegate
+	public class ScrollListExample extends Sprite implements IToggleButtonDelegate, IButtonDelegate
 	{
 		protected var _list:ScrollList;
 		protected var _verticalLayout:IScrollListVerticalLayout;
@@ -62,11 +63,10 @@ package com.custardbelly.as3flobile.example.web.view.component
 			
 			_list.dataProvider = getList( 40 );
 			
-			var button:Button = new Button();
+			var button:Button = Button.initWithDelegate( this );
 			button.label = "switch layout";
 			button.x = 0;
 			button.y = 400;
-			button.addEventListener( MouseEvent.CLICK, handleSwitchLayout );
 			addChild( button );
 			
 			var tbutton:ToggleButton = ToggleButton.initWithDelegate( this );
@@ -91,7 +91,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			return arr;
 		}
 		
-		protected function handleSwitchLayout( evt:Event ):void
+		public function buttonTapped( button:Button ):void
 		{
 			_layoutState = ( _layoutState == ScrollListExample.STATE_VERT ) ? ScrollListExample.STATE_HORIZ : ScrollListExample.STATE_VERT;
 			if( _layoutState == ScrollListExample.STATE_HORIZ )

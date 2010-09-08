@@ -1,6 +1,7 @@
 package com.custardbelly.as3flobile.example.web.view
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
+	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.debug.PrintLine;
 	
@@ -18,7 +19,7 @@ package com.custardbelly.as3flobile.example.web.view
 	import flash.text.engine.TextLine;
 	import flash.utils.getTimer;
 	
-	public class ControlPanel extends Sprite
+	public class ControlPanel extends Sprite implements IButtonDelegate
 	{
 		protected var _delegate:IControlPanelDelegate;
 		private var _gitRepo:String = "http://github.com/bustardcelly/as3flobile";
@@ -47,7 +48,8 @@ package com.custardbelly.as3flobile.example.web.view
 			createButton( "text area", 5, 345 );
 			createButton( "sliders", 5, 403 );
 			createButton( "toggle switch", 5, 461 );
-			createButton( "miscellany", 5, 519 );
+			createButton( "menus", 5, 519 );
+			createButton( "miscellany", 5, 577 );
 			
 			var linkFormat:ElementFormat = new ElementFormat( new FontDescription( "DroidSans" ), 14, 0x0000FF );
 			var linkHandler:EventDispatcher = new EventDispatcher();
@@ -63,27 +65,25 @@ package com.custardbelly.as3flobile.example.web.view
 		
 		protected function createButton( label:String, xpos:int, ypos:int ):void
 		{
-			var button:Button = new Button();
+			var button:Button = Button.initWithDelegate( this );
 			button.label = label;
 			button.x = xpos;
 			button.y = ypos;
-			button.addEventListener( MouseEvent.CLICK, handleSelection );
 			addChild( button );
 		}
 		
 		protected function drawBackground():void
 		{
-			var height:int = 536;
+			var height:int = 587;
 			graphics.clear();
 			graphics.beginFill( 0xE8C782 );
 			graphics.drawRoundRect( 0, 45, 110, height, 5, 5 );
 			graphics.endFill();
 		}
 		
-		protected function handleSelection( evt:Event ):void
+		public function buttonTapped( button:Button ):void
 		{
-			var target:DisplayObject = evt.target as DisplayObject;
-			var index:int = getChildIndex( target );
+			var index:int = getChildIndex( button );
 			_delegate.controlPanelSelectionChange( this, index - 1 );
 		}
 		

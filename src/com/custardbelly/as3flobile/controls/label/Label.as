@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Label.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

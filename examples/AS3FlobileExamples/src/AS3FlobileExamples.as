@@ -84,7 +84,7 @@ package
 		protected function handleResize( evt:Event ):void
 		{
 			var scale:Number = 1;
-			var h:int = _componentPanel.y + _componentPanel.height + 10;
+			var h:int = _controlPanel.y + _controlPanel.height + 10;
 			if( stage.stageWidth != 480 || stage.stageHeight != h )
 			{
 				scale = Math.min( stage.stageWidth / 480, stage.stageHeight / h );

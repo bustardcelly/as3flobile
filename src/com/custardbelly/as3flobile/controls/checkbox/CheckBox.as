@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: CheckBox.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -188,6 +188,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 */
 		override protected function addDisplayHandlers():void
 		{
+			super.addDisplayHandlers();
 			if( !_tapMediator.isMediating( this ) ) _tapMediator.mediateTapGesture( this, handleTap );
 		}
 		
@@ -196,6 +197,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 */
 		override protected function removeDisplayHandlers():void
 		{
+			super.removeDisplayHandlers();
 			if( _tapMediator.isMediating( this ) ) _tapMediator.unmediateTapGesture( this );
 		}
 		
@@ -233,7 +235,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		 * @private
 		 * 
 		 * Event handle for click detection on label display. 
-		 * @param evt MouseEvent
+		 * @param evt Event
 		 */
 		protected function handleTap( evt:Event ):void
 		{
@@ -247,12 +249,16 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			super.dispose();
 			
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
 			_boxDisplay = null;
 			_labelDisplay = null;
 			_delegate = null;
+			_tapMediator = null;
 		}
 		
 		/**

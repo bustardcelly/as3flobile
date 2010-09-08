@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: MouseTapMediator.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,7 @@ package com.custardbelly.as3flobile.helper
 		 */
 		protected function isWithinTargetBounds( x:int, y:int ):Boolean
 		{
-			if( _tapDisplay.stage == null ) return false;
+			if( _tapDisplay == null || _tapDisplay.stage == null ) return false;
 			
 			var scaledBounds:Rectangle = _tapDisplay.getBounds( _tapDisplay.stage );
 			return ( x >= scaledBounds.x && x <= scaledBounds.x + scaledBounds.width ) &&
@@ -98,8 +98,8 @@ package com.custardbelly.as3flobile.helper
 		 */
 		protected function assignMouseHandlers():void
 		{
-			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false, 0, true );
-			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false, 0, true );
+			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_DOWN, handleTouchBegin, false, 1, true );
+			_tapDisplay.stage.addEventListener( MouseEvent.MOUSE_UP, handleTouchEnd, false, 1, true );
 		}
 		/**
 		 * @private 
@@ -186,10 +186,7 @@ package com.custardbelly.as3flobile.helper
 		 */
 		override public function unmediateTapGesture( display:InteractiveObject ):void
 		{
-			if( display.stage )
-			{
-				removeMouseHandlers();
-			}
+			removeMouseHandlers();
 			removeDisplayHandlers();
 			super.unmediateTapGesture( display );
 		}

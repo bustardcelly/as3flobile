@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ButtonSkin.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,19 +74,21 @@ package com.custardbelly.as3flobile.skin
 			if( display == null ) return;
 			
 			var isSelected:Boolean = _target.skinState == BasicStateEnum.DOWN;
+			var isDisabled:Boolean = ( _target.skinState == BasicStateEnum.DISABLED ) || ( _target.skinState == BasicStateEnum.SELECTED_DISABLED );
 			var color:uint = ( isSelected ) ? 0xCCCCCC : 0xFFFFFF;
+			var alpha:Number = ( isDisabled ) ? 0.5 : 1;
 			var topLeftColor:uint = ( isSelected ) ? 0xAAAAAA : 0x666666;
 			var bottomRightColor:uint = ( isSelected ) ? 0x666666 : 0xAAAAAA;
 			
 			display.clear();
-			display.beginFill( color );
+			display.beginFill( color, alpha );
 			display.drawRect( 0, 0, width, height );
 			display.endFill();
-			display.lineStyle( 2, topLeftColor, 1, true, "normal", "square", "miter" );
+			display.lineStyle( 2, topLeftColor, alpha, true, "normal", "square", "miter" );
 			display.moveTo( width, 0 );
 			display.lineTo( width, height );
 			display.lineTo( 0, height );
-			display.lineStyle( 2, bottomRightColor, 1, true, "normal", "square", "miter" );
+			display.lineStyle( 2, bottomRightColor, alpha, true, "normal", "square", "miter" );
 			display.moveTo( 0, height );
 			display.lineTo( 0, 0 );
 			display.lineTo( width, 0 );

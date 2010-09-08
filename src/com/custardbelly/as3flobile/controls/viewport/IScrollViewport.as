@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: IScrollViewport.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.viewport
 {
+	import com.custardbelly.as3flobile.controls.core.ISimpleDisplayObject;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.model.IDisposable;
 	
@@ -38,7 +39,7 @@ package com.custardbelly.as3flobile.controls.viewport
 	 * IScrollViewport is a display container that provides a viewport area for scrolling of content. 
 	 * @author toddanderson
 	 */
-	public interface IScrollViewport extends IEventDispatcher, IDisposable
+	public interface IScrollViewport extends ISimpleDisplayObject, IDisposable, IEventDispatcher
 	{
 		/**
 		 * Runs a refresh on content and context.
@@ -63,34 +64,6 @@ package com.custardbelly.as3flobile.controls.viewport
 		 * @return Rectangle
 		 */
 		function get scrollBounds():Rectangle;
-		
-		/**
-		 * Accessor/Modifier for the position along the x axis. 
-		 * @return Number
-		 */
-		function get x():Number;
-		function set x( value:Number ):void;
-		
-		/**
-		 * Accessor/Modifier for the position along the y axis. 
-		 * @return Number
-		 */
-		function get y():Number;
-		function set y( value:Number ):void;
-		
-		/**
-		 * Accessor/Modifier for the display width of the viewport. 
-		 * @return Number
-		 */
-		function get width():Number;
-		function set width( value:Number ):void;
-		
-		/**
-		 * Accessor/Modifier for the display height of the viewport. 
-		 * @return Number
-		 */
-		function get height():Number;
-		function set height( value:Number ):void;
 		
 		/**
 		 * Accessor/Modifier for the content that is being scrolled within the viewport. 

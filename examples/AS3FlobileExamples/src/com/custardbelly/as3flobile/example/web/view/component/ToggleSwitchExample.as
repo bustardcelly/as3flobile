@@ -1,6 +1,7 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
+	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitch;
 	import com.custardbelly.as3flobile.controls.toggle.IToggleSwitchDelegate;
@@ -10,7 +11,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	public class ToggleSwitchExample extends Sprite implements IToggleSwitchDelegate
+	public class ToggleSwitchExample extends Sprite implements IToggleSwitchDelegate, IButtonDelegate
 	{
 		protected var _selectionField:Label;
 		protected var _toggleSwitch:ToggleSwitch;
@@ -50,27 +51,21 @@ package com.custardbelly.as3flobile.example.web.view.component
 			label.text = "Manual override.";
 			addChild( label );
 			
-			var button:Button = new Button();
+			var button:Button = Button.initWithDelegate( this );
 			button.label = "set off";
 			button.y = 200;
-			button.addEventListener( MouseEvent.CLICK, handleOff );
 			addChild( button );
 			
-			button = new Button();
+			button = Button.initWithDelegate( this );
 			button.label = "set on";
 			button.y = 200;
 			button.x = 110;
-			button.addEventListener( MouseEvent.CLICK, handleOn );
 			addChild( button );
 		}
 		
-		protected function handleOff( evt:Event ):void
+		public function buttonTapped( button:Button ):void
 		{
-			_toggleSwitch.selectedIndex = 0;
-		}
-		protected function handleOn( evt:Event ):void
-		{
-			_toggleSwitch.selectedIndex = 1;
+			_toggleSwitch.selectedIndex = ( button.label == "set off" ) ? 0 : 1; 
 		}
 		
 		public function toggleSwitchSelectionChange( toggleSwitch:IToggleSwitch, selectedIndex:uint ):void

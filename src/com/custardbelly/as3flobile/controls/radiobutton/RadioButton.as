@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioButton.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -247,11 +247,16 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		{
 			super.dispose();
 			
+			if( _tapMediator && _tapMediator.isMediating( this ) )
+				_tapMediator.unmediateTapGesture( this );
+			
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
 			_radioDisplay = null;
 			_labelDisplay = null;
+			_delegate = null;
+			_tapMediator = null;
 		}
 
 		/**

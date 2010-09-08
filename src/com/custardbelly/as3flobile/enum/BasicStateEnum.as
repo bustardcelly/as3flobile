@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: BasicStateEnum.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,9 @@ package com.custardbelly.as3flobile.enum
 		public static const NORMAL:int = 0;
 		public static const DISABLED:int = 1;
 		public static const SELECTED:int = 2;
-		public static const FOCUSED:int = 3;
-		public static const DOWN:int = 4;
+		public static const SELECTED_DISABLED:int = 3;
+		public static const FOCUSED:int = 4;
+		public static const FOCUSED_DISABLED:int = 5;
+		public static const DOWN:int = 6;
 	}
 }

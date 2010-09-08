@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ToggleButton.as</p>
- * <p>Version: 0.1</p>
+ * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.button
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.skin.ToggleButtonSkin;
 	
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 
 	/**
@@ -38,7 +39,7 @@ package com.custardbelly.as3flobile.controls.button
 	public class ToggleButton extends Button
 	{
 		protected var _currentState:int;
-		protected var _delegate:IToggleButtonDelegate;
+		protected var _toggleDelegate:IToggleButtonDelegate;
 		
 		/**
 		 * Constructor.
@@ -53,7 +54,7 @@ package com.custardbelly.as3flobile.controls.button
 		public static function initWithDelegate( delegate:IToggleButtonDelegate ):ToggleButton
 		{
 			var button:ToggleButton = new ToggleButton();
-			button.delegate = delegate;
+			button.toggleDelegate = delegate;
 			return button;
 		}
 		
@@ -69,22 +70,6 @@ package com.custardbelly.as3flobile.controls.button
 		}
 		
 		/**
-		 * @inherit
-		 */
-		override protected function addDisplayHandlers():void
-		{
-			addEventListener( MouseEvent.CLICK, handleToggleClick, false, 0, true );
-		}
-		
-		/**
-		 * @inherit
-		 */
-		override protected function removeDisplayHandlers():void
-		{
-			removeEventListener( MouseEvent.CLICK, handleToggleClick, false );
-		}
-		
-		/**
 		 * @private
 		 * 
 		 * Toggles the current state based on flag. 
@@ -96,8 +81,8 @@ package com.custardbelly.as3flobile.controls.button
 			_skinState = _currentState;
 			updateDisplay();
 			
-			if( _delegate )
-				_delegate.toggleButtonSelectionChange( this, value );
+			if( _toggleDelegate )
+				_toggleDelegate.toggleButtonSelectionChange( this, value );
 		}
 		
 		/**
@@ -119,9 +104,18 @@ package com.custardbelly.as3flobile.controls.button
 		 * Event handler for internal mouse click on this instance. 
 		 * @param evt MouseEvent
 		 */
-		protected function handleToggleClick( evt:MouseEvent ):void
+		override protected function handleTap( evt:Event ):void
 		{
+			super.handleTap( evt );
 			this.selected = !this.selected;
+		}
+		
+		/**
+		 * @inherit
+		 */
+		override protected function handleOut( evt:MouseEvent ):void
+		{
+			// prevent default. do nothing.
 		}
 		
 		/**
@@ -130,7 +124,7 @@ package com.custardbelly.as3flobile.controls.button
 		override public function dispose():void
 		{
 			super.dispose();
-			_delegate = null;
+			_toggleDelegate = null;
 		}
 		
 		/**
@@ -152,13 +146,13 @@ package com.custardbelly.as3flobile.controls.button
 		 * Accessor/Modifier for IToggleButtonDelegate instance that requires notification of change to toggle state. 
 		 * @return IToggleButtonDelegate
 		 */
-		public function get delegate():IToggleButtonDelegate
+		public function get toggleDelegate():IToggleButtonDelegate
 		{
-			return _delegate;
+			return _toggleDelegate;
 		}
-		public function set delegate(value:IToggleButtonDelegate):void
+		public function set toggleDelegate(value:IToggleButtonDelegate):void
 		{
-			_delegate = value;
+			_toggleDelegate = value;
 		}
 	}
 }
