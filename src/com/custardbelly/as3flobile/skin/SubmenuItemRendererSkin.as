@@ -30,6 +30,7 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 
 	/**
 	 * SubmenuItemRendererSkin is an extension of MenuItemRendererSkin to customize the layout of display elements in an IMenuItemRenderer 
@@ -41,6 +42,17 @@ package com.custardbelly.as3flobile.skin
 		 * Constructor.
 		 */
 		public function SubmenuItemRendererSkin() { super(); }
+		
+		/**
+		 * @inherit
+		 */
+		override protected function updateBackground( display:Graphics, width:Number, height:int ):void
+		{	
+			display.clear();
+			display.beginFill( 0xFFFFFF );
+			display.drawRoundRect( 0, 0, width, height, 10, 10 );
+			display.endFill();
+		}
 		
 		/**
 		 * @inherit

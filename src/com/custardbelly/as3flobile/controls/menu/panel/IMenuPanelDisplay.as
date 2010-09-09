@@ -33,6 +33,8 @@ package com.custardbelly.as3flobile.controls.menu.panel
 	import com.custardbelly.as3flobile.model.IDisposable;
 	import com.custardbelly.as3flobile.skin.ISkinnable;
 	
+	import flash.display.Graphics;
+	import flash.display.Shape;
 	import flash.events.IEventDispatcher;
 
 	/**
@@ -41,6 +43,12 @@ package com.custardbelly.as3flobile.controls.menu.panel
 	 */
 	public interface IMenuPanelDisplay extends ISimpleDisplayObject, ISkinnable, IMenuLayoutTarget, IDisposable, IEventDispatcher
 	{	
+		/**
+		 * Returns the background display for skinning purposes. 
+		 * @return Graphics
+		 */
+		function get backgroundDisplay():Graphics;
+			
 		/**
 		 * Accessor/Modifier for the fully-qualified class name of the item renderer of the display. 
 		 * @return String The fully-qualified class name.
@@ -54,6 +62,20 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		 */
 		function get itemRendererSkin():String;
 		function set itemRendererSkin( value:String ):void;
+		
+		/**
+		 * Accessor/Modifier for the default height of each child item for layout. 
+		 * @return int
+		 */
+		function get itemHeight():int;
+		function set itemHeight(value:int):void;
+		
+		/**
+		 * Accessor/Modifier for the default width of each child item for layout. 
+		 * @return int
+		 */
+		function get itemWidth():int;
+		function set itemWidth(value:int):void;
 		
 		/**
 		 * Accessor/Modifier for the layout type for the menu panel display. 

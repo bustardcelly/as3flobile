@@ -224,13 +224,13 @@ package com.custardbelly.as3flobile.controls.core
 		 * @param right int
 		 * @param bottom int
 		 */
-		protected function updatePadding( left:int, top:int, right:int, bottom:int ):void
+		protected function updatePadding( left:int, top:int, right:int, bottom:int, refresh:Boolean = false ):void
 		{
 			_padding.left = left;
 			_padding.top = top;
 			_padding.right = right;
 			_padding.bottom = bottom;
-			updateDisplay();
+			if( refresh ) updateDisplay();
 		}
 		
 		/**

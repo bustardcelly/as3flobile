@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.menu.layout
 {
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
+	import com.custardbelly.as3flobile.controls.shape.Divider;
 
 	/**
 	 * GridMenuLayout positions menu item views within a grid based on amount of available space and the maximum display amount of the target menu display. 
@@ -38,7 +39,6 @@ package com.custardbelly.as3flobile.controls.menu.layout
 		protected var _rowLengthCache:Vector.<int>;
 		
 		protected var _columnLength:int;
-		protected var _itemHeight:int;
 		
 		/**
 		 * Constructor.
@@ -60,6 +60,7 @@ package com.custardbelly.as3flobile.controls.menu.layout
 			var items:Vector.<IMenuItemRenderer> = _target.items;
 			if( items == null || items.length == 0 ) return;
 			
+			const dividerWidth:int = 2;
 			var i:int;
 			var length:int;
 			var xpos:int = _target.padding.left;
@@ -67,6 +68,7 @@ package com.custardbelly.as3flobile.controls.menu.layout
 			var item:IMenuItemRenderer;
 			var horizPadding:int = _target.padding.left + _target.padding.right;
 			var availableWidth:int = width - horizPadding;
+			var divider:Divider;
 			// If the amount of items is less that the column count, we can save processing by working in a small subset of length.
 			if( items.length <= _columnLength )
 			{
@@ -80,6 +82,15 @@ package com.custardbelly.as3flobile.controls.menu.layout
 					item.x = xpos;
 					item.y = ypos;
 					xpos += percentWidth;
+					
+					if( i < length - 1 )
+					{
+						divider = _target.addDivider();
+						divider.width = dividerWidth;
+						divider.height = _itemHeight;
+						divider.x = xpos - ( dividerWidth * 0.5 );
+						divider.y = ypos;
+					}
 				}
 			}
 			// Else we will cycle through and assemble the rows based on column count and maximum display amount of the target menu display.
@@ -121,12 +132,30 @@ package com.custardbelly.as3flobile.controls.menu.layout
 					item.y = ypos;
 					xpos += _widthCache[i];
 					lengthIndex++;
-					if( _rowLengthCache[rowIndex] == lengthIndex ) 
+					
+					if( i < length - 1 && _rowLengthCache[rowIndex] != lengthIndex )
+					{
+						divider = _target.addDivider();
+						divider.width = dividerWidth;
+						divider.height = _itemHeight;
+						divider.x = xpos - ( dividerWidth * 0.5 );
+						divider.y = ypos;
+					}
+					else if( _rowLengthCache[rowIndex] == lengthIndex ) 
 					{
 						ypos += _itemHeight;
 						xpos = _target.padding.left;
 						rowIndex++;
 						lengthIndex = 0;
+						
+						if( i < length - 1 )
+						{
+							divider = _target.addDivider();
+							divider.width = availableWidth;
+							divider.height = dividerWidth;
+							divider.y = ypos - ( dividerWidth * 0.5 );
+							divider.x = xpos;
+						}
 					}
 				}
 			}
@@ -144,19 +173,6 @@ package com.custardbelly.as3flobile.controls.menu.layout
 			super.dispose();
 			_widthCache = null;
 			_rowLengthCache = null;
-		}
-		
-		/**
-		 * Accessor/Modifier for the default height of each child item for layout. 
-		 * @return int
-		 */
-		public function get itemHeight():int
-		{
-			return _itemHeight;
-		}
-		public function set itemHeight(value:int):void
-		{
-			_itemHeight = value;
 		}
 
 		/**

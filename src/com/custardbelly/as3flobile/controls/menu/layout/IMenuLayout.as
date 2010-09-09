@@ -53,6 +53,20 @@ package com.custardbelly.as3flobile.controls.menu.layout
 		function getContentHeight():Number;
 		
 		/**
+		 * Accessor/Modifier for the default height of each child item for layout. 
+		 * @return int
+		 */
+		function get itemHeight():int;
+		function set itemHeight(value:int):void;
+		
+		/**
+		 * Accessor/Modifier for the default width of each child item for layout. 
+		 * @return int
+		 */
+		function get itemWidth():int;
+		function set itemWidth(value:int):void;
+		
+		/**
 		 * Accessor/Modifier for the layout target from which to access display children required for layout. 
 		 * @return IMenuLayoutTarget
 		 */

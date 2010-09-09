@@ -33,12 +33,16 @@ package com.custardbelly.as3flobile.controls.menu.panel
 	import com.custardbelly.as3flobile.controls.menu.renderer.DefaultMenuItemRenderer;
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemSelectionDelegate;
+	import com.custardbelly.as3flobile.controls.shape.Divider;
 	import com.custardbelly.as3flobile.enum.DimensionEnum;
 	import com.custardbelly.as3flobile.skin.ISkin;
+	import com.custardbelly.as3flobile.skin.MenuPanelSkin;
 	import com.custardbelly.as3flobile.util.IObjectPool;
 	import com.custardbelly.as3flobile.util.ObjectPool;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
+	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.utils.getQualifiedClassName;
 	
@@ -51,6 +55,12 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		protected var _items:Vector.<IMenuItemRenderer>;
 		protected var _rendererPool:IObjectPool;
 		protected var _skinPool:IObjectPool;
+		
+		protected var _dividers:Vector.<Divider>;
+		protected var _dividerPool:IObjectPool;
+		
+		protected var _itemWidth:int;
+		protected var _itemHeight:int;
 		
 		protected var _layout:IMenuLayout;
 		protected var _itemRenderer:String;
@@ -87,6 +97,9 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			_width = DimensionEnum.UNDEFINED;
 			_height = DimensionEnum.UNDEFINED;
 			
+			_itemWidth = DimensionEnum.UNDEFINED;
+			_itemHeight = 50;
+			
 			// Default maximum display amount.
 			_maximumItemDisplayAmount = 6;
 			
@@ -96,11 +109,21 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			// Default layout target.
 			_layout = new GridMenuLayout();
 			_layout.target = this;
+			_layout.itemWidth = _itemWidth;
+			_layout.itemHeight = _itemHeight;
+			
+			// Skin
+			_skin = new MenuPanelSkin();
+			_skin.target = this;
 			
 			// Supply default item renderer for menu.
 			_itemRenderer = getQualifiedClassName( DefaultMenuItemRenderer );
 			// Pools.
 			_rendererPool = new ObjectPool( _itemRenderer );
+			
+			// Dividers.
+			_dividers = new Vector.<Divider>();
+			_dividerPool = new ObjectPool( getQualifiedClassName( Divider ) );
 		}
 		
 		/**
@@ -119,6 +142,8 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			// Set up new layout target.
 			_layout = newValue;
 			_layout.target = this;
+			_layout.itemWidth = _itemWidth;
+			_layout.itemHeight = _itemHeight;
 			// Update display with new layout.
 			updateDisplay();
 		}
@@ -202,6 +227,15 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			updateDisplay();
 		}
 		
+		protected function invalidateItemSize():void
+		{
+			if( _layout == null ) return;
+			
+			_layout.itemWidth = _itemWidth;
+			_layout.itemHeight = _itemHeight;
+			updateDisplay();
+		}
+		
 		/**
 		 * @inherit
 		 */
@@ -279,6 +313,11 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		 */
 		override protected function updateDisplay():void
 		{
+			// Retrun dividers to pool.
+			while( _dividers.length > 0 )
+			{
+				_dividerPool.returnInstance( _dividers.pop() );
+			}
 			// Use the target layout to layout the children.
 			if( _layout != null )
 			{
@@ -287,6 +326,17 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			}
 			// Update othe parts fo display based on dimensions derived from layout target.
 			super.updateDisplay();
+		}
+		
+		/**
+		 * @copy IMenuLayoutTarget#addDivider()
+		 */
+		public function addDivider():Divider
+		{
+			var divider:Divider = _dividerPool.getInstance() as Divider;
+			_dividers[_dividers.length] = divider;
+			addChild( divider );
+			return divider;
 		}
 		
 		/**
@@ -331,6 +381,14 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			// Null references.
 			_items = null;
 			_dataProvider = null;
+		}
+		
+		/**
+		 * @copy IMenuPanelDisplay#backgroundDisplay
+		 */
+		public function get backgroundDisplay():Graphics
+		{
+			return graphics;
 		}
 		
 		/**
@@ -385,6 +443,38 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			if( _itemRendererSkin == value ) return;
 			
 			invalidateItemRendererSkin( _itemRendererSkin, value );
+		}
+		
+		/**
+		 * Accessor/Modifier for the default height of each child item for layout. 
+		 * @return int
+		 */
+		public function get itemHeight():int
+		{
+			return _itemHeight;
+		}
+		public function set itemHeight(value:int):void
+		{
+			if( _itemHeight == value ) return;
+			
+			_itemHeight = value;
+			invalidateItemSize();
+		}
+		
+		/**
+		 * Accessor/Modifier for the default width of each child item for layout. 
+		 * @return int
+		 */
+		public function get itemWidth():int
+		{
+			return _itemWidth;
+		}
+		public function set itemWidth(value:int):void
+		{
+			if( _itemWidth == value ) return;
+			
+			_itemWidth = value;
+			invalidateItemSize();
 		}
 		
 		/**

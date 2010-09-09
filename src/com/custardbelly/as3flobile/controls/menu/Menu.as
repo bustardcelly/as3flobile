@@ -41,6 +41,7 @@ package com.custardbelly.as3flobile.controls.menu
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
 	import com.custardbelly.as3flobile.enum.DimensionEnum;
 	import com.custardbelly.as3flobile.skin.SubmenuItemRendererSkin;
+	import com.custardbelly.as3flobile.skin.SubmenuPanelSkin;
 	import com.custardbelly.as3flobile.util.IObjectPool;
 	import com.custardbelly.as3flobile.util.ObjectPool;
 	import com.custardbelly.as3flobile.util.PropertyUtil;
@@ -124,6 +125,7 @@ package com.custardbelly.as3flobile.controls.menu
 			
 			_submenuPanelConfiguration = new MenuPanelConfiguration( getQualifiedClassName( MenuPanel ) );
 			_submenuPanelConfiguration.layoutType = getQualifiedClassName( VerticalMenuLayout );
+			_submenuPanelConfiguration.skinType = getQualifiedClassName( SubmenuPanelSkin );
 			_submenuPanelConfiguration.itemRendererSkinType = getQualifiedClassName( SubmenuItemRendererSkin );
 			
 			// Reveal behaviour type.
@@ -318,6 +320,8 @@ package com.custardbelly.as3flobile.controls.menu
 		 */
 		public function menuBehaviourDidEnd( behaviour:IMenuRevealBehaviour ):void
 		{
+			if( _displayDelegate == null ) return;
+			
 			var targetPanel:IMenuPanelDisplay = behaviour.targetDisplay;
 			var behaviourState:int = behaviour.getState();
 			// Notify display delegate if available based on state of behaviour.

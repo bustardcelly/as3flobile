@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.menu.layout
 {
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
+	import com.custardbelly.as3flobile.controls.shape.Divider;
 	import com.custardbelly.as3flobile.model.BoxPadding;
 
 	/**
@@ -35,6 +36,13 @@ package com.custardbelly.as3flobile.controls.menu.layout
 	 */
 	public interface IMenuLayoutTarget
 	{
+		/**
+		 * Adds a divider to the display based on layout positioning. 
+		 * @param width int
+		 * @param height int
+		 */
+		function addDivider():Divider;
+		
 		/**
 		 * Returns the list of IMenuItemRenderer views. 
 		 * @return IMenuItemRenderer

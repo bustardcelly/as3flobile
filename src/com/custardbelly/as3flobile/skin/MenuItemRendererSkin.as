@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.model.BoxPadding;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
@@ -54,13 +55,10 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateBackground( display:Graphics, width:Number, height:int ):void
 		{	
-			const offset:int = 1;
-			const padding:int = 2;
+			var padding:BoxPadding = _target.padding;
 			display.clear();
-			display.beginFill( 0xAAAAAA );
-			display.drawRect( -offset, -offset, width + offset, height + offset );
-			display.beginFill( 0xEEEEEE );
-			display.drawRect( offset, offset, width - padding - offset, height - padding - offset );
+			display.beginFill( 0xFFFFFF );
+			display.drawRect( padding.left, padding.top, width - ( padding.left + padding.right ), height - ( padding.top + padding.bottom ) );
 			display.endFill();
 		}
 		

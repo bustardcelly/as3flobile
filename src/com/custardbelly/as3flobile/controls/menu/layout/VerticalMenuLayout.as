@@ -27,6 +27,7 @@
 package com.custardbelly.as3flobile.controls.menu.layout
 {
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
+	import com.custardbelly.as3flobile.controls.shape.Divider;
 
 	/**
 	 * VerticalMenuLayout is a layout manager to display items of a traget menu display along the y-axis. 
@@ -34,8 +35,6 @@ package com.custardbelly.as3flobile.controls.menu.layout
 	 */
 	public class VerticalMenuLayout extends BaseMenuLayout
 	{
-		protected var _itemHeight:int;
-		
 		/**
 		 * Constructor.
 		 */
@@ -53,6 +52,7 @@ package com.custardbelly.as3flobile.controls.menu.layout
 			var items:Vector.<IMenuItemRenderer> = _target.items;
 			if( items == null || items.length == 0 ) return;
 			
+			const dividerHeight:int = 2;
 			var i:int;
 			var length:int = items.length;
 			var xpos:int = _target.padding.left;
@@ -60,6 +60,7 @@ package com.custardbelly.as3flobile.controls.menu.layout
 			var item:IMenuItemRenderer;
 			var horizPadding:int = _target.padding.left + _target.padding.right;
 			var availableWidth:int = width - horizPadding;
+			var divider:Divider;
 			for( i = 0; i < length; i++ )
 			{
 				item = items[i];
@@ -68,22 +69,18 @@ package com.custardbelly.as3flobile.controls.menu.layout
 				item.x = xpos;
 				item.y = ypos;
 				ypos += _itemHeight;
+				
+				if( i < length - 1 )
+				{
+					divider = _target.addDivider();
+					divider.width = availableWidth;
+					divider.height = dividerHeight;
+					divider.x = xpos;
+					divider.y = ypos - ( dividerHeight * 0.5 );
+				}
 			}
 			_contentWidth = availableWidth;
 			_contentHeight = ypos;
-		}
-
-		/**
-		 * Accessor/Modifier for the unified item height of each item in the layout.
-		 * @return int
-		 */
-		public function get itemHeight():int
-		{
-			return _itemHeight;
-		}
-		public function set itemHeight(value:int):void
-		{
-			_itemHeight = value;
 		}
 	}
 }

@@ -34,6 +34,9 @@ package com.custardbelly.as3flobile.controls.menu.layout
 	 */
 	public class BaseMenuLayout implements IMenuLayout
 	{
+		protected var _itemHeight:int;
+		protected var _itemWidth:int;
+		
 		protected var _contentWidth:Number;
 		protected var _contentHeight:Number;
 		protected var _target:IMenuLayoutTarget;
@@ -43,6 +46,8 @@ package com.custardbelly.as3flobile.controls.menu.layout
 		 */
 		public function BaseMenuLayout() 
 		{
+			_itemWidth = DimensionEnum.UNDEFINED;
+			_itemHeight = DimensionEnum.UNDEFINED;
 			_contentWidth = DimensionEnum.UNDEFINED;
 			_contentHeight = DimensionEnum.UNDEFINED;
 		}
@@ -84,6 +89,32 @@ package com.custardbelly.as3flobile.controls.menu.layout
 		public function set target( value:IMenuLayoutTarget ):void
 		{
 			_target = value;
+		}
+		
+		/**
+		 * Accessor/Modifier for the default height of each child item for layout. 
+		 * @return int
+		 */
+		public function get itemHeight():int
+		{
+			return _itemHeight;
+		}
+		public function set itemHeight(value:int):void
+		{
+			_itemHeight = value;
+		}
+		
+		/**
+		 * Accessor/Modifier for the default width of each child item for layout. 
+		 * @return int
+		 */
+		public function get itemWidth():int
+		{
+			return _itemWidth;
+		}
+		public function set itemWidth(value:int):void
+		{
+			_itemWidth = value;
 		}
 		
 		/**
