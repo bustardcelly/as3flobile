@@ -406,8 +406,12 @@ package com.custardbelly.as3flobile.controls.menu
 			while( _dataProvider.length > 0 )
 				_dataProvider.shift();
 			
+			_dataProvider = null;
+			
 			// Kill history.
 			_menuHistory.dispose();
+			_menuHistory = null;
+			
 			// Dispose of panels.
 			var menuPanel:IMenuPanelDisplay;
 			while( _menuPanelList.length > 0 )
@@ -415,6 +419,7 @@ package com.custardbelly.as3flobile.controls.menu
 				menuPanel = _menuPanelList.shift();
 				menuPanel.dispose();
 			}
+			_menuPanelList = null;
 			
 			// More item pool.
 			_moreMenuItemPool.dispose();
@@ -422,7 +427,10 @@ package com.custardbelly.as3flobile.controls.menu
 			
 			// Flush re-use pools.
 			_mainMenuPanelConfiguration.dispose();
+			_mainMenuPanelConfiguration = null;
+			
 			_submenuPanelConfiguration.dispose();
+			_submenuPanelConfiguration = null;
 		}
 		
 		/**

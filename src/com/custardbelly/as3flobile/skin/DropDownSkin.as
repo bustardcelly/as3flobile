@@ -185,7 +185,7 @@ class LabelButtonSkin extends ButtonSkin
 	/**
 	 * @inherit
 	 */
-	override protected function updateLabel( label:Label, width:int, height:int, padding:int = 0 ):void
+	override protected function updateLabel( label:Label, width:int, height:int, padding:int = 0, fromStateChange:Boolean = false ):void
 	{
 		super.updateLabel( label, width, height, padding );
 		label.x = padding;

@@ -35,6 +35,8 @@ package com.custardbelly.as3flobile.skin
 	 */
 	public class Skin implements ISkin
 	{
+		protected var _previousState:int;
+		protected var _currentState:int;
 		protected var _target:ISkinnable;
 		
 		/**
@@ -47,14 +49,15 @@ package com.custardbelly.as3flobile.skin
 		 */
 		public function initializeDisplay( width:int, height:int ):void
 		{
-			// abstract.
+			_currentState = _target.skinState;
 		}
 		/**
 		 * @copy ISkin#updateDisplay()
 		 */
 		public function updateDisplay( width:int, height:int ):void
 		{
-			// abstact.
+			_previousState = _currentState;
+			_currentState = _target.skinState;
 		}
 		
 		/**

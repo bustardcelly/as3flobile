@@ -43,6 +43,8 @@ package com.custardbelly.as3flobile.skin
 	 */
 	public class ButtonSkin extends Skin
 	{
+		protected var _enabledLabelColor:uint;
+		
 		/**
 		 * Constuctor.
 		 */
@@ -105,15 +107,19 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function initializeLabel( label:Label, width:int, height:int, padding:int = 0 ):void
 		{	
-			var format:ElementFormat = label.format;
+			var format:ElementFormat = label.format.clone();
+			_enabledLabelColor = format.color;
+			
+			var isDisabled:Boolean = ( _currentState == BasicStateEnum.DISABLED ) || ( _currentState == BasicStateEnum.SELECTED_DISABLED );
+			var color:uint = ( isDisabled ) ? 0xCCCCCC : _enabledLabelColor;
 			if( format.fontDescription.fontName != "DroidSans-Bold" )
 			{
-				format = format.clone();
 				var fontDesc:FontDescription = format.fontDescription.clone();
 				fontDesc.fontName = "DroidSans-Bold";
 				format.fontDescription = fontDesc;
-				label.format = format;
 			}
+			format.color = color;
+			label.format = format;
 			label.textAlign = TextAlign.CENTER;
 			updateLabel( label, width, height, padding );
 		}
@@ -127,9 +133,18 @@ package com.custardbelly.as3flobile.skin
 		 * @param height int
 		 * @param padding int
 		 */
-		protected function updateLabel( label:Label, width:int, height:int, padding:int = 0 ):void
+		protected function updateLabel( label:Label, width:int, height:int, padding:int = 0, fromStateChange:Boolean = false ):void
 		{
 			if( label == null ) return;
+			
+			if( fromStateChange )
+			{
+				var isDisabled:Boolean = ( _currentState == BasicStateEnum.DISABLED ) || ( _currentState == BasicStateEnum.SELECTED_DISABLED );
+				var color:uint = ( isDisabled ) ? 0xCCCCCC : _enabledLabelColor;
+				var format:ElementFormat = label.format.clone();
+				format.color = color;
+				label.format = format;
+			}
 			
 			label.width = width - ( padding * 2 );
 			label.x = ( width - label.width ) * 0.5;
@@ -155,9 +170,10 @@ package com.custardbelly.as3flobile.skin
 		{
 			super.updateDisplay( width, height );
 			
+			var fromStateChange:Boolean = ( _previousState != _currentState );
 			var buttonTarget:Button = ( _target as Button );
 			updateBackground( buttonTarget.backgroundDisplay, width, height );
-			updateLabel( buttonTarget.labelDisplay, width, height, buttonTarget.labelPadding );
+			updateLabel( buttonTarget.labelDisplay, width, height, buttonTarget.labelPadding, fromStateChange );
 		}
 	}
 }

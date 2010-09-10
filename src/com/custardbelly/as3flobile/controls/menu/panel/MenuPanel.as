@@ -367,6 +367,14 @@ package com.custardbelly.as3flobile.controls.menu.panel
 			_layout.dispose();
 			_layout = null;
 			
+			// Clear divider pool.
+			while( _dividers.length > 0 )
+			{
+				_dividerPool.returnInstance( _dividers.pop() );
+			}
+			_dividerPool.dispose();
+			_dividerPool = null;
+			
 			// Dispose of item factory.
 			_rendererPool.dispose();
 			_rendererPool = null;
