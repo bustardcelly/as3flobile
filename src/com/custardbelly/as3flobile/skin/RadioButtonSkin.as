@@ -80,7 +80,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateLabelDisplay( display:Label, width:int, height:int ):void
 		{
-			var isSelected:Boolean = _target.skinState == BasicStateEnum.SELECTED;
+			var isSelected:Boolean = _currentState == BasicStateEnum.SELECTED;
 			if( !isSelected )
 				display.format = _normalLabelFormat;
 			else

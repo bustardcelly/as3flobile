@@ -108,6 +108,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			super.createChildren();
 			
 			_radioDisplay = new ToggleButton();
+			_radioDisplay.tapMediator = null;
 			_radioDisplay.skin = new RadioButtonToggleSkin();
 			addChild( _radioDisplay );
 			

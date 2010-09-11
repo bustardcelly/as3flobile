@@ -257,7 +257,11 @@ package
 			_backButton.enabled = isShown;
 			_prevPageButton.enabled = !isShown;
 			_nextPageButton.enabled = !isShown;
-			if( !isShown ) _menuButton.selected = false;
+			if( !isShown )
+			{
+				_menuButton.selected = false;
+				_currentPage.onMenuClose();
+			}
 		}
 	}
 }

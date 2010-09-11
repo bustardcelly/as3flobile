@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.skin
 {
+	import com.custardbelly.as3flobile.controls.radiobutton.RadioButton;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	
 	import flash.display.Graphics;
@@ -52,7 +53,7 @@ package com.custardbelly.as3flobile.skin
 			var halfSize:int = size * 0.5;
 			
 			display.clear();
-			if( _target.skinState == BasicStateEnum.SELECTED )
+			if( _currentState == BasicStateEnum.SELECTED )
 			{	
 				display.beginFill( 0xEEEEEE );
 				display.lineStyle( 2, 0x999999 );

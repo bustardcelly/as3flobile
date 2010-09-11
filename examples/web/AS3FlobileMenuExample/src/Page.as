@@ -6,6 +6,7 @@ package
 	
 	import flash.display.Shape;
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -22,6 +23,8 @@ package
 		protected var _color:uint;
 		
 		protected var _mask:Shape;
+		protected var _modalSprite:Sprite;
+		protected var _menu:Menu;
 		
 		public function Page()
 		{
@@ -48,6 +51,9 @@ package
 			
 			_mask = new Shape();
 			addChild( _mask );
+			
+			_modalSprite = new Sprite();
+			_modalSprite.addEventListener( MouseEvent.CLICK, handleClick, false, 0, true );
 		}
 		
 		protected function position():void
@@ -93,16 +99,37 @@ package
 		{
 			_mask.graphics.clear();
 			_mask.graphics.beginFill( 0 );
-			_mask.graphics.drawRect( 0, 0, _width, height );
+			_mask.graphics.drawRect( 0, 0, _width, _height );
 			_mask.graphics.endFill();
 			this.mask = _mask;
+			
+			_modalSprite.graphics.clear();
+			_modalSprite.graphics.beginFill( 0, 0 );
+			_modalSprite.graphics.drawRect( 0, 0, _width, _height );
+			_modalSprite.graphics.endFill();
+		}
+		
+		protected function handleClick( evt:MouseEvent ):void
+		{
+			if( _menu != null )
+			{
+				_menu.close();	
+			}
 		}
 		
 		public function showMenu( menu:Menu ):void
 		{
+			addChild( _modalSprite );
+			
+			_menu = menu;
 			menu.dataProvider = _menuData;
 			menu.width = _width;
 			menu.open( this, new Point( 0, _height ) );
+		}
+		
+		public function onMenuClose():void
+		{
+			removeChild( _modalSprite );
 		}
 		
 		public function get title():String
