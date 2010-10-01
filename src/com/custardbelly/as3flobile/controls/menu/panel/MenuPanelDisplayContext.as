@@ -1,6 +1,6 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: MenuPanelConfiguration.as</p>
+ * <p>Class File: MenuPanelDisplayContext.as</p>
  * <p>Version: 0.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,11 +33,11 @@ package com.custardbelly.as3flobile.controls.menu.panel
 	import com.custardbelly.as3flobile.util.ObjectPool;
 
 	/**
-	 * MenuPanelConfiguration represents a model for configuration of an IMenuPanelDisplay instance. 
+	 * MenuPanelDisplayContext represents a model for configuration of an IMenuPanelDisplay instance. 
 	 * By extending IObjectPool, this model also acts as a factory for creating new instances based on configuration properties. 
 	 * @author toddanderson
 	 */
-	public class MenuPanelConfiguration implements IObjectPool
+	public class MenuPanelDisplayContext implements IObjectPool
 	{
 		protected var _menuPanelType:String;
 		protected var _layoutType:String;
@@ -53,7 +53,7 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		 * Constructor. 
 		 * @param menuPanelType String The fully-qualified classname of the IMenuPanelDisplay implementation.
 		 */
-		public function MenuPanelConfiguration( menuPanelType:String )
+		public function MenuPanelDisplayContext( menuPanelType:String )
 		{
 			this.menuPanelType = menuPanelType;
 		}
@@ -79,6 +79,8 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		 */
 		public function returnInstance( value:Object ):void
 		{
+			if( !(value is IMenuPanelDisplay) ) return;
+			
 			if( _skinPool ) _skinPool.returnInstance( value.skin );
 			if( _layoutPool ) _layoutPool.returnInstance( value.layout );
 			_panelPool.returnInstance( value );
@@ -123,10 +125,10 @@ package com.custardbelly.as3flobile.controls.menu.panel
 		
 		/**
 		 * Returns flag of speficied configuration properties equaling those held on this instance. 
-		 * @param configuration MenuPanelConfiguration
+		 * @param configuration MenuPanelDisplayContext
 		 * @return Boolean
 		 */
-		public function isEqual( configuration:MenuPanelConfiguration ):Boolean
+		public function isEqual( configuration:MenuPanelDisplayContext ):Boolean
 		{
 			return	( configuration.menuPanelType == _menuPanelType ) &&
 					( configuration.layoutType == _layoutType ) &&

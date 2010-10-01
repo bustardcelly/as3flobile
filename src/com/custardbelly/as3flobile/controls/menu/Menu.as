@@ -37,7 +37,7 @@ package com.custardbelly.as3flobile.controls.menu
 	import com.custardbelly.as3flobile.controls.menu.panel.IMenuPanelDisplay;
 	import com.custardbelly.as3flobile.controls.menu.panel.IMenuPanelSelectionDelegate;
 	import com.custardbelly.as3flobile.controls.menu.panel.MenuPanel;
-	import com.custardbelly.as3flobile.controls.menu.panel.MenuPanelConfiguration;
+	import com.custardbelly.as3flobile.controls.menu.panel.MenuPanelDisplayContext;
 	import com.custardbelly.as3flobile.controls.menu.renderer.IMenuItemRenderer;
 	import com.custardbelly.as3flobile.enum.DimensionEnum;
 	import com.custardbelly.as3flobile.skin.SubmenuItemRendererSkin;
@@ -60,10 +60,10 @@ package com.custardbelly.as3flobile.controls.menu
 		protected var _menuPanelList:Vector.<IMenuPanelDisplay>;
 		protected var _menuHistory:MenuHistoryFlow;
 		
-		protected var _mainMenuPanelConfiguration:MenuPanelConfiguration;
-		protected var _mainMenuPanelConfigurationChanged:Boolean;
-		protected var _submenuPanelConfiguration:MenuPanelConfiguration;
-		protected var _submenuPanelConfigurationChanged:Boolean;
+		protected var _mainMenuPanelContext:MenuPanelDisplayContext;
+		protected var _mainMenuPanelContextChanged:Boolean;
+		protected var _submenuPanelContext:MenuPanelDisplayContext;
+		protected var _submenuPanelContextChanged:Boolean;
 		
 		protected var _moreMenuItemPool:IObjectPool;
 		protected var _panelBehaviourType:String;
@@ -120,13 +120,13 @@ package com.custardbelly.as3flobile.controls.menu
 			_menuPanelList = new Vector.<IMenuPanelDisplay>();
 			
 			// Configurations.
-			_mainMenuPanelConfiguration = new MenuPanelConfiguration( getQualifiedClassName( MenuPanel ) );
-			_mainMenuPanelConfiguration.layoutType = getQualifiedClassName( GridMenuLayout );
+			_mainMenuPanelContext = new MenuPanelDisplayContext( getQualifiedClassName( MenuPanel ) );
+			_mainMenuPanelContext.layoutType = getQualifiedClassName( GridMenuLayout );
 			
-			_submenuPanelConfiguration = new MenuPanelConfiguration( getQualifiedClassName( MenuPanel ) );
-			_submenuPanelConfiguration.layoutType = getQualifiedClassName( VerticalMenuLayout );
-			_submenuPanelConfiguration.skinType = getQualifiedClassName( SubmenuPanelSkin );
-			_submenuPanelConfiguration.itemRendererSkinType = getQualifiedClassName( SubmenuItemRendererSkin );
+			_submenuPanelContext = new MenuPanelDisplayContext( getQualifiedClassName( MenuPanel ) );
+			_submenuPanelContext.layoutType = getQualifiedClassName( VerticalMenuLayout );
+			_submenuPanelContext.skinType = getQualifiedClassName( SubmenuPanelSkin );
+			_submenuPanelContext.itemRendererSkinType = getQualifiedClassName( SubmenuItemRendererSkin );
 			
 			// Reveal behaviour type.
 			_panelBehaviourType = getQualifiedClassName( SlideUpMenuBehaviour );
@@ -195,8 +195,8 @@ package com.custardbelly.as3flobile.controls.menu
 		protected function invalidateConfigurations():void
 		{
 			invalidateDataProvider();
-			_mainMenuPanelConfigurationChanged = false;
-			_submenuPanelConfigurationChanged = false;
+			_mainMenuPanelContextChanged = false;
+			_submenuPanelContextChanged = false;
 		}
 		
 		/**
@@ -220,7 +220,7 @@ package com.custardbelly.as3flobile.controls.menu
 			var i:int = _menuPanelList.length;
 			var isMain:Boolean;
 			var menuPanel:IMenuPanelDisplay;
-			var configuration:MenuPanelConfiguration;
+			var configuration:MenuPanelDisplayContext;
 			while( --i > -1 )
 			{
 				configuration = null;
@@ -228,13 +228,13 @@ package com.custardbelly.as3flobile.controls.menu
 				isMain = ( i == 0 );
 				// Determine configuration based on being main or submenu and the change to configuration property.
 				// Do not return already created panels to their configuration if it has changed.
-				if( isMain && !_mainMenuPanelConfigurationChanged )
+				if( isMain && !_mainMenuPanelContextChanged )
 				{
-					configuration = _mainMenuPanelConfiguration;
+					configuration = _mainMenuPanelContext;
 				}
-				else if( !_submenuPanelConfigurationChanged )
+				else if( !_submenuPanelContextChanged )
 				{
-					configuration = _submenuPanelConfiguration;
+					configuration = _submenuPanelContext;
 				}
 				if( configuration ) configuration.returnInstance( menuPanel );
 			}
@@ -249,7 +249,7 @@ package com.custardbelly.as3flobile.controls.menu
 		protected function getSubmenuContainer():IMenuPanelDisplay
 		{
 			var isMain:Boolean = ( _menuPanelList.length == 0 );
-			var config:MenuPanelConfiguration = ( isMain ) ? _mainMenuPanelConfiguration : _submenuPanelConfiguration;
+			var config:MenuPanelDisplayContext = ( isMain ) ? _mainMenuPanelContext : _submenuPanelContext;
 			var submenu:IMenuPanelDisplay = config.getInstance() as IMenuPanelDisplay;
 			submenu.selectionDelegate = this;
 			submenu.maximumItemDisplayAmount = _maximumItemDisplayAmount;
@@ -426,11 +426,11 @@ package com.custardbelly.as3flobile.controls.menu
 			_moreMenuItem = null;
 			
 			// Flush re-use pools.
-			_mainMenuPanelConfiguration.dispose();
-			_mainMenuPanelConfiguration = null;
+			_mainMenuPanelContext.dispose();
+			_mainMenuPanelContext = null;
 			
-			_submenuPanelConfiguration.dispose();
-			_submenuPanelConfiguration = null;
+			_submenuPanelContext.dispose();
+			_submenuPanelContext = null;
 		}
 		
 		/**
@@ -485,40 +485,40 @@ package com.custardbelly.as3flobile.controls.menu
 		}
 		
 		/**
-		 * Accessor/Modifier for the MenuPanelConfiguration to use when creating the main panel within the submenus of this control. 
-		 * @return MenuPanelConfiguration
+		 * Accessor/Modifier for the MenuPanelDisplayContext to use when creating the main panel within the submenus of this control. 
+		 * @return MenuPanelDisplayContext
 		 */
-		public function get mainMenuPanelConfiguration():MenuPanelConfiguration
+		public function get mainMenuPanelDisplayContext():MenuPanelDisplayContext
 		{
-			return _mainMenuPanelConfiguration;
+			return _mainMenuPanelContext;
 		}
-		public function set mainMenuPanelConfiguration( value:MenuPanelConfiguration ):void
+		public function set mainMenuPanelDisplayContext( value:MenuPanelDisplayContext ):void
 		{
-			if( _mainMenuPanelConfiguration.isEqual( value ) ) return;
+			if( _mainMenuPanelContext.isEqual( value ) ) return;
 			
 			// Dispose previous config.
-			_mainMenuPanelConfiguration.dispose();
+			_mainMenuPanelContext.dispose();
 			// Update config reference and flip property change value.
-			_mainMenuPanelConfiguration = value;
-			_mainMenuPanelConfigurationChanged = true;
+			_mainMenuPanelContext = value;
+			_mainMenuPanelContextChanged = true;
 			invalidateConfigurations();
 		}
 		
 		/**
-		 * Accessor/Modifier fot the MenuPanelConfiguration to use when creating submenus other than the main menu in this control. 
-		 * @return MenuPanelConfiguration
+		 * Accessor/Modifier fot the MenuPanelDisplayContext to use when creating submenus other than the main menu in this control. 
+		 * @return MenuPanelDisplayContext
 		 */
-		public function get submenuPanelConfiguration():MenuPanelConfiguration
+		public function get submenuPanelDisplayContext():MenuPanelDisplayContext
 		{
-			return _submenuPanelConfiguration;
+			return _submenuPanelContext;
 		}
-		public function set submenuPanelConfiguration( value:MenuPanelConfiguration ):void
+		public function set submenuPanelDisplayContext( value:MenuPanelDisplayContext ):void
 		{
-			if( _submenuPanelConfiguration.isEqual( value ) ) return;
+			if( _submenuPanelContext.isEqual( value ) ) return;
 			
-			_submenuPanelConfiguration.dispose();
-			_submenuPanelConfiguration = value;
-			_submenuPanelConfigurationChanged = true;
+			_submenuPanelContext.dispose();
+			_submenuPanelContext = value;
+			_submenuPanelContextChanged = true;
 			invalidateConfigurations();
 		}
 		

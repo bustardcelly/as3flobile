@@ -9,20 +9,15 @@ package com.custardbelly.as3flobile.example.web.view.component
 	import com.custardbelly.as3flobile.controls.menu.IMenuSelectionDelegate;
 	import com.custardbelly.as3flobile.controls.menu.Menu;
 	import com.custardbelly.as3flobile.controls.menu.MenuItem;
-	import com.custardbelly.as3flobile.controls.menu.layout.GridMenuLayout;
 	import com.custardbelly.as3flobile.controls.menu.panel.IMenuPanelDisplay;
-	import com.custardbelly.as3flobile.controls.menu.panel.MenuPanel;
-	import com.custardbelly.as3flobile.controls.menu.panel.MenuPanelConfiguration;
 	
 	import flash.display.Bitmap;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
-	import flash.utils.getQualifiedClassName;
 	
 	public class MenusExample extends Sprite implements IButtonDelegate, IToggleButtonDelegate, IMenuDisplayDelegate, IMenuSelectionDelegate
 	{
@@ -82,7 +77,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 			menu.width = 240;
 			menu.moreMenuItem = new MenuItem( "More", new moreIconClass() as Bitmap );
 			menu.dataProvider = getMenuItems( 40 );
-//			var subConfig:MenuPanelConfiguration = new MenuPanelConfiguration( getQualifiedClassName( MenuPanel ) );
+//			var subConfigMenuPanelDisplayContextxt = neMenuPanelDisplayContextext( getQualifiedClassName( MenuPanel ) );
 //			subConfig.layoutType = getQualifiedClassName( GridMenuLayout );
 //			menu.submenuPanelConfiguration = subConfig;
 			

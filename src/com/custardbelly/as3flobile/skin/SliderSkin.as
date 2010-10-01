@@ -94,18 +94,20 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateThumb( display:Sprite, thumbWidth:int, thumbHeight:int ):void
 		{
+			const lineSize:int = 2;
+			const offset:int = 1;
 			display.graphics.clear();
 			display.graphics.beginFill( 0xAAAAAA );
 			display.graphics.drawRect( 0, 0, thumbWidth, thumbHeight );
 			display.graphics.endFill();
-			display.graphics.lineStyle( 2, 0x666666, 1, true, "normal", "square", "miter" );
-			display.graphics.moveTo( thumbWidth - 1, 1 );
-			display.graphics.lineTo( thumbWidth - 1, thumbHeight );
-			display.graphics.lineTo( 1, thumbHeight - 1 );
-			display.graphics.lineStyle( 2, 0xCCCCCC, 1, true, "normal", "square", "miter" );
-			display.graphics.moveTo( 1, thumbHeight - 1 );
-			display.graphics.lineTo( 1, 1 );
-			display.graphics.lineTo( thumbWidth - 1, 1 );
+			display.graphics.lineStyle( lineSize, 0x666666, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( thumbWidth - offset, offset );
+			display.graphics.lineTo( thumbWidth - offset, thumbHeight - offset );
+			display.graphics.lineTo( offset, thumbHeight - offset);
+			display.graphics.lineStyle( lineSize, 0xCCCCCC, 1, true, "normal", "square", "miter" );
+			display.graphics.moveTo( offset, thumbHeight - offset );
+			display.graphics.lineTo( offset, offset );
+			display.graphics.lineTo( thumbWidth - offset, offset );
 		}
 		
 		/**
