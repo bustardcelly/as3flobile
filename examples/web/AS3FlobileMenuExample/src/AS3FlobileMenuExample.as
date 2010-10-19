@@ -20,13 +20,12 @@ package
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.text.TextFormatAlign;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
 	import flash.text.engine.TextBlock;
 	import flash.text.engine.TextElement;
 	import flash.text.engine.TextLine;
-	
-	import flashx.textLayout.formats.TextAlign;
 	
 	public class AS3FlobileMenuExample extends Sprite implements IButtonDelegate, IToggleButtonDelegate, IMenuSelectionDelegate, IMenuDisplayDelegate
 	{
@@ -67,7 +66,7 @@ package
 			label.format = new ElementFormat( new FontDescription( "DroidSans" ), 36 );
 			label.width = 470;
 			label.y = 5;
-			label.textAlign = TextAlign.RIGHT;
+			label.textAlign = TextFormatAlign.RIGHT;
 			label.text = "AS3Flobile: Menu";
 			view.addChild( label );
 			

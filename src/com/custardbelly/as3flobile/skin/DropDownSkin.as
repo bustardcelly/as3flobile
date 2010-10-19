@@ -156,8 +156,7 @@ import com.custardbelly.as3flobile.controls.label.Label;
 import com.custardbelly.as3flobile.skin.ButtonSkin;
 
 import flash.display.Graphics;
-
-import flashx.textLayout.formats.TextAlign;
+import flash.text.TextFormatAlign;
 
 /**
  * LabelButtonSkin is a skin class for the label button of a DropDown control. 
@@ -180,7 +179,7 @@ class LabelButtonSkin extends ButtonSkin
 		label.truncationText = "...";
 		label.multiline = false;
 		label.autosize = false;
-		label.textAlign = TextAlign.LEFT;
+		label.textAlign = TextFormatAlign.LEFT;
 	}
 	/**
 	 * @inherit

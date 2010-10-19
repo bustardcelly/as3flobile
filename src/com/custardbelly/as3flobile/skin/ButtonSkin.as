@@ -31,11 +31,9 @@ package com.custardbelly.as3flobile.skin
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	
 	import flash.display.Graphics;
-	import flash.display.Sprite;
+	import flash.text.TextFormatAlign;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
-	
-	import flashx.textLayout.formats.TextAlign;
 
 	/**
 	 * ButtonSkin is the base class for skinning a Button control. 
@@ -135,7 +133,7 @@ package com.custardbelly.as3flobile.skin
 			}
 			format.color = color;
 			label.format = format;
-			label.textAlign = TextAlign.CENTER;
+			label.textAlign = TextFormatAlign.CENTER;
 			updateLabel( label, width, height, padding );
 		}
 		
