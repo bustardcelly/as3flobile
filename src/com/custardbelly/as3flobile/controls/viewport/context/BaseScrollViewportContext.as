@@ -60,6 +60,14 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		}
 		
 		/**
+		 * @copy IScrollViewportContext#reset()
+		 */
+		public function reset():void
+		{
+			_strategy.reset();
+		}
+		
+		/**
 		 * Runs an update on held IScrollViewportStrategy.
 		 */
 		public function update():void
@@ -74,7 +82,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function activate():void
 		{
 			_isActive = true;
-			update();
+			_strategy.mediate( _viewport );
 		}
 		
 		/**

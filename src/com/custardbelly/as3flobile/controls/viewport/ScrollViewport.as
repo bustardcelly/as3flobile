@@ -58,6 +58,7 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		public function ScrollViewport()
 		{	
+			_enabled = true;
 			context = getDefaultViewportContext();
 			scrollRect = new Rectangle( 0, 0, _width, _height );
 			initialize();
@@ -172,10 +173,10 @@ package com.custardbelly.as3flobile.controls.viewport
 		/**
 		 * @inherit
 		 */
-		override protected function handleAddedToStage( evt:Event ):void
+		override protected function addDisplayHandlers():void
 		{
-			super.handleAddedToStage( evt );
-			if( _context )
+			super.addDisplayHandlers();
+			if( _enabled && _context )
 			{
 				_context.activate();
 				flushPendingContextActivateCommands();
@@ -185,9 +186,9 @@ package com.custardbelly.as3flobile.controls.viewport
 		/**
 		 * @inherit
 		 */
-		override protected function handleRemovedFromStage( evt:Event ):void
+		override protected function removeDisplayHandlers():void
 		{
-			super.handleRemovedFromStage( evt );
+			super.removeDisplayHandlers();
 			if( _context )
 			{
 				_context.deactivate();
@@ -233,6 +234,18 @@ package com.custardbelly.as3flobile.controls.viewport
 			{
 				pushPendingContextActivationCommand( new PendingInitializationCommand( scrollToPosition, position ) );
 			}
+		}
+		
+		/**
+		 * @copy IScrollViewport#reset()
+		 */
+		public function reset():void
+		{
+			if( _content )
+			{
+				_content.x = _content.y = 0;
+			}
+			_context.reset();
 		}
 		
 		/**

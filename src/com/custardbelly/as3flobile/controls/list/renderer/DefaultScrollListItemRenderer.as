@@ -59,6 +59,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		protected var _useVariableWidth:Boolean;
 		protected var _useVariableHeight:Boolean;
 		
+		protected var _labelField:String = "label";
 		protected var _data:Object;
 		protected var _selected:Boolean;
 		
@@ -130,7 +131,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			// If no data and this was called in response to a property change, move on.
 			if( _data == null ) return;
 			
-			_label.text = _data.label;
+			_label.text = _data[_labelField];
 			
 			if( _useVariableHeight ) _height = _label.height + _padding.top + _padding.bottom;
 			if( _useVariableWidth ) _width = _label.width + _padding.left + _padding.right;
@@ -252,6 +253,18 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			_useVariableWidth = value;
 			invalidateProperty( invalidateData );
+		}
+		
+		/**
+		 * @copy IScrollListItemRenderer#labelField
+		 */
+		public function get labelField():String
+		{
+			return _labelField;
+		}
+		public function set labelField( value:String ):void
+		{
+			_labelField = value;
 		}
 		
 		/**

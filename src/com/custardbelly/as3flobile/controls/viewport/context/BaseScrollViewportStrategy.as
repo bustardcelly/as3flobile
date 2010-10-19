@@ -89,6 +89,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		{
 			_targetAdaptor = getDefaultTargetScrollAdaptor();
 			_coordinate = new Point();
+			// Get key for store.
+			_markStoreKey = ScrollMark.generateKey();
 		}
 		
 		/**
@@ -128,9 +130,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_damp = DAMP;
 			_thresholdX = BaseScrollViewportStrategy.THRESHOLD * _bounds.width;
 			_thresholdY = BaseScrollViewportStrategy.THRESHOLD * _bounds.height;
-			
-			// Get key for store.
-			_markStoreKey = ScrollMark.generateKey();
 			
 			// Create marks and fill with capacity.
 			if( _marks == null )
@@ -384,6 +383,16 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			}
 		}
 		
+		/**
+		 * @copy IScrollViewportStrategy#reset()
+		 */
+		public function reset():void
+		{
+			_currentScrollPositionX = 0;
+			_currentScrollPositionY = 0;
+			_coordinate.x = _currentScrollPositionX;
+			_coordinate.y = _currentScrollPositionY;
+		}
 		
 		/**
 		 * Starts the marking of touch movements and animation. 

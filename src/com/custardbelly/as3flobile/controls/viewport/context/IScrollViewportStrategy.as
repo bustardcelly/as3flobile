@@ -52,6 +52,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		function unmediate():void;
 		
 		/**
+		 * Resets any initial values for mediation.
+		 */
+		function reset():void;
+		/**
 		 * Starts the scrolling animation session. 
 		 * @param point Point The coordinate point at which to start.
 		 */

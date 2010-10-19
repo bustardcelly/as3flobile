@@ -210,7 +210,10 @@ package com.custardbelly.as3flobile.controls.core
 			if( _skin != null ) _skin.dispose();
 			
 			_skin = newValue;
-			_skin.target = this;
+			if( _skin != null )
+			{	
+				_skin.target = this;
+			}
 			initializeDisplay();
 			updateDisplay();
 		}

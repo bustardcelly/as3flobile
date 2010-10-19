@@ -120,11 +120,6 @@ package com.custardbelly.as3flobile.controls.label
 				var lastChild:TextLine = getChildAt( numChildren - 1 ) as TextLine;
 				_measuredWidth = bounds.width;
 				_measuredHeight = bounds.height + ( lastChild.ascent - ( lastChild.descent * 2 ) );
-				if( _autosize )
-				{
-					_width = _measuredWidth;
-					_height = _measuredHeight;
-				}
 			}
 		}
 		/**
@@ -186,6 +181,25 @@ package com.custardbelly.as3flobile.controls.label
 		public function get measuredHeight():int
 		{
 			return _measuredHeight;
+		}
+		
+		/**
+		 * @inherit
+		 * 
+		 * Override to return the determined measured width based on content when autosize is specified.
+		 */
+		override public function get width():Number
+		{
+			return ( _autosize ) ? _measuredWidth : _width;
+		}
+		/**
+		 * @inherit
+		 * 
+		 * Override to return the determined measured height based on content when autosize is specified.
+		 */
+		override public function get height():Number
+		{
+			return ( _autosize ) ? _measuredHeight : _height;
 		}
 		
 		/**

@@ -42,6 +42,11 @@ package com.custardbelly.as3flobile.controls.viewport
 	public interface IScrollViewport extends ISimpleDisplayObject, IDisposable, IEventDispatcher
 	{
 		/**
+		 * Runs a reset on context and context.
+		 */
+		function reset():void;
+		
+		/**
 		 * Runs a refresh on content and context.
 		 */
 		function refresh():void;

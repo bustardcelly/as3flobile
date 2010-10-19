@@ -46,6 +46,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		function initialize( viewport:IScrollViewport ):void;
 		/**
+		 * Runs a reset on the context and strategy.
+		 */
+		function reset():void;
+		/**
 		 * Updates the context and strategy.
 		 */
 		function update():void;

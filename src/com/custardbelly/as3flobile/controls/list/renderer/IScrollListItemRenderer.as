@@ -83,6 +83,13 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		function set useVariableHeight( value:Boolean ):void;
 		
 		/**
+		 * Accessor/Modifier for the field within the data to use as the label textual content. 
+		 * @return String
+		 */
+		function get labelField():String;
+		function set labelField( value:String ):void;
+		
+		/**
 		 * Accessor/Modifier for the model representation to display. 
 		 * @return Object
 		 */

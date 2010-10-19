@@ -43,6 +43,17 @@ package com.custardbelly.as3flobile.skin
 		public function ScrollListSkin() { super(); }
 		
 		/**
+		 * @inherit
+		 */
+		override protected function clearDisplay():void
+		{
+			super.clearDisplay();
+			var scrollListTarget:ScrollList = ( _target as ScrollList );
+			var background:Graphics = scrollListTarget.backgroundDisplay;
+			background.clear();
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * updates the look and feel of the background display of the target ScrollList 

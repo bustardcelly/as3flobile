@@ -84,6 +84,7 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _selectedRenderer:IScrollListItemRenderer;
 		
 		protected var _selectedIndex:int = -1;
+		protected var _labelField:String = "label";
 		protected var _dataProvider:Array;
 		
 		/**
@@ -213,7 +214,6 @@ package com.custardbelly.as3flobile.controls.list
 		{	
 			var layout:IScrollListLayout = new ScrollListVerticalLayout();
 			layout.target = this;
-			( layout as IScrollListVerticalLayout ).itemHeight = 48;
 			return layout;
 		}
 		
@@ -265,6 +265,15 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * @inherit
+		 */
+		override protected function invalidateEnablement( oldValue:Boolean, newValue:Boolean ):void
+		{
+			super.invalidateEnablement( oldValue, newValue );
+			_viewport.enabled = _enabled;
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Validate the new data provider applied to this instance. 
@@ -273,8 +282,18 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function invalidateDataProvider( oldValue:Array, newValue:Array ):void
 		{
+			// null out previous selection.
+			_selectedIndex = -1;
+			invalidateSelection();
+			
 			// Hold easy reference to the amount of new data.
 			_cellAmount = ( _dataProvider ) ? _dataProvider.length : 0;
+			
+			// Remove all renderers.
+			while( _listHolder.numChildren > 0 )
+			{
+				_listHolder.removeChildAt( 0 );
+			}
 			
 			// If we had no old value, fill as normal.
 			if( oldValue == null )
@@ -298,6 +317,7 @@ package com.custardbelly.as3flobile.controls.list
 			}
 			// Run a refresh.
 			refresh();
+			_viewport.reset();
 		}
 		
 		/**
@@ -315,6 +335,22 @@ package com.custardbelly.as3flobile.controls.list
 			fillRendererQueue( _cells, ( _dataProvider ) ? _dataProvider.length : 0 );
 			// Refresh.
 			invalidateDisplay();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Validates the update to labelField for each item renderer.
+		 */
+		protected function invalidateLabelField():void
+		{
+			var i:int = _cells.length;
+			var renderer:IScrollListItemRenderer;
+			while( --i > -1 )
+			{
+				renderer = _cells[i] as IScrollListItemRenderer;
+				renderer.labelField = _labelField;
+			}
 		}
 		
 		/**
@@ -433,6 +469,7 @@ package com.custardbelly.as3flobile.controls.list
 			while( --i > -1 )
 			{
 				renderer = createItemRenderer();
+				renderer.labelField = _labelField;
 				queue[queue.length] = renderer;
 			}
 		}
@@ -443,13 +480,17 @@ package com.custardbelly.as3flobile.controls.list
 		 * Appends item renderers to the list of IScrollListItemRenderer. 
 		 * @param queue Vector.<IScrollListItemRenderer> The list to add a new instance to.
 		 * @param amount int The amount of item renderer instances to add to the list.
-		 * 
 		 */
 		protected function addToRendererQueue( queue:Vector.<IScrollListItemRenderer>, amount:int ):void
 		{
 			var length:int = queue.length + amount;
+			var renderer:IScrollListItemRenderer;
 			while( queue.length < length )
-				queue[queue.length] = createItemRenderer();
+			{
+				renderer = createItemRenderer();
+				renderer.labelField = _labelField;
+				queue[queue.length] = renderer
+			}
 		}
 		
 		/**
@@ -504,20 +545,20 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * @inherit
 		 */
-		override protected function handleAddedToStage( evt:Event ):void
+		override protected function addDisplayHandlers():void
 		{
-			super.handleAddedToStage( evt );
+			super.addDisplayHandlers();
 			
-			if( _selectionEnabled )
+			if( _enabled && _selectionEnabled )
 				_tapMediator.mediateTapGesture( _listHolder, handleListTap );
 		}
 		
 		/**
 		 * @inherit
 		 */
-		override protected function handleRemovedFromStage( evt:Event ):void
+		override protected function removeDisplayHandlers():void
 		{
-			super.handleRemovedFromStage( evt );
+			super.removeDisplayHandlers();
 			
 			if( _tapMediator.isMediating( _listHolder ) ) 
 				_tapMediator.unmediateTapGesture( _listHolder );
@@ -844,6 +885,21 @@ package com.custardbelly.as3flobile.controls.list
 			_selectedIndex = value;
 			invalidateSelection(); 
 			if( _delegate ) _delegate.listSelectionChange( this, _selectedIndex );
+		}
+		
+		/**
+		 * @copu IScrollListContainer#labelField
+		 */
+		public function get labelField():String
+		{
+			return _labelField;
+		}
+		public function set labelField( value:String ):void
+		{
+			if( _labelField == value ) return;
+			
+			_labelField = value;
+			invalidateLabelField();
 		}
 		
 		/**

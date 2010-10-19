@@ -45,6 +45,14 @@ package com.custardbelly.as3flobile.skin
 		public function Skin() {}
 		
 		/**
+		 * Clears the skinning operations.
+		 */
+		protected function clearDisplay():void
+		{
+			// abstract.
+		}
+		
+		/**
 		 * @copy ISkin#initializeDisplay()
 		 */
 		public function initializeDisplay( width:int, height:int ):void
@@ -65,6 +73,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		public function dispose():void
 		{
+			clearDisplay();
 			_target = null;
 		}
 		

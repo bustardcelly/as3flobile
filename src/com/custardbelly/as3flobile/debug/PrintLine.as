@@ -53,7 +53,7 @@ package com.custardbelly.as3flobile.debug
 		
 		public function print( message:String, append:Boolean = false ):void
 		{
-			if( append && _field.text.length > 0 )
+			if( append && _field.text && _field.text.length > 0 )
 			{
 				_field.text += "\n" + message;
 			}

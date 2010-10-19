@@ -42,6 +42,16 @@ package com.custardbelly.as3flobile.skin
 		public function DividerSkin() { super(); }
 		
 		/**
+		 * @inherit
+		 */
+		override protected function clearDisplay():void
+		{
+			super.clearDisplay();
+			var background:Graphics = ( _target as Divider ).background;
+			background.clear();
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Updates the background display of the target Divider. 

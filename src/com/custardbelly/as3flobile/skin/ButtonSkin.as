@@ -43,12 +43,26 @@ package com.custardbelly.as3flobile.skin
 	 */
 	public class ButtonSkin extends Skin
 	{
+		protected var _originalFormat:ElementFormat;
 		protected var _enabledLabelColor:uint;
 		
 		/**
 		 * Constuctor.
 		 */
 		public function ButtonSkin() { super(); }
+		
+		/**
+		 * @inherit
+		 */
+		override protected function clearDisplay():void
+		{
+			super.clearDisplay();
+			var buttonTarget:Button = ( _target as Button );
+			var background:Graphics = buttonTarget.backgroundDisplay;
+			var label:Label = buttonTarget.labelDisplay;
+			background.clear();
+			label.format = _originalFormat;
+		}
 		
 		/**
 		 * @private
@@ -107,6 +121,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function initializeLabel( label:Label, width:int, height:int, padding:int = 0 ):void
 		{	
+			_originalFormat = label.format;
 			var format:ElementFormat = label.format.clone();
 			_enabledLabelColor = format.color;
 			

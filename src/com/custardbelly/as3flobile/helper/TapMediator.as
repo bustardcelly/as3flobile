@@ -59,6 +59,9 @@ package com.custardbelly.as3flobile.helper
 		 */
 		protected function handleTouchBegin( evt:Event ):void
 		{
+			// If our event has detected a tap, but it flowed up without the target as the mediating object, move on.
+			if( evt.target != _tapDisplay ) return;
+			
 			_startTime = getTimer();
 		}
 		
@@ -70,6 +73,9 @@ package com.custardbelly.as3flobile.helper
 		 */
 		protected function handleTouchEnd( evt:Event ):void
 		{
+			// If our event has detected a tap, but it flowed up without the target as the mediating object, move on.
+			if( evt.target != _tapDisplay ) return;
+			
 			if( getTimer() - _startTime <= _threshold )
 			{
 				_tapHandler.apply( this, [evt] );

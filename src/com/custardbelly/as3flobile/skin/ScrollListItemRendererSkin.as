@@ -96,6 +96,13 @@ package com.custardbelly.as3flobile.skin
 			display.format = format;
 		}
 		
+		/**
+		 * @private
+		 * 
+		 * Position elemtns of item renderer. 
+		 * @param width int
+		 * @param height int
+		 */
 		protected function updatePosition( width:int, height:int ):void
 		{
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );

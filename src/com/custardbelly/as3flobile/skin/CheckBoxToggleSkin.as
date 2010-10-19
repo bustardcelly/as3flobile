@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.skin
 {
+	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	
 	import flash.display.Graphics;
@@ -40,6 +41,17 @@ package com.custardbelly.as3flobile.skin
 		 * Constructor.
 		 */
 		public function CheckBoxToggleSkin() { super(); }
+		
+		/**
+		 * @inherit
+		 */
+		override protected function clearDisplay():void
+		{
+			super.clearDisplay();
+			var target:ToggleButton = ( _target as ToggleButton );
+			var background:Graphics = target.backgroundDisplay;
+			background.clear();
+		}
 		
 		/**
 		 * @inherit

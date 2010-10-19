@@ -26,6 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.list
 {
+	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
@@ -132,6 +133,13 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		function get selectedIndex():int;
 		function set selectedIndex( value:int ):void;
+		
+		/**
+		 * Accessor/Modifier for the property field of a data item to use as the textual context for the label of the item renderer. 
+		 * @return String
+		 */
+		function get labelField():String;
+		function set labelField( value:String ):void;
 		
 		/**
 		 * Accessor/Modifier for an Array of object data that is interpreted visually as IScrollListItemRenderer instances. 

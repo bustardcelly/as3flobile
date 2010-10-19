@@ -51,6 +51,13 @@ package com.custardbelly.as3flobile.util
 			else
 			{
 				_pool = new Array( int(size) );
+				var i:int;
+				for( i = 0; i < size; i++ )
+				{
+					var objectClass:Class = getDefinitionByName( _type ) as Class;
+					var obj:Object = new objectClass();
+					_pool[i] = obj;
+				}
 			}
 		}
 		
