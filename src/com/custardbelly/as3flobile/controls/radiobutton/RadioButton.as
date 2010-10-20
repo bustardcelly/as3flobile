@@ -178,10 +178,8 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		override protected function invalidateSize():void
 		{
 			// The true size of this control is actually based on the size of the label if it.
-			_labelDisplay.width = _width;
-			_labelDisplay.height = _height;
-			if( _height < _labelDisplay.height ) _height = _labelDisplay.height;
 			super.invalidateSize();
+			_height = ( _labelDisplay.measuredHeight > _height ) ? _labelDisplay.measuredHeight : _height;
 		}
 		
 		/**

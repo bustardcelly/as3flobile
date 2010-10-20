@@ -86,7 +86,8 @@ package com.custardbelly.as3flobile.skin
 			var labelDisplay:Label = checkBoxTarget.labelDisplay;
 			var labelPlacement:int = checkBoxTarget.labelPlacement;
 						
-			labelDisplay.width = width - boxDisplay.width - offset;
+			var labelWidth:int = width - boxDisplay.width - offset;
+			labelDisplay.width = ( labelWidth < 0 ) ? 0 : labelWidth;
 			if( labelPlacement == BoxPositionEnum.LEFT )
 			{
 				labelDisplay.x = 0;

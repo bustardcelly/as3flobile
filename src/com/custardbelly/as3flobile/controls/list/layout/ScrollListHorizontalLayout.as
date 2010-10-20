@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
 	import com.custardbelly.as3flobile.controls.list.IScrollListLayoutTarget;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
+	import com.custardbelly.as3flobile.enum.OrientationEnum;
 	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.util.DisplayPositionSearch;
 	
@@ -188,6 +189,7 @@ package com.custardbelly.as3flobile.controls.list.layout
 			{
 				renderer = renderers[i];
 				renderer.lock();
+				renderer.orientation = OrientationEnum.HORIZONTAL;
 				renderer.useVariableHeight = false;
 				renderer.useVariableWidth = _useVariableWidth;
 				if( !isNaN( _itemWidth ) ) renderer.width = _itemWidth;

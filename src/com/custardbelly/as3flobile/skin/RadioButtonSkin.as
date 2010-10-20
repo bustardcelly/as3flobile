@@ -103,7 +103,8 @@ package com.custardbelly.as3flobile.skin
 			var labelPlacement:int = radioTarget.labelPlacement;
 			
 			// update label width.
-			labelDisplay.width = width - radioDisplay.width - offset;
+			var labelWidth:int = width - radioDisplay.width - offset;
+			labelDisplay.width = ( labelWidth < 0 ) ? 0 : labelWidth;
 			// Update placement along x axis.
 			if( labelPlacement == BoxPositionEnum.LEFT )
 			{
@@ -117,14 +118,15 @@ package com.custardbelly.as3flobile.skin
 			}
 			
 			// Update placement along y-axis.
-			radioDisplay.y = ( height - radioDisplay.height ) * 0.5;
-			if( labelDisplay.height > height )
+			if( labelDisplay.measuredHeight > height )
 			{
 				labelDisplay.y = 0;
+				radioDisplay.y = ( labelDisplay.measuredHeight - radioDisplay.height ) * 0.5;
 			}
 			else
 			{
 				labelDisplay.y = ( height - labelDisplay.measuredHeight ) * 0.5;
+				radioDisplay.y = ( height - radioDisplay.height ) * 0.5;
 			}
 		}
 		

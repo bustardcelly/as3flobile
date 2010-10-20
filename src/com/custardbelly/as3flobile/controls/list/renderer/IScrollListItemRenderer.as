@@ -83,6 +83,13 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		function set useVariableHeight( value:Boolean ):void;
 		
 		/**
+		 * Accessor/Modifier for orientation of item renderer based on parenting layout. Valid values are from OrientationEnum. 
+		 * @return int
+		 */
+		function get orientation():int;
+		function set orientation( value:int ):void;
+		
+		/**
 		 * Accessor/Modifier for the field within the data to use as the label textual content. 
 		 * @return String
 		 */

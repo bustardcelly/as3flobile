@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
+	import com.custardbelly.as3flobile.enum.OrientationEnum;
 	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.skin.ScrollListItemRendererSkin;
 	
@@ -58,6 +59,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		protected var _currentState:uint = DefaultScrollListItemRenderer.STATE_UNLOCKED;
 		protected var _useVariableWidth:Boolean;
 		protected var _useVariableHeight:Boolean;
+		protected var _orientation:int;
 		
 		protected var _labelField:String = "label";
 		protected var _data:Object;
@@ -86,6 +88,8 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			_height = 48;
 			
 			updatePadding( 3, 3, 3, 3 );
+			
+			_orientation = OrientationEnum.VERTICAL;
 			
 			_skin = new ScrollListItemRendererSkin();
 			_skin.target = this;
@@ -158,6 +162,16 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		{
 			_skinState = ( _selected ) ? BasicStateEnum.SELECTED : BasicStateEnum.NORMAL;
 			invalidateSize();
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Validates the orientation of this item renderer based on parening list layout.
+		 */
+		protected function invalidateOrientation():void
+		{
+			updateDisplay();
 		}
 		
 		/**
@@ -253,6 +267,21 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			
 			_useVariableWidth = value;
 			invalidateProperty( invalidateData );
+		}
+		
+		/**
+		 * @copy IScrollListItemRenderer#orientation
+		 */
+		public function get orientation():int
+		{
+			return _orientation;
+		}
+		public function set orientation(value:int):void
+		{
+			if( _orientation == value ) return;
+			
+			_orientation = value;
+			invalidateProperty( invalidateOrientation );
 		}
 		
 		/**

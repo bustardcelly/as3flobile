@@ -88,7 +88,7 @@ package com.custardbelly.as3flobile.skin
 					ypos += radio.height + itemOffset;
 				}
 				
-				height = ypos - itemOffset + padding.bottom;
+				height = ypos + padding.bottom;
 			}
 			updateBackgroundDisplay( radioGroup.backgroundDisplay, width, ypos );
 		}
