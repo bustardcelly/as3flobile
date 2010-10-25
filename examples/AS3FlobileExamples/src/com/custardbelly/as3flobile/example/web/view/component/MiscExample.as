@@ -43,7 +43,13 @@ package com.custardbelly.as3flobile.example.web.view.component
 			radioGroup.width = 280;
 			radioGroup.y = 240;
 			radioGroup.dataProvider = radioDataProvider;
+			radioGroup.selectionChange.add( handleSelectionChange );
 			addChild( radioGroup );
+		}
+		
+		protected function handleSelectionChange( radioButton:RadioButton, index:int ):void
+		{
+			trace( radioButton.label + ", " + index );
 		}
 		
 		protected function getRadioDataProvider():Vector.<RadioButton>

@@ -37,6 +37,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
+	import org.osflash.signals.DeluxeSignal;
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.events.GenericEvent;
 	
@@ -62,7 +63,8 @@ package com.custardbelly.as3flobile.controls.dropdown
 		protected var _selectedIndex:int;
 		protected var _dataProvider:Array;
 		
-		protected var _selectionChange:Signal;
+		protected var _selectionChange:DeluxeSignal;
+		protected var _selectionEvent:GenericEvent;
 		
 		/**
 		 * Constructor.
@@ -86,7 +88,8 @@ package com.custardbelly.as3flobile.controls.dropdown
 			_skin = new DropDownSkin();
 			_skin.target = this;
 			
-			_selectionChange = new Signal( int );
+			_selectionChange = new DeluxeSignal( this );
+			_selectionEvent = new GenericEvent();
 		}
 		
 		/**
@@ -214,7 +217,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			// Update label button to selection or default.
 			_labelButton.label = ( _selectedIndex >= 0 && _selectedIndex < _dataProvider.length ) ? _dataProvider[_selectedIndex].label : _defaultLabel;
 			// Notify delegate.
-			_selectionChange.dispatch( _selectedIndex );
+			_selectionChange.dispatch( _selectionEvent );
 		}
 		
 		/**
@@ -314,13 +317,14 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_selectionChange.removeAll();
 			_selectionChange = null;
+			_selectionEvent = null;
 		}
 		
 		/**
 		 * Returns signal reference for change in selection. 
-		 * @return Signal Signal( int )
+		 * @return DeluxeSignal
 		 */
-		public function selectionChange():Signal
+		public function selectionChange():DeluxeSignal
 		{
 			return _selectionChange;
 		}
