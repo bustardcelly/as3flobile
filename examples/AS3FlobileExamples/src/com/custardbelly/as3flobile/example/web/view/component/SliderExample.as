@@ -1,14 +1,12 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.controls.slider.ISlider;
-	import com.custardbelly.as3flobile.controls.slider.ISliderDelegate;
 	import com.custardbelly.as3flobile.controls.slider.Slider;
 	import com.custardbelly.as3flobile.enum.OrientationEnum;
 	
 	import flash.display.Sprite;
 	
-	public class SliderExample extends Sprite implements ISliderDelegate
+	public class SliderExample extends Sprite
 	{
 		protected var _vertSlider:Slider;
 		protected var _vertValueLabel:Label;
@@ -50,7 +48,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_horizValueLabel.text = "value: 0";
 			addChild( _horizValueLabel );
 			
-			_horizSlider = Slider.initWithOrientationAndDelegate( OrientationEnum.HORIZONTAL, this );
+			_horizSlider = Slider.initWithOrientation( OrientationEnum.HORIZONTAL );
+			_horizSlider.valueChange.add( horizSliderValueDidChange );
 			_horizSlider.y = 400;
 			_horizSlider.width = 170;
 			_horizSlider.x = 50;
@@ -77,7 +76,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_vertValueLabel.text = "value: -100";
 			addChild( _vertValueLabel );
 			
-			_vertSlider = Slider.initWithOrientationAndDelegate( OrientationEnum.VERTICAL, this );
+			_vertSlider = Slider.initWithOrientation( OrientationEnum.VERTICAL );
+			_vertSlider.valueChange.add( vertSliderValueDidChange );
 			_vertSlider.y = 110;
 			_vertSlider.height = 220;
 			_vertSlider.minimumValue = -100;
@@ -86,10 +86,13 @@ package com.custardbelly.as3flobile.example.web.view.component
 			addChild( _vertSlider );
 		}
 		
-		public function sliderValueDidChange( slider:Slider, value:Number ):void
+		public function horizSliderValueDidChange( value:Number ):void
 		{
-			if( slider == _horizSlider ) 	_horizValueLabel.text = "value: " + ( int( value ) ).toString();
-			else							_vertValueLabel.text = "value: " + ( int( value ) ).toString();
+			_horizValueLabel.text = "value: " + ( int( value ) ).toString();
+		}
+		public function vertSliderValueDidChange( value:Number ):void
+		{
+			_vertValueLabel.text = "value: " + ( int( value ) ).toString();
 		}
 	}
 }

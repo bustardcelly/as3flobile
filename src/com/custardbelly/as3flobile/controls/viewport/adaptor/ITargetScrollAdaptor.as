@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ITargetScrollAdaptor.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.viewport.adaptor
 {
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
+	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportStrategy;
 	import com.custardbelly.as3flobile.model.IDisposable;
 	
 	import flash.display.DisplayObject;
@@ -43,9 +43,9 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		 * @param targetPosition Point The target position.
 		 * @param currentPosition Point The current position of scroll target display.
 		 * @param content DisplayObject The scroll target display.
-		 * @param delegate IScrollViewportDelegate The optional delegate that receievs notification on change to display position.
+		 * @param delegate IScrollViewportStrategy The underlying delegate strategy. Mainly used to access signals.
 		 */
-		function scrollToPosition( targetPosition:Point, currentPosition:Point, content:DisplayObject, delegate:IScrollViewportDelegate ):void;
+		function scrollToPosition( targetPosition:Point, currentPosition:Point, content:DisplayObject, delegate:IScrollViewportStrategy ):void;
 		/**
 		 * Stops the scroll animation.
 		 */

@@ -1,13 +1,9 @@
 package com.custardbelly.as3flobile.example.web.view
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
-	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.debug.PrintLine;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
@@ -17,9 +13,10 @@ package com.custardbelly.as3flobile.example.web.view
 	import flash.text.engine.TextBlock;
 	import flash.text.engine.TextElement;
 	import flash.text.engine.TextLine;
-	import flash.utils.getTimer;
 	
-	public class ControlPanel extends Sprite implements IButtonDelegate
+	import org.osflash.signals.events.GenericEvent;
+	
+	public class ControlPanel extends Sprite
 	{
 		protected var _delegate:IControlPanelDelegate;
 		private var _gitRepo:String = "http://github.com/bustardcelly/as3flobile";
@@ -48,8 +45,7 @@ package com.custardbelly.as3flobile.example.web.view
 			createButton( "text area", 5, 345 );
 			createButton( "sliders", 5, 403 );
 			createButton( "toggle switch", 5, 461 );
-			createButton( "menus", 5, 519 );
-			createButton( "miscellany", 5, 577 );
+			createButton( "miscellany", 5, 519 );
 			
 			var linkFormat:ElementFormat = new ElementFormat( new FontDescription( "DroidSans" ), 14, 0x0000FF );
 			var linkHandler:EventDispatcher = new EventDispatcher();
@@ -65,7 +61,8 @@ package com.custardbelly.as3flobile.example.web.view
 		
 		protected function createButton( label:String, xpos:int, ypos:int ):void
 		{
-			var button:Button = Button.initWithDelegate( this );
+			var button:Button = new Button();
+			button.tap.add( buttonTapped );
 			button.label = label;
 			button.x = xpos;
 			button.y = ypos;
@@ -81,8 +78,9 @@ package com.custardbelly.as3flobile.example.web.view
 			graphics.endFill();
 		}
 		
-		public function buttonTapped( button:Button ):void
+		public function buttonTapped( evt:GenericEvent ):void
 		{
+			var button:Button = evt.target as Button;
 			var index:int = getChildIndex( button );
 			_delegate.controlPanelSelectionChange( this, index - 1 );
 		}

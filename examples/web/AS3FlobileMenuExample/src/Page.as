@@ -1,8 +1,8 @@
 package
-{
+{	
+	import com.custardbelly.as3flobile.android.control.menu.AndroidMenu;
+	import com.custardbelly.as3flobile.android.model.menu.MenuItem;
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.controls.menu.Menu;
-	import com.custardbelly.as3flobile.controls.menu.MenuItem;
 	
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -24,7 +24,7 @@ package
 		
 		protected var _mask:Shape;
 		protected var _modalSprite:Sprite;
-		protected var _menu:Menu;
+		protected var _menu:AndroidMenu;
 		
 		public function Page()
 		{
@@ -117,7 +117,7 @@ package
 			}
 		}
 		
-		public function showMenu( menu:Menu ):void
+		public function showMenu( menu:AndroidMenu ):void
 		{
 			addChild( _modalSprite );
 			

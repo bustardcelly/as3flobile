@@ -1,8 +1,6 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
 	import com.custardbelly.as3flobile.controls.button.Button;
-	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
-	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
 	import com.custardbelly.as3flobile.controls.list.ScrollList;
@@ -13,7 +11,9 @@ package com.custardbelly.as3flobile.example.web.view.component
 	
 	import flash.display.Sprite;
 	
-	public class ScrollListExample extends Sprite implements IToggleButtonDelegate, IButtonDelegate
+	import org.osflash.signals.events.GenericEvent;
+	
+	public class ScrollListExample extends Sprite
 	{
 		protected var _list:ScrollList;
 		protected var _verticalLayout:IScrollListVerticalLayout;
@@ -59,13 +59,15 @@ package com.custardbelly.as3flobile.example.web.view.component
 			
 			_list.dataProvider = getList( 40 );
 			
-			var button:Button = Button.initWithDelegate( this );
+			var button:Button = new Button();
+			button.tap.add( buttonTapped );
 			button.label = "switch layout";
 			button.x = 0;
 			button.y = 400;
 			addChild( button );
 			
-			var tbutton:ToggleButton = ToggleButton.initWithDelegate( this );
+			var tbutton:ToggleButton = new ToggleButton();
+			tbutton.toggle.add( buttonToggle );
 			tbutton.label = "toggle variable size";
 			tbutton.x = 110;
 			tbutton.y = 400;
@@ -87,8 +89,9 @@ package com.custardbelly.as3flobile.example.web.view.component
 			return arr;
 		}
 		
-		public function buttonTapped( button:Button ):void
+		public function buttonTapped( evt:GenericEvent ):void
 		{
+			var button:Button = evt.target as Button;
 			_layoutState = ( _layoutState == ScrollListExample.STATE_VERT ) ? ScrollListExample.STATE_HORIZ : ScrollListExample.STATE_VERT;
 			if( _layoutState == ScrollListExample.STATE_HORIZ )
 			{
@@ -100,8 +103,10 @@ package com.custardbelly.as3flobile.example.web.view.component
 			}
 		}
 		
-		public function toggleButtonSelectionChange( toggleButton:ToggleButton, selected:Boolean ):void
+		public function buttonToggle( evt:GenericEvent ):void
 		{
+			var button:ToggleButton = evt.target as ToggleButton;
+			var selected:Boolean = button.selected;
 			_isVariableSize = selected;
 			_verticalLayout.useVariableHeight = _isVariableSize;
 			_horizontalLayout.useVariableWidth = _isVariableSize;

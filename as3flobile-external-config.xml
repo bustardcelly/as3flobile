@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+
+	<compiler>
+    	<external-library-path>
+      		<path-element>${playerglobal.lib.dir}</path-element>
+      		<path-element>${libs.dir}</path-element>
+    	</external-library-path>
+    	<source-path>
+      		<path-element>${src.dir}</path-element>
+    	</source-path>
+  	</compiler>
+  	
+  	<include-sources includes="**/*">
+    	<path-element>${src.dir}</path-element>
+    </include-sources>
+  	
+  	<output>${lib.bin.dir}/${lib.name}.swc</output>
+  	
+  	<metadata>
+    	<creator>Todd Anderson</creator>
+    	<description>http://github.com/bustardcelly/as3flobile</description>
+    	<language>EN</language>
+    	<title>External AS3 Library For Components targeting Mobile Devices</title>
+  	</metadata>
+  	
+</flex-config>

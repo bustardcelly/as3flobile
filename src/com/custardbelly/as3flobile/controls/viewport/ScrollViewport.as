@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollViewport.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,10 +35,11 @@ package com.custardbelly.as3flobile.controls.viewport
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
-	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import org.osflash.signals.Signal;
+	import org.osflash.signals.events.GenericEvent;
 	
 	/**
 	 * ScrollViewport is an IScrollViewport implementation that acts as a scrollable display container.
@@ -49,7 +50,11 @@ package com.custardbelly.as3flobile.controls.viewport
 		protected var _bounds:Rectangle;
 		protected var _content:InteractiveObject;
 		protected var _context:IScrollViewportContext;
-		protected var _delegate:IScrollViewportDelegate;
+		
+		protected var _scrollStart:Signal;
+		protected var _scrollEnd:Signal;
+		protected var _scrollChange:Signal;
+		protected var _scrollEvent:GenericEvent;
 		
 		protected var _pendingContextActivationCommands:Vector.<IPendingInitializationCommand>;
 		
@@ -67,14 +72,12 @@ package com.custardbelly.as3flobile.controls.viewport
 		/**
 		 * Utility factory method for ease of creation with initialization properties. 
 		 * @param bounds Rectangle The rectangular viewport area.
-		 * @param delegate IScrollViewportDelegate The delegate to notify on changein action.
 		 * @return ScrollViewport
 		 */
-		public static function initWithScrollRectAndDelegate( bounds:Rectangle, delegate:IScrollViewportDelegate = null ):ScrollViewport
+		public static function initWithScrollRect( bounds:Rectangle ):ScrollViewport
 		{
 			var viewport:ScrollViewport = new ScrollViewport();
 			viewport.scrollRect = bounds;
-			viewport.delegate = delegate;
 			return viewport;
 		}
 		
@@ -84,6 +87,9 @@ package com.custardbelly.as3flobile.controls.viewport
 		override protected function initialize():void
 		{
 			_bounds = new Rectangle( 0, 0, _width, _height );
+			_scrollStart = new Signal( Point );
+			_scrollEnd = new Signal( Point );
+			_scrollChange = new Signal( Point );
 			addStageHandlers();
 		}
 		
@@ -270,7 +276,34 @@ package com.custardbelly.as3flobile.controls.viewport
 			_context.dispose();
 			_context = null;
 			
-			_delegate = null;
+			_scrollStart.removeAll();
+			_scrollStart = null;
+			_scrollEnd.removeAll();
+			_scrollEnd = null;
+			_scrollChange.removeAll();
+			_scrollChange = null;
+		}
+		
+		/**
+		 * @copy IScrollViewport#scrollStart
+		 */
+		public function get scrollStart():Signal
+		{
+			return _scrollStart;
+		}
+		/**
+		 * @copy IScrollViewport#scrollEnd
+		 */
+		public function get scrollEnd():Signal
+		{
+			return _scrollEnd;
+		}
+		/**
+		 * @copy IScrollViewport#scrollChange
+		 */
+		public function get scrollChange():Signal
+		{
+			return _scrollChange;
 		}
 		
 		/**
@@ -309,21 +342,6 @@ package com.custardbelly.as3flobile.controls.viewport
 			if( _context == value ) return;
 			
 			invalidateContext( _context, value );
-		}
-		
-		/**
-		 * @copy IScrollViewport#delegate
-		 */
-		public function get delegate():IScrollViewportDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IScrollViewportDelegate ):void
-		{
-			if( _delegate == value ) return;
-			
-			_delegate = value;
-			invalidateDisplay();
 		}
 	}
 }

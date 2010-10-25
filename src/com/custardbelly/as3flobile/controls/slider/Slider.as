@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Slider.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,8 @@ package com.custardbelly.as3flobile.controls.slider
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	import org.osflash.signals.Signal;
+	
 	/**
 	 * Slider is a base class to select a value from a range of linear values. The default layout and slide context is horizontal, but the orientation can be change for vertical. 
 	 * @author toddanderson
@@ -73,7 +75,8 @@ package com.custardbelly.as3flobile.controls.slider
 		
 		protected var _orientation:int;
 		protected var _sliderContext:ISliderContext;
-		protected var _delegate:ISliderDelegate;
+		
+		protected var _valueChange:Signal;
 		
 		/**
 		 * Constuctor.
@@ -85,13 +88,17 @@ package com.custardbelly.as3flobile.controls.slider
 			sliderContext = getSliderContext( _orientation );
 		}
 		
-		static public function initWithOrientationAndDelegate( orientation:int, delegate:ISliderDelegate ):Slider
+		/**
+		 * Static convenience method to create a new instance of this control with a target orientation. 
+		 * @param orientation int
+		 * @return Slider
+		 */
+		static public function initWithOrientation( orientation:int ):Slider
 		{
 			var slider:Slider = new Slider();
 			slider.orientation = orientation;
 			slider.width = ( orientation == OrientationEnum.VERTICAL ) ? 48 : 260;
 			slider.height = ( orientation == OrientationEnum.VERTICAL )  ? 260 : 48;
-			slider.delegate = delegate;
 			return slider;
 		}
 		
@@ -113,6 +120,8 @@ package com.custardbelly.as3flobile.controls.slider
 			
 			_skin = new SliderSkin();
 			_skin.target = this;
+			
+			_valueChange = new Signal( Number );
 		}
 		
 		/**
@@ -168,10 +177,7 @@ package com.custardbelly.as3flobile.controls.slider
 			invalidateValueRange();
 			
 			// Notify delegate.
-			if( _delegate )
-			{
-				_delegate.sliderValueDidChange( this, _value );
-			}
+			_valueChange.dispatch( _value );
 		}
 		
 		/**
@@ -301,8 +307,17 @@ package com.custardbelly.as3flobile.controls.slider
 			_sliderContext.dispose();
 			_sliderContext = null;
 			
-			// Null reference to delegate.
-			_delegate = null;
+			_valueChange.removeAll();
+			_valueChange = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in value. 
+		 * @return Signal Signal( Number )
+		 */
+		public function get valueChange():Signal
+		{
+			return _valueChange;
 		}
 		
 		/**
@@ -440,19 +455,6 @@ package com.custardbelly.as3flobile.controls.slider
 			if( _sliderContext == value ) return;
 			
 			invalidateSliderContext( _sliderContext, value );
-		}
-		
-		/**
-		 * Accessor/Modifier for optional delegate that requests notification on change to properties of this control. 
-		 * @return ISliderDelegate
-		 */
-		public function get delegate():ISliderDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:ISliderDelegate ):void
-		{
-			_delegate = value;
 		}
 	}
 }

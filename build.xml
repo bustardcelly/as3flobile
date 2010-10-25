@@ -32,6 +32,7 @@
 		<echo>[EXEC] Compiling ${lib.name}.swc</echo>
 		<exec executable="${compc.loc}" dir="${basedir}">
 			<arg line="+playerglobal.lib.dir=${playerglobal.lib.dir}" />
+			<arg line="+libs.dir=${lib.dir}" />
 			<arg line="+lib.bin.dir=${lib.bin.dir}" />
 			<arg line="+lib.name=${lib.name}" />
 			<arg line="+src.dir=${src.dir}" />
@@ -40,12 +41,21 @@
 		<echo>[EXEC] Finished compiling ${lib.name}.swc. ${lib.name}.swc can be found in ${lib.bin.dir}/.</echo>
 	</target>
 	
-	<!-- Build the standalone library swc. DEFAULT -->
+	<!-- Build the standalone library swc. -->
 	<target name="standalone" description="Generates the standalone library SWC.">
 		<antcall target="lib">
-			<param name="lib.name" value="${library.name}" />
-			<param name="lib.bin.dir" value="${bin.dir}" />
-			<param name="config" value="${config.loc}" />
+			<param name="lib.name" value="${standalone.name}" />
+			<param name="lib.bin.dir" value="${standalone.bin.dir}" />
+			<param name="config" value="${standalone.config.loc}" />
+		</antcall>
+	</target>
+	
+	<!-- Build the external library swc. -->
+	<target name="external" description="Generates the external library SWC.">
+		<antcall target="lib">
+			<param name="lib.name" value="${external.name}" />
+			<param name="lib.bin.dir" value="${external.bin.dir}" />
+			<param name="config" value="${external.config.loc}" />
 		</antcall>
 	</target>
 		
@@ -63,6 +73,7 @@
 		<exec executable="${asdoc.loc}" spawn="no">
 			<arg line="-source-path ${src.dir} " />
 			<arg line="-doc-sources ${src.dir} " />
+			<arg line="-library-path ${lib.dir} " />
 			<arg line="-lenient" />
 			<arg line="-output ${doc.dir}" />
 			<arg line="-window-title 'AS3Flobile Library - ${library.name}' "/>
@@ -72,6 +83,7 @@
 	<!-- DEFAULT. Runs all tasks to build standard and external SWCs and optimized SWFs as well as project docs. -->
 	<target name="build-project" description="Runs all tasks to generate SWC, SWF and doc files.">
 		<antcall target="standalone" />
+		<antcall target="external" />
 		<antcall target="doc" />
 	</target>
 	

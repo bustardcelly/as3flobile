@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: TextArea.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ package com.custardbelly.as3flobile.controls.text
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.model.BoxPadding;
@@ -37,8 +36,6 @@ package com.custardbelly.as3flobile.controls.text
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
-	import flash.events.EventDispatcher;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.text.engine.ElementFormat;
 	import flash.text.engine.FontDescription;
@@ -46,11 +43,13 @@ package com.custardbelly.as3flobile.controls.text
 	import flash.text.engine.TextElement;
 	import flash.text.engine.TextLine;
 	
+	import org.osflash.signals.Signal;
+	
 	/**
 	 * TextArea is a scrollable area of static textual content. 
 	 * @author toddanderson
 	 */
-	public class TextArea extends AS3FlobileComponent implements IScrollViewportDelegate
+	public class TextArea extends AS3FlobileComponent
 	{
 		protected var _background:Shape;
 		protected var _viewport:IScrollViewport;
@@ -66,7 +65,9 @@ package com.custardbelly.as3flobile.controls.text
 		protected var _maximumScrollPosition:int;
 		
 		protected var _scrollContext:IScrollViewportContext;
-		protected var _delegate:ITextAreaDelegate;
+		
+		protected var _textChange:Signal;
+		protected var _scrollChange:Signal;
 		
 		/**
 		 * Constructor.
@@ -74,18 +75,6 @@ package com.custardbelly.as3flobile.controls.text
 		public function TextArea() 
 		{
 			super();
-		}
-		
-		/**
-		 * Static convenience method to create a new instance of TextArea with target ITextAreaDelegate reference. 
-		 * @param delegate ITextAreaDelegate
-		 * @return TextArea
-		 */
-		static public function initWithDelegate( delegate:ITextAreaDelegate ):TextArea
-		{
-			var textArea:TextArea = new TextArea();
-			textArea.delegate = delegate;
-			return textArea;
 		}
 		
 		/**
@@ -109,6 +98,9 @@ package com.custardbelly.as3flobile.controls.text
 			
 			_skin = new TextAreaSkin();
 			_skin.target = this;
+			
+			_textChange = new Signal( String );
+			_scrollChange = new Signal( Point );
 		}
 		
 		/**
@@ -126,7 +118,9 @@ package com.custardbelly.as3flobile.controls.text
 			var horizPadding:int = ( _padding.left + _padding.right );
 			var vertPadding:int = ( _padding.top + _padding.bottom );
 			_viewport = new ScrollViewport();
-			_viewport.delegate = this;
+			_viewport.scrollStart.add( scrollViewScrollChange );
+			_viewport.scrollChange.add( scrollViewScrollChange );
+			_viewport.scrollEnd.add( scrollViewScrollChange );
 			_viewport.width = _width - horizPadding;
 			_viewport.height = _height - vertPadding;
 			_viewport.x = _padding.left;
@@ -218,28 +212,15 @@ package com.custardbelly.as3flobile.controls.text
 		}
 		
 		/**
-		 * @copy IScrollViewportDelegate#scrollViewDidStart()
+		 * @private
+		 * 
+		 * Signal handler for change in scroll position from viewport. 
+		 * @param position Point
 		 */
-		public function scrollViewDidStart( position:Point ):void
+		protected function scrollViewScrollChange( position:Point ):void
 		{
 			_scrollPosition = position;
-			if( _delegate ) _delegate.textAreaDidScroll( this, position );
-		}
-		/**
-		 * @copy IScrollViewportDelegate#scrollViewDidAnimate()
-		 */
-		public function scrollViewDidAnimate( position:Point ):void
-		{
-			_scrollPosition = position;
-			if( _delegate ) _delegate.textAreaDidScroll( this, position );
-		}
-		/**
-		 * @copy IScrollViewportDelegate#scrollViewDidEnd()
-		 */
-		public function scrollViewDidEnd( position:Point ):void
-		{
-			_scrollPosition = position;
-			if( _delegate ) _delegate.textAreaDidScroll( this, position );
+			_scrollChange.dispatch( position );
 		}
 		
 		/**
@@ -261,8 +242,11 @@ package com.custardbelly.as3flobile.controls.text
 			_block.releaseLines( _block.firstLine, _block.lastLine );
 			_block = null;
 			
-			// Null reference to delegate.
-			_delegate = null;
+			_textChange.removeAll();
+			_textChange = null;
+			
+			_scrollChange.removeAll();
+			_scrollChange = null;
 		}
 		
 		/**
@@ -296,6 +280,23 @@ package com.custardbelly.as3flobile.controls.text
 		public function get numLines():int
 		{
 			return _numLines;
+		}
+		
+		/**
+		 * Returns signal reference for change in scroll. 
+		 * @return Signal Signal( Point )
+		 */
+		public function get scrollChange():Signal
+		{
+			return _scrollChange;
+		}
+		/**
+		 * Returns signal reference for change in textual content. 
+		 * @return Signal Signal( String )
+		 */
+		public function get textChange():Signal
+		{
+			return _textChange;
 		}
 		
 		/**
@@ -333,7 +334,7 @@ package com.custardbelly.as3flobile.controls.text
 			
 			_text = value;
 			invalidateTextDisplay();
-			if( _delegate ) _delegate.textAreaTextChange( this, _text );
+			_textChange.dispatch( _text );
 		}
 		
 		/**
@@ -414,19 +415,6 @@ package com.custardbelly.as3flobile.controls.text
 			
 			_viewport.height = value;
 			super.height = value;
-		}
-		
-		/**
-		 * Accessor/Modifier for the delegate instance to notify on change. 
-		 * @return ITextAreaDelegate
-		 */
-		public function get delegate():ITextAreaDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate(value:ITextAreaDelegate):void
-		{
-			_delegate = value;
 		}
 	}
 }

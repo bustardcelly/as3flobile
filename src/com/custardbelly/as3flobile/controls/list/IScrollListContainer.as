@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: IScrollListContainer.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,10 @@ package com.custardbelly.as3flobile.controls.list
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.Signal;
+
+	
 	/**
 	 * IScrollListContainer is a list of data pbjects represented as IScrollListItemRenderer instances. 
 	 * @author toddanderson
@@ -54,6 +58,31 @@ package com.custardbelly.as3flobile.controls.list
 		 * @param index uint
 		 */
 		function scrollPositionToIndex( index:uint ):void;
+		
+		/**
+		 * Returns the signal reference for the start of scroll.
+		 * Clients can listen for start of scroll by using the DeluxeSignal::add() method. 
+		 * @return DeluxeSignal
+		 */
+		function get scrollStart():DeluxeSignal
+		/**
+		 * Returns the signal reference for the end of scroll.
+		 * Clients can listen for the end of scroll by using the DeluxeSignal::add() method. 
+		 * @return DeluxeSignal
+		 */
+		function get scrollEnd():DeluxeSignal;
+		/**
+		 * Returns the signal reference for the scroll.
+		 * Clients can list for the scroll of a container by using the DeluxeSignal::add() method. 
+		 * @return DeluxeSignal
+		 */
+		function get scrollChange():DeluxeSignal;
+		
+		/**
+		 * Returns the signal reference for select change. 
+		 * @return DeluxeSignal
+		 */
+		function get selectionChange():DeluxeSignal;
 		
 		/**
 		 * Returns the list of IScrollListItemRenderers. 
@@ -77,13 +106,6 @@ package com.custardbelly.as3flobile.controls.list
 		 * @return Rectangle
 		 */
 		function get scrollBounds():Rectangle;
-		
-		/**
-		 * Accessor/Modifier for the action delegate notified of change in properties. 
-		 * @return IScrollListDelegate
-		 */
-		function get delegate():IScrollListDelegate;
-		function set delegate( value:IScrollListDelegate ):void;
 		
 		/**
 		 * Accessor/Modifier for the layout manager for the item renderers in the list. 

@@ -1,7 +1,6 @@
 package com.custardbelly.as3flobile.example.web.view
 {
 	import com.custardbelly.as3flobile.example.web.view.component.DropDownExample;
-	import com.custardbelly.as3flobile.example.web.view.component.MenusExample;
 	import com.custardbelly.as3flobile.example.web.view.component.MiscExample;
 	import com.custardbelly.as3flobile.example.web.view.component.PickerExample;
 	import com.custardbelly.as3flobile.example.web.view.component.ScrollListExample;
@@ -32,7 +31,6 @@ package com.custardbelly.as3flobile.example.web.view
 		private var pickerexample:PickerExample; PickerExample;
 		private var miscexample:MiscExample; MiscExample;
 		private var sliderexample:SliderExample; SliderExample;
-		private var menusexample:MenusExample; MenusExample;
 		
 		public function ComponentsPanel()
 		{
@@ -44,7 +42,6 @@ package com.custardbelly.as3flobile.example.web.view
 										"com.custardbelly.as3flobile.example.web.view.component.TextAreaExample",
 										"com.custardbelly.as3flobile.example.web.view.component.SliderExample",
 										"com.custardbelly.as3flobile.example.web.view.component.ToggleSwitchExample",
-										"com.custardbelly.as3flobile.example.web.view.component.MenusExample",
 										"com.custardbelly.as3flobile.example.web.view.component.MiscExample"
 										]);
 			_displayMap = new Dictionary( true );

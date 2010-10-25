@@ -1,16 +1,12 @@
 package com.custardbelly.as3flobile.example.web.view.component
 {
-	import com.custardbelly.as3flobile.controls.button.Button;
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.controls.picker.IPickerSelectionDelegate;
 	import com.custardbelly.as3flobile.controls.picker.Picker;
 	import com.custardbelly.as3flobile.controls.picker.PickerColumn;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.MouseEvent;
 	
-	public class PickerExample extends Sprite implements IPickerSelectionDelegate
+	public class PickerExample extends Sprite
 	{
 		protected var labels:Array;
 		protected var picker:Picker;
@@ -57,7 +53,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 			dataProvider.push( getPickerColumnDays( 50 ) );
 			dataProvider.push( getPickerColumnYears( 80 ) );
 			
-			picker = Picker.initWithDelegate( this );
+			picker = new Picker();
+			picker.selectionChange.add( pickerSelectionDidChange );
 			picker.y = 150;
 			picker.dataProvider = dataProvider;
 			picker.itemHeight = 50;
@@ -111,10 +108,10 @@ package com.custardbelly.as3flobile.example.web.view.component
 			return column;
 		}
 		
-		public function pickerSelectionDidChange( picker:Picker, column:PickerColumn, index:int ):void
+		public function pickerSelectionDidChange( column:PickerColumn, index:int ):void
 		{
-			var columnIndex:int = picker.dataProvider.indexOf( column );
-			labels[columnIndex].text = column.data[index].label;
+//			var columnIndex:int = picker.dataProvider.indexOf( column );
+//			labels[columnIndex].text = column.data[index].label;
 			trace( "picker selection change: " + column.data[index].label );
 		}
 	}

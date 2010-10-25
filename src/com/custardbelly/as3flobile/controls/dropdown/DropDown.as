@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: DropDown.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,21 +29,22 @@ package com.custardbelly.as3flobile.controls.dropdown
 	import com.custardbelly.as3flobile.controls.button.Button;
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
-	import com.custardbelly.as3flobile.controls.list.IScrollListDelegate;
 	import com.custardbelly.as3flobile.controls.list.ScrollList;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.skin.DropDownSkin;
 	
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import org.osflash.signals.Signal;
+	import org.osflash.signals.events.GenericEvent;
 	
 	/**
 	 * DownDown is a mutli-button control exposing a list control to select items from. 
 	 * @author toddanderson
 	 */
-	public class DropDown extends AS3FlobileComponent implements IScrollListDelegate
+	public class DropDown extends AS3FlobileComponent
 	{
 		protected static const STATE_CLOSED:int = 0;
 		protected static const STATE_OPENED:int = 1;
@@ -60,7 +61,8 @@ package com.custardbelly.as3flobile.controls.dropdown
 		
 		protected var _selectedIndex:int;
 		protected var _dataProvider:Array;
-		protected var _delegate:IDropDownDelegate;
+		
+		protected var _selectionChange:Signal;
 		
 		/**
 		 * Constructor.
@@ -83,6 +85,8 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_skin = new DropDownSkin();
 			_skin.target = this;
+			
+			_selectionChange = new Signal( int );
 		}
 		
 		/**
@@ -135,7 +139,8 @@ package com.custardbelly.as3flobile.controls.dropdown
 			{
 				var layout:IScrollListVerticalLayout = new ScrollListVerticalLayout();
 				layout.itemHeight = 48;
-				_dropDownList = ScrollList.initWithScrollRectAndDelegate( new Rectangle( 0, 0, _dropDownWidth, _dropDownHeight ), this );
+				_dropDownList = ScrollList.initWithScrollRect( new Rectangle( 0, 0, _dropDownWidth, _dropDownHeight ) );
+				_dropDownList.selectionChange.add( listSelectionChange );
 				_dropDownList.layout = layout;
 			}
 			return _dropDownList;
@@ -209,8 +214,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			// Update label button to selection or default.
 			_labelButton.label = ( _selectedIndex >= 0 && _selectedIndex < _dataProvider.length ) ? _dataProvider[_selectedIndex].label : _defaultLabel;
 			// Notify delegate.
-			if( _delegate )
-				_delegate.dropDownSelectionChange( this, _selectedIndex );
+			_selectionChange.dispatch( _selectedIndex );
 		}
 		
 		/**
@@ -255,23 +259,15 @@ package com.custardbelly.as3flobile.controls.dropdown
 		}
 		
 		/**
-		 * @copy IScrollListDelete#listDidStartScroll()
+		 * @private
+		 * 
+		 * Signal handler for change in selection.
+		 * @param evt GenericEvent
 		 */
-		public function listDidStartScroll( list:IScrollListContainer, position:Point ):void {}
-		/**
-		 * @copy IScrollListDelete#listDidScroll()
-		 */
-		public function listDidScroll( list:IScrollListContainer, position:Point ):void {}
-		/**
-		 * @copy IScrollListDelete#listDidEndScroll()
-		 */
-		public function listDidEndScroll( list:IScrollListContainer, position:Point ):void {}
-		/**
-		 * @copy IScrollListDelete#listSelectionChange()
-		 */
-		public function listSelectionChange( list:IScrollListContainer, selectedIndex:int ):void 
+		protected function listSelectionChange( evt:GenericEvent ):void 
 		{
-			this.selectedIndex = selectedIndex;
+			var list:IScrollListContainer = evt.target as IScrollListContainer;
+			this.selectedIndex = list.selectedIndex;
 			closeDropDown();
 		}
 		
@@ -315,6 +311,18 @@ package com.custardbelly.as3flobile.controls.dropdown
 				_dropDownList.dispose();
 				_dropDownList = null;
 			}
+			
+			_selectionChange.removeAll();
+			_selectionChange = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in selection. 
+		 * @return Signal Signal( int )
+		 */
+		public function selectionChange():Signal
+		{
+			return _selectionChange;
 		}
 		
 		/**
@@ -437,19 +445,6 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_dataProvider = value;
 			invalidateDataProvider();
-		}
-
-		/**
-		 * Accessor/Modifier for client to notify on change to selection in this control. 
-		 * @return IDropDownDelegate
-		 */
-		public function get delegate():IDropDownDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate(value:IDropDownDelegate):void
-		{
-			_delegate = value;
 		}
 	}
 }

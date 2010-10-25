@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioGroup.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,35 +32,26 @@ package com.custardbelly.as3flobile.controls.radiobutton
 	import flash.display.Graphics;
 	import flash.display.Shape;
 	
+	import org.osflash.signals.Signal;
+	import org.osflash.signals.events.GenericEvent;
+	
 	/**
 	 * RadioGroup is a mutli-radiobutton control that manages selection across multiple RadioButton instances. 
 	 * @author toddanderson
 	 */
-	public class RadioGroup extends AS3FlobileComponent implements IRadioButtonDelegate
+	public class RadioGroup extends AS3FlobileComponent
 	{
 		protected var _background:Shape;
 		
 		protected var _selectedIndex:int;
-		
-		protected var _delegate:IRadioGroupDelegate;
 		protected var _dataProvider:Vector.<RadioButton>;
+		
+		protected var _selectionChange:Signal;
 		
 		/**
 		 * Constructor.
 		 */
 		public function RadioGroup() { super(); }
-		
-		/**
-		 * Static util function to create a new instance of RadioGroup with an IRadioGroupDelegate reference. 
-		 * @param delegate IRadioGroupDelegate
-		 * @return RadioGroup
-		 */
-		static public function initWithDelegate( delegate:IRadioGroupDelegate ):RadioGroup
-		{
-			var group:RadioGroup = new RadioGroup();
-			group.delegate = delegate;
-			return group;
-		}
 		
 		/**
 		 * @inherit
@@ -79,6 +70,8 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			_selectedIndex = -1;
 			
 			_dataProvider = new Vector.<RadioButton>();
+			
+			_selectionChange = new Signal( RadioButton, int );
 		}
 		
 		/**
@@ -108,7 +101,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			while( --i > -1 )
 			{
 				radio = _dataProvider[i];
-				radio.delegate = this;
+				radio.selectionChange.add( radioButtonSelectionChange );
 				addChildAt( radio, 1 );
 			}
 			// DEfault to first item selected.
@@ -127,8 +120,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			// Unselect.
 			unselectRadioButtons( _selectedIndex );
 			// Notify delegate.
-			if( _delegate )
-				_delegate.radioGroupSelectionChange( this, getRadioButtonAtIndex( _selectedIndex ), _selectedIndex );
+			_selectionChange.dispatch( getRadioButtonAtIndex( _selectedIndex ), _selectedIndex );
 		}
 		
 		/**
@@ -154,8 +146,12 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		 */
 		protected function removePreviousRadioButtons():void
 		{
+			var button:RadioButton;
 			while( numChildren > 1 )
-				removeChildAt( 1 );
+			{
+				button = removeChildAt( 1 ) as RadioButton;
+				button.selectionChange.removeAll();
+			}
 		}
 		
 		/**
@@ -208,12 +204,15 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		}
 		
 		/**
-		 * IRadioButtonDelegate implementation. 
-		 * @param radioButton RadioButton
-		 * @param selected Boolean
+		 * @private
+		 * 
+		 * Signal hanlder for selection change on radio button child. 
+		 * @param evt GenericEvent
 		 */
-		public function radioButtonSelectionChange( radioButton:RadioButton, selected:Boolean ):void
+		protected function radioButtonSelectionChange( evt:GenericEvent ):void
 		{
+			var radioButton:RadioButton = evt.target as RadioButton;
+			var selected:Boolean = radioButton.selected;
 			// If there is a new selection, update the selected RadioButtons.
 			if( selected )
 			{
@@ -233,7 +232,18 @@ package com.custardbelly.as3flobile.controls.radiobutton
 				removeChildAt( 0 );
 			
 			_background = null;
-			_delegate = null;
+			
+			_selectionChange.removeAll();
+			_selectionChange = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in selection of radio within the group. 
+		 * @return Signal Signal( RadioButton, int )
+		 */
+		public function get selectionChange():Signal
+		{
+			return _selectionChange;
 		}
 		
 		/**
@@ -253,20 +263,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		{
 			return _dataProvider;
 		}
-
-		/**
-		 * Accessor/Modifier for the client that requires notification of changes form this control. 
-		 * @return IRadioGroupDelegate
-		 */
-		public function get delegate():IRadioGroupDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IRadioGroupDelegate ):void
-		{
-			_delegate = value;
-		}
-
+		
 		/**
 		 * Accessor/Modifier for the selected index of the RadioButton instance within this control. 
 		 * @return int

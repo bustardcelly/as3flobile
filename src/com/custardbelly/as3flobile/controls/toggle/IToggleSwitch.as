@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: IToggleSwitch.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,10 @@ package com.custardbelly.as3flobile.controls.toggle
 	import flash.events.IEventDispatcher;
 	import flash.geom.Rectangle;
 
+	/**
+	 * IToggleSwitch is a toggle switch managed by a context. 
+	 * @author toddanderson
+	 */
 	public interface IToggleSwitch extends ISlider, IEventDispatcher
 	{
 		/**

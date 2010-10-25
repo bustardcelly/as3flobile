@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ToggleSwitch.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,18 +33,14 @@ package com.custardbelly.as3flobile.controls.toggle
 	import com.custardbelly.as3flobile.controls.toggle.context.ToggleSwitchMouseContext;
 	import com.custardbelly.as3flobile.skin.ToggleSwitchSkin;
 	
-	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.engine.ElementFormat;
-	import flash.text.engine.FontDescription;
-	import flash.text.engine.TextBlock;
-	import flash.text.engine.TextElement;
-	import flash.text.engine.TextLine;
+	
+	import org.osflash.signals.Signal;
 	
 	/**
 	 * ToggleSwitch is an IToggleSwitch implementation that provides a control to select an between 2 values, usually representing opposites such as OFF an ON (default). 
@@ -65,7 +61,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		protected var _bounds:Rectangle;
 		protected var _toggleContext:IToggleSwitchContext;
 		
-		protected var _delegate:IToggleSwitchDelegate;
+		protected var _selectionChange:Signal;
 		
 		/**
 		 * Constructor.
@@ -75,18 +71,6 @@ package com.custardbelly.as3flobile.controls.toggle
 			super();
 			invalidateLabels();
 			toggleContext = getDefaultContext();
-		}
-		
-		/**
-		 * Static util function to create a new instance of a IToggleSwitch with IToggleSwitchDelegate reference. 
-		 * @param delegate IToggleSwitchDelegate
-		 * @return IToggleSwitch
-		 */
-		public static function initWithDelegate( delegate:IToggleSwitchDelegate ):ToggleSwitch
-		{
-			var toggle:ToggleSwitch = new ToggleSwitch();
-			toggle.delegate = delegate;
-			return toggle;
 		}
 		
 		/**
@@ -105,6 +89,8 @@ package com.custardbelly.as3flobile.controls.toggle
 			
 			_skin = new ToggleSwitchSkin();
 			_skin.target = this;
+			
+			_selectionChange = new Signal( int );
 		}
 		
 		/**
@@ -218,7 +204,7 @@ package com.custardbelly.as3flobile.controls.toggle
 				positionThumb();
 			}
 			
-			if( _delegate ) _delegate.toggleSwitchSelectionChange( this, _selectedIndex );
+			_selectionChange.dispatch( _selectedIndex );
 		}
 		
 		/**
@@ -318,8 +304,17 @@ package com.custardbelly.as3flobile.controls.toggle
 			_toggleContext.dispose();
 			_toggleContext = null;
 			
-			// Null reference to delegate.
-			_delegate = null;
+			_selectionChange.removeAll();
+			_selectionChange = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in selection on switch instanc. 
+		 * @return Signal
+		 */
+		public function get selectionChange():Signal
+		{
+			return _selectionChange;
 		}
 		
 		/**
@@ -454,18 +449,6 @@ package com.custardbelly.as3flobile.controls.toggle
 			if( _toggleContext == value ) return;
 			
 			invalidateToggleContext( _toggleContext, value );
-		}
-		
-		/**
-		 * @copy IToggleSwitch#delegate
-		 */
-		public function get delegate():IToggleSwitchDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IToggleSwitchDelegate ):void
-		{
-			_delegate = value;
 		}
 	}
 }

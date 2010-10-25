@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollList.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,26 +28,21 @@ package com.custardbelly.as3flobile.controls.list
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
-	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.list.renderer.IScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.ScrollViewport;
 	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
 	import com.custardbelly.as3flobile.helper.ITapMediator;
 	import com.custardbelly.as3flobile.helper.MouseTapMediator;
-	import com.custardbelly.as3flobile.helper.TapMediator;
-	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.skin.ScrollListSkin;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Graphics;
 	import flash.display.InteractiveObject;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -56,11 +51,14 @@ package com.custardbelly.as3flobile.controls.list
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.events.GenericEvent;
+	
 	/**
 	 * ScrollList is a display component that allows you to scroll through a list of items using a mouse or touch gesture. 
 	 * @author toddanderson
 	 */
-	public class ScrollList extends AS3FlobileComponent implements IScrollViewportDelegate, IScrollListContainer, IScrollListLayoutTarget
+	public class ScrollList extends AS3FlobileComponent implements IScrollListContainer, IScrollListLayoutTarget
 	{	
 		protected var _listHolder:ScrollListHolder;
 		protected var _bounds:Rectangle;
@@ -70,7 +68,6 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _tapMediator:ITapMediator;
 		protected var _layout:IScrollListLayout;
 		protected var _scrollContext:IScrollViewportContext;
-		protected var _delegate:IScrollListDelegate;
 		
 		protected var _cells:Vector.<IScrollListItemRenderer>;
 		protected var _cellAmount:int;
@@ -87,6 +84,13 @@ package com.custardbelly.as3flobile.controls.list
 		protected var _labelField:String = "label";
 		protected var _dataProvider:Array;
 		
+		/* Signals */
+		protected var _scrollStart:DeluxeSignal;
+		protected var _scrollEnd:DeluxeSignal;
+		protected var _scrollChange:DeluxeSignal;
+		protected var _selectionChange:DeluxeSignal;
+		protected var _signalEvent:GenericEvent;
+		
 		/**
 		 * Constructor.
 		 */
@@ -100,13 +104,11 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * Static factory method to create a new instance of ScrollList with default properties. 
 		 * @param bounds Rectangle The rectangular area to be shown by the list.
-		 * @param delegate IScrollListDelegate The delegate to be invoked as actions are performed.
 		 * @return ScrollList
 		 */
-		public static function initWithScrollRectAndDelegate( bounds:Rectangle, delegate:IScrollListDelegate = null ):ScrollList
+		public static function initWithScrollRect( bounds:Rectangle ):ScrollList
 		{
 			var list:ScrollList = new ScrollList();
-			list.delegate = delegate;
 			list.width = bounds.width;
 			list.height = bounds.height;
 			return list;
@@ -137,6 +139,12 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_skin = new ScrollListSkin();
 			_skin.target = this;
+			
+			_scrollStart = new DeluxeSignal( this );
+			_scrollEnd = new DeluxeSignal( this );
+			_scrollChange = new DeluxeSignal( this );
+			_selectionChange = new DeluxeSignal( this );
+			_signalEvent = new GenericEvent();
 		}
 		
 		/**
@@ -153,7 +161,9 @@ package com.custardbelly.as3flobile.controls.list
 			var horizPadding:int = ( _padding.left + _padding.right );
 			var vertPadding:int = ( _padding.top + _padding.bottom );
 			_viewport = new ScrollViewport();
-			_viewport.delegate = this;
+			_viewport.scrollStart.add( scrollViewDidStart );
+			_viewport.scrollChange.add( scrollViewDidAnimate );
+			_viewport.scrollEnd.add( scrollViewDidEnd );
 			_viewport.context = _scrollContext;
 			_viewport.content = _listHolder;
 			_viewport.width = _width - horizPadding;
@@ -565,6 +575,39 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * Signal handler for start of scroll in viewport.
+		 * @param Position
+		 */
+		protected function scrollViewDidStart( position:Point ):void
+		{
+			_currentScrollPosition = position;
+			scrollStart.dispatch( _signalEvent );
+		}
+		
+		/**
+		 * Signal handler for change in scroll from viewport.
+		 * @param Point
+		 */
+		protected function scrollViewDidAnimate( position:Point ):void
+		{
+			_isScrolling = true;
+			_currentScrollPosition = position;
+			scrollChange.dispatch( _signalEvent );
+			showCells();
+		}
+		
+		/**
+		 * Signal handler for end of scroll from viewport.
+		 * @param Point
+		 */
+		protected function scrollViewDidEnd( position:Point ):void
+		{	
+			_isScrolling = false;
+			_currentScrollPosition = position;
+			scrollEnd.dispatch( _signalEvent );
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Event handler for tap gesture on content. Determines the selected index within the list. 
@@ -644,6 +687,38 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * @copy IScrollListContainer#startScroll
+		 */
+		public function get scrollStart():DeluxeSignal
+		{
+			return _scrollStart;
+		}
+		
+		/**
+		 * @copy IScrollListContainer#endScroll
+		 */
+		public function get scrollEnd():DeluxeSignal
+		{
+			return _scrollEnd;
+		}
+		
+		/**
+		 * @copy IScrollListContainer#scroll
+		 */
+		public function get scrollChange():DeluxeSignal
+		{
+			return _scrollChange;
+		}
+		
+		/**
+		 * @copy IScrollListContainer#select
+		 */
+		public function get selectionChange():DeluxeSignal
+		{
+			return _selectionChange;
+		}
+		
+		/**
 		 * Returns the list of IScrollListItemRenderer instances. 
 		 * @return Vector.<IScrollListItemRenderer>
 		 */
@@ -668,39 +743,6 @@ package com.custardbelly.as3flobile.controls.list
 		public function get scrollPosition():Point
 		{
 			return _currentScrollPosition;
-		}
-		
-		/**
-		 * IScrollViewportDelegate implementation for start of scroll animation. 
-		 * @param position Number
-		 */
-		public function scrollViewDidStart( position:Point ):void
-		{
-			_currentScrollPosition = position;
-			if( _delegate ) _delegate.listDidStartScroll( this, position );
-		}
-		
-		/**
-		 * IScrollViewportDelegate implementation for animation of scroll. 
-		 * @param position Number
-		 */
-		public function scrollViewDidAnimate( position:Point ):void
-		{
-			_isScrolling = true;
-			_currentScrollPosition = position;
-			if( _delegate ) _delegate.listDidScroll( this, position );
-			showCells();
-		}
-		
-		/**
-		 * IScrollViewportDelegate implementation for end of scroll animation. 
-		 * @param position Number
-		 */
-		public function scrollViewDidEnd( position:Point ):void
-		{
-			_currentScrollPosition = position;
-			_isScrolling = false;
-			if( _delegate ) _delegate.listDidEndScroll( this, position );
 		}
 		
 		/**
@@ -734,8 +776,15 @@ package com.custardbelly.as3flobile.controls.list
 			// Null reference to any selected item.
 			_selectedRenderer = null;
 			
-			// Null reference to delegate.
-			_delegate = null;
+			// Null reference to signals.
+			_scrollStart.removeAll();
+			_scrollStart = null;
+			_scrollEnd.removeAll();
+			_scrollEnd = null;
+			_scrollChange.removeAll();
+			_scrollChange = null;
+			_selectionChange.removeAll();
+			_selectionChange = null;
 		}
 		
 		/**
@@ -772,19 +821,6 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_seperatorLength = ( value < 0 ) ? 0 : value;
 			invalidateDisplay();
-		}
-		
-		/**
-		 * Accessor/Modifier for the action delegate notified of change in properties. 
-		 * @return IScrollListDelegate
-		 */
-		public function get delegate():IScrollListDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IScrollListDelegate ):void
-		{
-			_delegate = value;
 		}
 		
 		/**
@@ -884,7 +920,7 @@ package com.custardbelly.as3flobile.controls.list
 			
 			_selectedIndex = value;
 			invalidateSelection(); 
-			if( _delegate ) _delegate.listSelectionChange( this, _selectedIndex );
+			selectionChange.dispatch( _signalEvent );
 		}
 		
 		/**

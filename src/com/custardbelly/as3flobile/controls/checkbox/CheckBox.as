@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: CheckBox.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,9 @@ package com.custardbelly.as3flobile.controls.checkbox
 	
 	import flash.events.Event;
 	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.events.GenericEvent;
+	
 	/**
 	 * CheckBox is a control display for a user to change selection on a model. 
 	 * @author toddanderson
@@ -54,7 +57,9 @@ package com.custardbelly.as3flobile.controls.checkbox
 		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
 		protected var _tapMediator:ITapMediator;
-		protected var _delegate:ICheckBoxDelegate;
+		
+		protected var _check:DeluxeSignal;
+		protected var _checkEvent:GenericEvent;
 		
 		/**
 		 * Constructor.
@@ -62,21 +67,6 @@ package com.custardbelly.as3flobile.controls.checkbox
 		public function CheckBox() 
 		{ 
 			super();
-			mouseChildren = false;
-			mouseEnabled = true;
-			_tapMediator = new MouseTapMediator();
-		}
-		
-		/**
-		 * Status util method to create a new CheckBox with a specific ICheckBoxDelegate reference. 
-		 * @param delegate ICheckBoxDelegate
-		 * @return CheckBox
-		 */
-		static public function initWithDelegate( delegate:ICheckBoxDelegate ):CheckBox
-		{
-			var checkBox:CheckBox = new CheckBox();
-			checkBox.delegate = delegate;
-			return checkBox;
 		}
 		
 		/**
@@ -85,6 +75,9 @@ package com.custardbelly.as3flobile.controls.checkbox
 		override protected function initialize():void
 		{
 			super.initialize();
+			
+			mouseChildren = false;
+			mouseEnabled = true;
 			
 			// *Note: 	The height property is regardless in this context.
 			//			The height will be updated once the group is filled with content.
@@ -98,6 +91,11 @@ package com.custardbelly.as3flobile.controls.checkbox
 			_skin.target = this;
 			
 			_labelPlacement = BoxPositionEnum.RIGHT;
+			
+			_tapMediator = new MouseTapMediator();
+			
+			_check = new DeluxeSignal( this );
+			_checkEvent = new GenericEvent();
 		}
 		
 		/**
@@ -214,8 +212,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			_boxDisplay.selected = value;
 			updateDisplay();
 			
-			if( _delegate )
-				_delegate.checkBoxSelectionChange( this, value );
+			_check.dispatch( _checkEvent );
 		}
 		
 		/**
@@ -257,8 +254,20 @@ package com.custardbelly.as3flobile.controls.checkbox
 			
 			_boxDisplay = null;
 			_labelDisplay = null;
-			_delegate = null;
 			_tapMediator = null;
+			
+			_check.removeAll();
+			_check = null;
+			_checkEvent = null;
+		}
+		
+		/**
+		 * Returns signal of change to toggle check. 
+		 * @return DeluxeSignal
+		 */
+		public function get check():DeluxeSignal
+		{
+			return _check;
 		}
 		
 		/**
@@ -342,19 +351,6 @@ package com.custardbelly.as3flobile.controls.checkbox
 			
 			_label = value;
 			invalidateLabel();
-		}
-		
-		/**
-		 * Accessor/Modifier for the ICheckBoxDelegate client requiring notification on check to selection.  
-		 * @return ICheckBoxDelegate
-		 */
-		public function get delegate():ICheckBoxDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate(value:ICheckBoxDelegate):void
-		{
-			_delegate = value;
 		}
 		
 		/**

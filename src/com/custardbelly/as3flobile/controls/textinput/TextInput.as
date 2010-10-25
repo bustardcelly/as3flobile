@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: TextInput.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,17 +31,15 @@ package com.custardbelly.as3flobile.controls.textinput
 	import com.custardbelly.as3flobile.skin.TextInputSkin;
 	
 	import flash.display.Graphics;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
 	
-	import flashx.textLayout.edit.SelectionManager;
+	import org.osflash.signals.Signal;
 	
 	/**
 	 * TextInput is a control to allow for input of text on single and multiple lines. 
@@ -58,24 +56,12 @@ package com.custardbelly.as3flobile.controls.textinput
 		protected var _defaultText:String = "";
 		protected var _text:String = "";
 		
-		protected var _delegate:ITextInputDelegate;
+		protected var _textChange:Signal;
 		
 		/**
 		 * Constructor.
 		 */
 		public function TextInput() { super(); }
-		
-		/**
-		 * Static util method to create a new instance of TextInput with a specified ITextInputDelegate instance. 
-		 * @param delegate ITextInputDelegate
-		 * @return TextInput
-		 */
-		static public function initWithDelegate( delegate:ITextInputDelegate ):TextInput
-		{
-			var input:TextInput = new TextInput();
-			input.delegate = delegate;
-			return input;
-		}
 		
 		/**
 		 * @inherit
@@ -91,6 +77,8 @@ package com.custardbelly.as3flobile.controls.textinput
 			
 			_skin = new TextInputSkin();
 			_skin.target = this;
+			
+			_textChange = new Signal( String );
 		}
 		
 		/**
@@ -147,9 +135,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			_input.displayAsPassword = ( _input.text == _defaultText ) ? false : _displayAsPassword;
 			updateDisplay();
 			
-			// Notify delegate.
-			if( _delegate )
-				_delegate.textInputTextChange( this, value );
+			_textChange.dispatch( value );
 		}
 		
 		/**
@@ -276,8 +262,17 @@ package com.custardbelly.as3flobile.controls.textinput
 			while( numChildren > 0 )
 				removeChildAt( 0 );
 			
-			// Null reference to delegate.
-			_delegate = null;
+			_textChange.removeAll();
+			_textChange = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in text. 
+		 * @return Signal Signal( String )
+		 */
+		public function get textChange():Signal
+		{
+			return _textChange;
 		}
 		
 		/**
@@ -390,19 +385,5 @@ package com.custardbelly.as3flobile.controls.textinput
 		{
 			invalidateMultiline( value );
 		}
-
-		/**
-		 * Accessor/Modifier for the ITextInputDelegate that requires notification of change to textual content. 
-		 * @return ITextInputDelegate
-		 */
-		public function get delegate():ITextInputDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:ITextInputDelegate ):void
-		{
-			_delegate = value;
-		}
-
 	}
 }

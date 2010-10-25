@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Picker.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,6 @@ package com.custardbelly.as3flobile.controls.picker
 {
 	import com.custardbelly.as3flobile.controls.core.AS3FlobileComponent;
 	import com.custardbelly.as3flobile.controls.list.IScrollListContainer;
-	import com.custardbelly.as3flobile.controls.list.IScrollListDelegate;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.layout.ScrollListVerticalLayout;
@@ -42,7 +41,10 @@ package com.custardbelly.as3flobile.controls.picker
 	import flash.geom.Point;
 	import flash.utils.Dictionary;
 	
-	public class Picker extends AS3FlobileComponent implements IScrollListDelegate
+	import org.osflash.signals.Signal;
+	import org.osflash.signals.events.GenericEvent;
+	
+	public class Picker extends AS3FlobileComponent
 	{
 		protected var _selectionBar:Shape;
 		
@@ -55,8 +57,9 @@ package com.custardbelly.as3flobile.controls.picker
 		protected var _selectedItemOffsetForCompare:Number;
 		
 		protected var _itemHeight:int;
-		protected var _delegate:IPickerSelectionDelegate;
 		protected var _dataProvider:Vector.<PickerColumn>;
+		
+		protected var _selectionChange:Signal;
 		
 		/**
 		 * Constructor.
@@ -65,18 +68,6 @@ package com.custardbelly.as3flobile.controls.picker
 		{ 
 			super();
 			_columnSelectionIndices = new Dictionary( true );
-		}
-		
-		/**
-		 * Static method to create a new instance of Picker control filled with target IPickerSelectionDelegate. 
-		 * @param delegate IPickerSelectionDelegate
-		 * @return Picker
-		 */
-		public static function initWithDelegate( delegate:IPickerSelectionDelegate ):Picker
-		{
-			var picker:Picker = new Picker();
-			picker.delegate = delegate;
-			return picker;
 		}
 		
 		/**
@@ -103,6 +94,8 @@ package com.custardbelly.as3flobile.controls.picker
 			// SKin it.
 			_skin = new PickerSkin();
 			_skin.target = this;
+			// Select signal.
+			_selectionChange = new Signal( PickerColumn, int );
 		}
 		
 		/**
@@ -250,7 +243,7 @@ package com.custardbelly.as3flobile.controls.picker
 			list.dataProvider = column.data;
 			list.itemRenderer = column.itemRenderer;
 			list.layout = column.layout;
-			list.delegate = this;
+			list.scrollEnd.add( listDidEndScroll );
 			list.seperatorLength = 1;
 			list.padding = getDefaultColumnListPadding( list.padding );
 			list.selectionEnabled = false;
@@ -353,24 +346,17 @@ package com.custardbelly.as3flobile.controls.picker
 		}
 		
 		/**
-		 * @copy IScrollListDelegate#listDidStartScroll()
+		 * @private
+		 * 
+		 * Signal handler for end of scroll. 
+		 * Within the context of this composite control, the lists are not selectable. Rather they ae scrolled to selection.
+		 * By listening to the end of scroll, we can determine the desired selection within a list.
+		 * @param evt GenericEvent
 		 */
-		public function listDidStartScroll( list:IScrollListContainer, position:Point ):void
+		protected function listDidEndScroll( evt:GenericEvent ):void
 		{
-			// Only concerned with the end of scroll at the moment.
-		}
-		/**
-		 * @copy IScrollListDelegate#listDidScroll()
-		 */
-		public function listDidScroll( list:IScrollListContainer, position:Point ):void
-		{
-			// Only concerned with the end of scroll at the moment.
-		}
-		/**
-		 * @copy IScrollListDelegate#listDidEndScroll()
-		 */
-		public function listDidEndScroll( list:IScrollListContainer, position:Point ):void
-		{
+			var list:IScrollListContainer = evt.target as IScrollListContainer;
+			var position:Point = list.scrollPosition;
 			// Update selected item offset based on list seperator.
 			//	This offset is used to determine the display range of an item based on position.
 			//	since the seperator can be any given number, we need an offset for that range.
@@ -385,16 +371,18 @@ package com.custardbelly.as3flobile.controls.picker
 			// Verify that the index of the notifying column has changed. If it has notify any clients of change.
 			var hasSelectionChange:Boolean = ( _columnSelectionIndices[list] == null || _columnSelectionIndices[list] == index );
 			// Notify delegate if available.
-			if( _delegate && hasSelectionChange ) _delegate.pickerSelectionDidChange( this, getPickerColumnFromList( list ), index ); 
+			if( hasSelectionChange ) _selectionChange.dispatch( getPickerColumnFromList( list ), index ); 
 			// Mark selected index.
 			_columnSelectionIndices[list] = index;
 		}
+		
 		/**
-		 * @copy IScrollListDelegate#listSelectionChange()
+		 * Returns the signal reference for selection change. 
+		 * @return Signal Signal( PickerColumn, int )
 		 */
-		public function listSelectionChange( list:IScrollListContainer, selectedIndex:int ):void 
+		public function get selectionChange():Signal
 		{
-			// we have disabled selection, so no need to handle it here. Recognized selection for each list will occur in listDidEndScroll().
+			return _selectionChange;
 		}
 		
 		/**
@@ -488,8 +476,8 @@ package com.custardbelly.as3flobile.controls.picker
 			
 			_dataProvider = null;
 			
-			// Null reference to delegate.
-			_delegate = null;
+			_selectionChange.removeAll();
+			_selectionChange = null;
 		}
 		
 		/**
@@ -525,19 +513,6 @@ package com.custardbelly.as3flobile.controls.picker
 			
 			_itemHeight = value;
 			invalidateItemHeight();
-		}
-		
-		/**
-		 * Accessor/Modifier for the IPickerSelectionDelegate client to be notified of change in selection. 
-		 * @return IPickerSelectionDelegate 
-		 */
-		public function get delegate():IPickerSelectionDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IPickerSelectionDelegate ):void
-		{
-			_delegate = value;
 		}
 		
 		/**

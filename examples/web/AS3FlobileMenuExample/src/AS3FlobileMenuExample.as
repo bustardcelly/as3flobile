@@ -1,15 +1,12 @@
 package
 {
+	import com.custardbelly.as3flobile.android.control.menu.AndroidMenu;
+	import com.custardbelly.as3flobile.android.control.menu.panel.IMenuPanelDisplay;
+	import com.custardbelly.as3flobile.android.model.menu.MenuItem;
 	import com.custardbelly.as3flobile.controls.button.Button;
-	import com.custardbelly.as3flobile.controls.button.IButtonDelegate;
-	import com.custardbelly.as3flobile.controls.button.IToggleButtonDelegate;
 	import com.custardbelly.as3flobile.controls.button.ToggleButton;
 	import com.custardbelly.as3flobile.controls.label.Label;
-	import com.custardbelly.as3flobile.controls.menu.IMenuDisplayDelegate;
-	import com.custardbelly.as3flobile.controls.menu.IMenuSelectionDelegate;
-	import com.custardbelly.as3flobile.controls.menu.Menu;
-	import com.custardbelly.as3flobile.controls.menu.MenuItem;
-	import com.custardbelly.as3flobile.controls.menu.panel.IMenuPanelDisplay;
+	import com.custardbelly.as3flobile.signal.CancelableSignal;
 	
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -27,10 +24,12 @@ package
 	import flash.text.engine.TextElement;
 	import flash.text.engine.TextLine;
 	
-	public class AS3FlobileMenuExample extends Sprite implements IButtonDelegate, IToggleButtonDelegate, IMenuSelectionDelegate, IMenuDisplayDelegate
+	import org.osflash.signals.events.GenericEvent;
+	
+	public class AS3FlobileMenuExample extends Sprite
 	{
 		protected var view:Sprite;
-		protected var menu:Menu;
+		protected var menu:AndroidMenu;
 		
 		protected var _pageIndex:int;
 		
@@ -81,7 +80,10 @@ package
 			line.x = 182;
 			view.addChild( line );
 			
-			menu = Menu.initWithDelegates( this, this );
+			menu = new AndroidMenu();
+			menu.openSignal.add( menuDidOpen );
+			menu.closeSignal.add( menuDidClose );
+			menu.selectionChange.add( menuSelectionChange );
 			
 			label = new Label();
 			label.x = 354;
@@ -89,14 +91,16 @@ package
 			label.text = "page actions";
 			view.addChild( label );
 			
-			_prevPageButton = Button.initWithDelegate( this );
+			_prevPageButton = new Button();
+			_prevPageButton.tap.add( buttonTapped );
 			_prevPageButton.label = "<<";
 			_prevPageButton.y = 740;
 			_prevPageButton.x = 330;
 			_prevPageButton.width = 60;
 			view.addChild( _prevPageButton );
 			
-			_nextPageButton = Button.initWithDelegate( this );
+			_nextPageButton = new Button();
+			_nextPageButton.tap.add( buttonTapped );
 			_nextPageButton.label = ">>";
 			_nextPageButton.x = 400;
 			_nextPageButton.y = 740;
@@ -109,13 +113,15 @@ package
 			label.text = "menu actions";
 			view.addChild( label );
 			
-			_menuButton = ToggleButton.initWithDelegate( this );
+			_menuButton = new ToggleButton();
+			_menuButton.toggle.add( toggleButtonSelectionChange );
 			_menuButton.label = "show menu";
 			_menuButton.y =  740;
 			_menuButton.x = 20;
 			view.addChild( _menuButton );
 			
-			_backButton = Button.initWithDelegate( this );
+			_backButton = new Button();
+			_backButton.tap.add( buttonTapped );
 			_backButton.label = "back";
 			_backButton.y = 740;
 			_backButton.x = 130;
@@ -195,8 +201,9 @@ package
 			navigateToURL( new URLRequest( "http://github.com/bustardcelly/as3flobile" ) );
 		}
 		
-		public function buttonTapped( button:Button ):void
+		public function buttonTapped( evt:GenericEvent ):void
 		{
+			var button:Button = evt.target as Button;
 			if( button == _prevPageButton )
 			{
 				if( --_pageIndex < 0 )
@@ -225,8 +232,10 @@ package
 			}
 		}
 		
-		public function toggleButtonSelectionChange( toggleButton:ToggleButton, selected:Boolean ):void
+		public function toggleButtonSelectionChange( evt:GenericEvent ):void
 		{
+			var toggleButton:ToggleButton = evt.target as ToggleButton;
+			var selected:Boolean = toggleButton.selected;
 			if( selected )
 			{
 				_currentPage.showMenu( menu );
@@ -239,18 +248,19 @@ package
 			}
 		}
 		
-		public function menuSelectionChange( menu:Menu, selectedItem:MenuItem ):Boolean
+		public function menuSelectionChange( menu:AndroidMenu, item:MenuItem, signal:CancelableSignal ):void
 		{
-			return true;
+			// set evt.false to stop close of menu.
+			signal.preventDefault();
 		}
-		public function menuDidOpen( menu:Menu, menuPanel:IMenuPanelDisplay ):void
+		public function menuDidOpen( menu:AndroidMenu, menuPanel:IMenuPanelDisplay ):void
 		{
 			var isShown:Boolean = menu.isActive();
 			_backButton.enabled = isShown;
 			_prevPageButton.enabled = !isShown;
 			_nextPageButton.enabled = !isShown;
 		}
-		public function menuDidClose( menu:Menu, menuPanel:IMenuPanelDisplay ):void
+		public function menuDidClose( menu:AndroidMenu, menuPanel:IMenuPanelDisplay ):void
 		{
 			var isShown:Boolean = menu.isActive();
 			_backButton.enabled = isShown;

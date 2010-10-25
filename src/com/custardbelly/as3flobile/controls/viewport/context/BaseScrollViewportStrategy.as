@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: BaseScrollViewportStrategy.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,6 @@
 package com.custardbelly.as3flobile.controls.viewport.context
 {
 	import com.custardbelly.as3flobile.controls.viewport.IScrollViewport;
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
 	import com.custardbelly.as3flobile.controls.viewport.adaptor.ITargetScrollAdaptor;
 	import com.custardbelly.as3flobile.controls.viewport.adaptor.TargetScrollAdaptor;
 	import com.custardbelly.as3flobile.model.ScrollMark;
@@ -38,6 +37,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	
+	import org.osflash.signals.Signal;
+	
 	/**
 	 * BaseScrollViewportStrategy is the base strategy for managing the movement of content within a viewport along its x and y axes. 
 	 * @author toddanderson
@@ -46,8 +47,11 @@ package com.custardbelly.as3flobile.controls.viewport.context
 	{
 		protected var _content:DisplayObject;
 		protected var _bounds:Rectangle;
-		protected var _delegate:IScrollViewportDelegate;
 		protected var _targetAdaptor:ITargetScrollAdaptor;
+		
+		protected var _scrollStart:Signal;
+		protected var _scrollEnd:Signal;
+		protected var _scrollChange:Signal
 		
 		protected var _currentScrollPositionX:Number = 0;
 		protected var _currentScrollPositionY:Number = 0;
@@ -154,7 +158,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected function invalidatePosition( value:Point ):void
 		{
 			_targetAdaptor.stop();
-			_targetAdaptor.scrollToPosition( value, _coordinate, _content, _delegate );
+			_targetAdaptor.scrollToPosition( value, _coordinate, _content, this );
 		}
 		
 		/**
@@ -310,12 +314,9 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_content.removeEventListener( Event.ENTER_FRAME, animate, false );
 			
 			// Notify delegate of end.
-			if( _delegate )
-			{
-				_coordinate.x = _currentScrollPositionX;
-				_coordinate.y = _currentScrollPositionY;
-				_delegate.scrollViewDidEnd( _coordinate );
-			}
+			_coordinate.x = _currentScrollPositionX;
+			_coordinate.y = _currentScrollPositionY;
+			_scrollEnd.dispatch( _coordinate );
 			
 			// Remove previously held values on mark list.
 			var i:int;
@@ -354,10 +355,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			// IF we have stopped moving, stop moving.
 			if( _velocityX == 0 && _velocityY == 0 ) return;
 			// Notify delegate of animation.
-			if( _delegate )
-			{
-				_delegate.scrollViewDidAnimate( _coordinate );
-			}
+			_scrollChange.dispatch( _coordinate );
 			
 			// Damp the velocity.
 			_velocityX *= _damp;
@@ -414,10 +412,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_currentScrollPositionY = _coordinate.y;
 			
 			// Notify the delegate of start.
-			if( _delegate )
-			{
-				_delegate.scrollViewDidStart( _coordinate );
-			}
+			_scrollStart.dispatch( _coordinate );
 		}
 		
 		/**
@@ -452,10 +447,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_coordinate.y = _currentScrollPositionY;
 			
 			// Notify client of animate.
-			if( _delegate )
-			{
-				_delegate.scrollViewDidAnimate( _coordinate );
-			}
+			_scrollChange.dispatch( _coordinate );
 		}
 		
 		/**
@@ -553,9 +545,11 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public function mediate(viewport:IScrollViewport):void
 		{
 			// Hold refernces to properties on the IScrollViewport for ease of operations.
+			_scrollStart = viewport.scrollStart;
+			_scrollEnd = viewport.scrollEnd;
+			_scrollChange = viewport.scrollChange;
 			_content = viewport.content;
 			_bounds = viewport.scrollBounds;
-			_delegate = viewport.delegate;
 			// Return marks.
 			returnAllMarks();
 			// If we have the minimum of what is needed, initialize.
@@ -587,7 +581,34 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_targetAdaptor = null;
 			
 			_content = null;
-			_delegate = null;
+			_scrollStart = null;
+			_scrollEnd = null;
+			_scrollChange = null;
+		}
+		
+		/**
+		 * Returns signal reference of start of scroll. 
+		 * @return DeluxeSignal
+		 */
+		public function get scrollStart():Signal
+		{
+			return _scrollStart;
+		}
+		/**
+		 * Returns signal reference of end of scroll. 
+		 * @return DeluxeSignal
+		 */
+		public function get scrollEnd():Signal
+		{
+			return _scrollEnd;
+		}
+		/**
+		 * Returns signal reference of change in scroll. 
+		 * @return DeluxeSignal
+		 */
+		public function get scrollChange():Signal
+		{
+			return _scrollChange;
 		}
 		
 		/**

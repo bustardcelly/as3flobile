@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioButton.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,9 @@ package com.custardbelly.as3flobile.controls.radiobutton
 	
 	import flash.events.Event;
 	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.events.GenericEvent;
+	
 	/**
 	 * RadioButton is a control that toggles the selection of a model.
 	 * Though it is possible to create and add a RadioButton to a display directly, it is more common to use a RadioGroup to manage the selection of a model across multiple RadioButtons.
@@ -56,7 +59,9 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		protected var _autosize:Boolean;
 		protected var _labelPlacement:int;
 		protected var _tapMediator:ITapMediator;
-		protected var _delegate:IRadioButtonDelegate;
+		
+		protected var _selectionChange:DeluxeSignal;
+		protected var _selectEvent:GenericEvent;
 		
 		/**
 		 * Constructor.
@@ -64,21 +69,6 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		public function RadioButton() 
 		{ 
 			super();
-			mouseChildren = false;
-			mouseEnabled = true;
-			_tapMediator = new MouseTapMediator();
-		}
-		
-		/**
-		 * Static util function to create a new RadioButton instance with an IRadioButtonDelegate reference.
-		 * @param delegate IRadioButtonDelegate
-		 * @return RadioButton
-		 */
-		static public function initWithDelegate( delegate:IRadioButtonDelegate ):RadioButton
-		{
-			var radio:RadioButton = new RadioButton();
-			radio.delegate = delegate;
-			return radio;
 		}
 		
 		/**
@@ -87,6 +77,9 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		override protected function initialize():void
 		{
 			super.initialize();
+			
+			mouseChildren = false;
+			mouseEnabled = true;
 			
 			_width = 180;
 			_height = 34;
@@ -98,6 +91,11 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			_skin.target = this;
 			
 			_labelPlacement = BoxPositionEnum.RIGHT;
+			
+			_tapMediator = new MouseTapMediator();
+			
+			_selectionChange = new DeluxeSignal( this );
+			_selectEvent = new GenericEvent();
 		}
 		
 		/**
@@ -211,8 +209,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			_radioDisplay.selected = value;
 			updateDisplay();
 			
-			if( _delegate )
-				_delegate.radioButtonSelectionChange( this, value );
+			_selectionChange.dispatch( _selectEvent );
 		}
 		
 		/**
@@ -254,8 +251,20 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			
 			_radioDisplay = null;
 			_labelDisplay = null;
-			_delegate = null;
 			_tapMediator = null;
+			
+			_selectionChange.removeAll();
+			_selectionChange = null;
+			_selectEvent = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in toggle selection. 
+		 * @return DeluxeSignal
+		 */
+		public function get selectionChange():DeluxeSignal
+		{
+			return _selectionChange;
 		}
 
 		/**
@@ -355,19 +364,6 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			invalidateTapMediator( value );
 		}
 
-		/**
-		 * Accessor/Modifier for the client that requires notification of changes to this control. 
-		 * @return IRadioButtonDelegate
-		 */
-		public function get delegate():IRadioButtonDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IRadioButtonDelegate ):void
-		{
-			_delegate = value;
-		}
-		
 		/**
 		 * Accessor/Modifier for selection flag associate with current state. 
 		 * @return Boolean

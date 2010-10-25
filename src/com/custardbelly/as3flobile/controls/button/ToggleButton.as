@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ToggleButton.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,9 @@ package com.custardbelly.as3flobile.controls.button
 	
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.events.GenericEvent;
 
 	/**
 	 * ToggleButton is a Button extension that manages the state of being selected or toggled. 
@@ -39,24 +42,14 @@ package com.custardbelly.as3flobile.controls.button
 	public class ToggleButton extends Button
 	{
 		protected var _currentState:int;
-		protected var _toggleDelegate:IToggleButtonDelegate;
+		
+		protected var _toggle:DeluxeSignal;
+		protected var _toggleEvent:GenericEvent;
 		
 		/**
 		 * Constructor.
 		 */
 		public function ToggleButton() { super(); }
-		
-		/**
-		 * Static util method to create a new instance of ToggleButton with specified IToggleButtonDelegate reference. 
-		 * @param delegate IToggleButtonDelegate
-		 * @return ToggleButton
-		 */
-		public static function initWithDelegate( delegate:IToggleButtonDelegate ):ToggleButton
-		{
-			var button:ToggleButton = new ToggleButton();
-			button.toggleDelegate = delegate;
-			return button;
-		}
 		
 		/**
 		 * @inherit
@@ -67,6 +60,9 @@ package com.custardbelly.as3flobile.controls.button
 			
 			_skin = new ToggleButtonSkin();
 			_skin.target = this;
+			
+			_toggle = new DeluxeSignal( this );
+			_toggleEvent = new GenericEvent();
 		}
 		
 		/**
@@ -81,8 +77,7 @@ package com.custardbelly.as3flobile.controls.button
 			_skinState = _currentState;
 			updateDisplay();
 			
-			if( _toggleDelegate )
-				_toggleDelegate.toggleButtonSelectionChange( this, value );
+			_toggle.dispatch( _toggleEvent );
 		}
 		
 		/**
@@ -124,7 +119,18 @@ package com.custardbelly.as3flobile.controls.button
 		override public function dispose():void
 		{
 			super.dispose();
-			_toggleDelegate = null;
+			_toggle.removeAll();
+			_toggle = null;
+			_toggleEvent = null;
+		}
+		
+		/**
+		 * Returns signal reference for change in toggle. 
+		 * @return DeluxeSignal
+		 */
+		public function get toggle():DeluxeSignal
+		{
+			return _toggle;
 		}
 		
 		/**
@@ -140,19 +146,6 @@ package com.custardbelly.as3flobile.controls.button
 			if( isStateEqual( value ) ) return;
 			
 			toggleState( value );
-		}
-
-		/**
-		 * Accessor/Modifier for IToggleButtonDelegate instance that requires notification of change to toggle state. 
-		 * @return IToggleButtonDelegate
-		 */
-		public function get toggleDelegate():IToggleButtonDelegate
-		{
-			return _toggleDelegate;
-		}
-		public function set toggleDelegate(value:IToggleButtonDelegate):void
-		{
-			_toggleDelegate = value;
 		}
 	}
 }

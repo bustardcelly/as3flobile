@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Button.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,16 +32,13 @@ package com.custardbelly.as3flobile.controls.button
 	import com.custardbelly.as3flobile.helper.ITapMediator;
 	import com.custardbelly.as3flobile.helper.MouseTapMediator;
 	import com.custardbelly.as3flobile.skin.ButtonSkin;
-	import com.custardbelly.as3flobile.skin.ISkin;
-	import com.custardbelly.as3flobile.skin.Skin;
 	
-	import flash.display.DisplayObject;
 	import flash.display.Graphics;
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.text.engine.ElementFormat;
-	import flash.text.engine.FontDescription;
+	
+	import org.osflash.signals.DeluxeSignal;
+	import org.osflash.signals.events.GenericEvent;
 	
 	/**
 	 * Button is a component that renders a graphic and textual display to represent an interactable object. 
@@ -54,8 +51,10 @@ package com.custardbelly.as3flobile.controls.button
 		protected var _label:String;
 		protected var _labelPadding:int;
 		
-		protected var _delegate:IButtonDelegate;
 		protected var _tapMediator:ITapMediator;
+		
+		protected var _tap:DeluxeSignal;
+		protected var _tapEvent:GenericEvent;
 		
 		/**
 		 * Constructor.
@@ -63,15 +62,17 @@ package com.custardbelly.as3flobile.controls.button
 		public function Button()
 		{
 			super();
-			mouseChildren = false;
-			mouseEnabled = true;
-			_tapMediator = new MouseTapMediator();
 		}
 		
-		static public function initWithDelegate( delegate:IButtonDelegate ):Button
+		/**
+		 * Static convenience method to instantiate a new instance of Button with an assigned tap delegate method. 
+		 * @param handler Function The delegate function to add to the tap signal.
+		 * @return Button
+		 */
+		static public function initWithTapHandler( handler:Function ):Button
 		{
 			var button:Button = new Button();
-			button.delegate = delegate;
+			button.tap.add( handler );
 			return button;
 		}
 		
@@ -82,13 +83,21 @@ package com.custardbelly.as3flobile.controls.button
 		{
 			super.initialize();
 			
+			mouseChildren = false;
+			mouseEnabled = true;
+			
 			_width = 100;
 			_height = 48;
 			
 			_labelPadding = 5;
 			
+			_tapMediator = new MouseTapMediator();
+			
 			_skin = new ButtonSkin();
 			_skin.target = this;
+			
+			_tap = new DeluxeSignal( this );
+			_tapEvent = new GenericEvent();
 		}
 		
 		/**
@@ -186,7 +195,7 @@ package com.custardbelly.as3flobile.controls.button
 		 */
 		protected function handleTap( evt:Event ):void
 		{
-			if( _delegate ) _delegate.buttonTapped( this );
+			_tap.dispatch( _tapEvent );
 		}
 		
 		/**
@@ -202,7 +211,18 @@ package com.custardbelly.as3flobile.controls.button
 			if( _tapMediator && _tapMediator.isMediating( this ) )
 				_tapMediator.unmediateTapGesture( this );
 			
-			_delegate = null;
+			_tap.removeAll();
+			_tap = null;
+			_tapEvent = null;
+		}
+		
+		/**
+		 * Returns signal reference for handle of tap action. 
+		 * @return DeluxeSignal
+		 */
+		public function get tap():DeluxeSignal
+		{
+			return _tap;
 		}
 		
 		/**
@@ -253,19 +273,6 @@ package com.custardbelly.as3flobile.controls.button
 		public function get backgroundDisplay():Graphics
 		{
 			return graphics;
-		}
-		
-		/**
-		 * Accessor/Modifier for the IButtonDelegate client requiring notification on tap.  
-		 * @return ICheckBoxDelegate
-		 */
-		public function get delegate():IButtonDelegate
-		{
-			return _delegate;
-		}
-		public function set delegate( value:IButtonDelegate ):void
-		{
-			_delegate = value;
 		}
 
 		/**

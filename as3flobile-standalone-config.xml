@@ -5,6 +5,9 @@
     	<external-library-path>
       		<path-element>${playerglobal.lib.dir}</path-element>
     	</external-library-path>
+    	<library-path append="true">
+    		<path-element>${libs.dir}</path-element>
+    	</library-path>
     	<source-path>
       		<path-element>${src.dir}</path-element>
     	</source-path>

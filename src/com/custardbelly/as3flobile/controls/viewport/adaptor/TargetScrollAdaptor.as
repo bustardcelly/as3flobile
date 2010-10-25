@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: TargetScrollAdaptor.as</p>
- * <p>Version: 0.2</p>
+ * <p>Version: 0.3</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,7 @@
  */
 package com.custardbelly.as3flobile.controls.viewport.adaptor
 {
-	import com.custardbelly.as3flobile.controls.viewport.IScrollViewportDelegate;
-	import com.custardbelly.as3flobile.model.IDisposable;
+	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportStrategy;
 	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
@@ -51,7 +50,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		
 		protected var _content:DisplayObject;
 		protected var _coordinate:Point;
-		protected var _delegate:IScrollViewportDelegate;
+		protected var _delegate:IScrollViewportStrategy;
 		
 		/**
 		 * Constructor.
@@ -75,7 +74,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 			// Notify delegate.
 			if( _isAnimating && _delegate )
 			{
-				_delegate.scrollViewDidStart( _coordinate );
+				_delegate.scrollStart.dispatch( _coordinate );
 			}
 		}
 		
@@ -126,7 +125,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 			// Notify delegate of animation.
 			if( _delegate )
 			{
-				_delegate.scrollViewDidAnimate( _coordinate );
+				_delegate.scrollChange.dispatch( _coordinate );
 			}
 			
 			// If we ain't moving, we ain't moving.
@@ -136,7 +135,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 				// If we have stopped animating, notify delegate.
 				if( _delegate )
 				{
-					_delegate.scrollViewDidEnd( _coordinate );
+					_delegate.scrollEnd.dispatch( _coordinate );
 				}
 			}
 		}
@@ -144,7 +143,7 @@ package com.custardbelly.as3flobile.controls.viewport.adaptor
 		/**
 		 * @copy ITargetScrollAdaptor#scrollToPosition()
 		 */
-		public function scrollToPosition( targetPosition:Point, currentPosition:Point, content:DisplayObject, delegate:IScrollViewportDelegate ):void
+		public function scrollToPosition( targetPosition:Point, currentPosition:Point, content:DisplayObject, delegate:IScrollViewportStrategy ):void
 		{
 			_content = content;
 			_delegate = delegate;
