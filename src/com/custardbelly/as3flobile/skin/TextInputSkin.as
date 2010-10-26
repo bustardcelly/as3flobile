@@ -164,7 +164,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			var padding:BoxPadding = _target.padding;
 			var inputTarget:TextInput = ( _target as TextInput );
@@ -207,7 +207,7 @@ package com.custardbelly.as3flobile.skin
 			initializeBackground( inputTarget.backgroundDisplay, width, height );
 			initializeClearDisplay( inputTarget.clearButtonDisplay, width, height );
 			initializeInput( inputTarget.inputDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -221,7 +221,7 @@ package com.custardbelly.as3flobile.skin
 			updateBackground( inputTarget.backgroundDisplay, width, height );
 			updateClearDisplay( inputTarget.clearButtonDisplay, width, height );
 			updateInput( inputTarget.inputDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**

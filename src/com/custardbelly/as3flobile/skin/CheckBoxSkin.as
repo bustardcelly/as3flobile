@@ -78,7 +78,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			const offset:int = 10;
 			var checkBoxTarget:CheckBox = ( _target as CheckBox );
@@ -120,7 +120,7 @@ package com.custardbelly.as3flobile.skin
 			var checkBoxTarget:CheckBox = ( _target as CheckBox );
 			initializeBoxToggle( checkBoxTarget.boxDisplay, width, height );
 			updateLabelDisplay( checkBoxTarget.labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -132,7 +132,7 @@ package com.custardbelly.as3flobile.skin
 			
 			var checkBoxTarget:CheckBox = ( _target as CheckBox );
 			updateLabelDisplay( checkBoxTarget.labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 	}
 }

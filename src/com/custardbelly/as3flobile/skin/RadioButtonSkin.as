@@ -94,7 +94,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			const offset:int = 10;
 			var radioTarget:RadioButton = ( _target as RadioButton );
@@ -140,7 +140,7 @@ package com.custardbelly.as3flobile.skin
 			var radioTarget:RadioButton = ( _target as RadioButton );
 			initializeBoxToggle( radioTarget.radioDisplay, width, height );
 			updateLabelDisplay( radioTarget.labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -152,7 +152,7 @@ package com.custardbelly.as3flobile.skin
 			
 			var radioTarget:RadioButton = ( _target as RadioButton );
 			updateLabelDisplay( radioTarget.labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 	}
 }

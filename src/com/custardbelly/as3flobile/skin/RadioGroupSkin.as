@@ -65,7 +65,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			// *Note: height is disregarded as the content of radio buttons deterines the height of the control.
 			const itemOffset:int = 10;
@@ -101,7 +101,7 @@ package com.custardbelly.as3flobile.skin
 			super.initializeDisplay( width, height );
 			
 			var radioGroup:RadioGroup = ( _target as RadioGroup );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -112,7 +112,7 @@ package com.custardbelly.as3flobile.skin
 			super.updateDisplay( width, height );
 			
 			var radioGroup:RadioGroup = ( _target as RadioGroup );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 	}
 }

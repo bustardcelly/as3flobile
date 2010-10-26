@@ -103,7 +103,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
 			var padding:BoxPadding = _target.padding;
@@ -121,7 +121,7 @@ package com.custardbelly.as3flobile.skin
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
 			updateBackground( itemTarget.backgroundDisplay, width, height );
 			updateLabel( (itemTarget as DefaultScrollListItemRenderer).labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -134,7 +134,7 @@ package com.custardbelly.as3flobile.skin
 			var itemTarget:IScrollListItemRenderer = ( _target as IScrollListItemRenderer );
 			updateBackground( itemTarget.backgroundDisplay, width, height );
 			updateLabel( (itemTarget as DefaultScrollListItemRenderer).labelDisplay, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 	}
 }

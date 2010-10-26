@@ -310,7 +310,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		
 		/**
 		 * Returns signal reference for change in selection on switch instanc. 
-		 * @return Signal
+		 * @return Signal Signal( int )
 		 */
 		public function get selectionChange():Signal
 		{

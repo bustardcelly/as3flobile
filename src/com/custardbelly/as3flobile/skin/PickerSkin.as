@@ -122,7 +122,7 @@ package com.custardbelly.as3flobile.skin
 		 * @param width int
 		 * @param height int
 		 */
-		protected function updatePosition( width:int, height:int ):void
+		protected function updateLayout( width:int, height:int ):void
 		{
 			var padding:BoxPadding = _target.padding;
 			var horizPadding:int = padding.left + padding.right;
@@ -181,7 +181,7 @@ package com.custardbelly.as3flobile.skin
 			var pickerTarget:Picker = ( _target as Picker );
 			initializeBackground( pickerTarget.backgroundDisplay, width, height );
 			initializeSelectionBar( pickerTarget.selectionBarDisplay, pickerTarget.itemHeight, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 		
 		/**
@@ -194,7 +194,7 @@ package com.custardbelly.as3flobile.skin
 			var pickerTarget:Picker = ( _target as Picker );
 			updateBackground( pickerTarget.backgroundDisplay, width, height );
 			updateSelectionBar( pickerTarget.selectionBarDisplay, pickerTarget.itemHeight, width, height );
-			updatePosition( width, height );
+			updateLayout( width, height );
 		}
 	}
 }
