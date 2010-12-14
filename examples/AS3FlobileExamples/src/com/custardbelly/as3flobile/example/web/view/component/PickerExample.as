@@ -110,9 +110,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 		
 		public function pickerSelectionDidChange( column:PickerColumn, index:int ):void
 		{
-//			var columnIndex:int = picker.dataProvider.indexOf( column );
-//			labels[columnIndex].text = column.data[index].label;
-			trace( "picker selection change: " + column.data[index].label );
+			var columnIndex:int = picker.dataProvider.indexOf( column );
+			labels[columnIndex].text = column.data[index].label;
 		}
 	}
 }

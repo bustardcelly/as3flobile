@@ -56,8 +56,14 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * Scrolls the list to the specified index. 
 		 * @param index uint
+		 * @param select Boolean Flag to set the selected index to the target value as well. Default is false.
 		 */
-		function scrollPositionToIndex( index:uint ):void;
+		function scrollPositionToIndex( index:uint, select:Boolean = false ):void;
+		
+		/**
+		 * Runs a refresh of list display based on held dataProvider reference.
+		 */
+		function refresh():void;
 		
 		/**
 		 * Returns the signal reference for the start of scroll.

@@ -15,6 +15,7 @@ package com.custardbelly.as3flobile.example.web.view.component
 	
 	public class ScrollListExample extends Sprite
 	{
+		protected var _dataProvider:Array;
 		protected var _list:ScrollList;
 		protected var _verticalLayout:IScrollListVerticalLayout;
 		protected var _horizontalLayout:IScrollListHorizontalLayout;
@@ -57,7 +58,8 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_list.layout = _verticalLayout
 			addChild( _list );
 			
-			_list.dataProvider = getList( 40 );
+			_dataProvider = getList( 20 );
+			_list.dataProvider = _dataProvider;
 			
 			var button:Button = new Button();
 			button.tap.add( buttonTapped );
@@ -79,12 +81,12 @@ package com.custardbelly.as3flobile.example.web.view.component
 			return Math.random() * (max - min + 1) + min;
 		}
 		
-		protected function getList( length:int ):Array
+		protected function getList( length:int, front:String = "Item Renderer " ):Array
 		{
 			var arr:Array = new Array( length );
 			for( var i:int = 0; i < length; i++ )
 			{
-				arr[i] = {label:"Item Renderer " + ( i + 1 ).toString()};
+				arr[i] = {label:front + ( i + 1 ).toString()};
 			}
 			return arr;
 		}
@@ -110,6 +112,11 @@ package com.custardbelly.as3flobile.example.web.view.component
 			_isVariableSize = selected;
 			_verticalLayout.useVariableHeight = _isVariableSize;
 			_horizontalLayout.useVariableWidth = _isVariableSize;
+		}
+		
+		private function randRange(minNum:Number, maxNum:Number):Number 
+		{
+			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 		}
 	}
 }

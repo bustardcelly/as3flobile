@@ -366,7 +366,7 @@ package com.custardbelly.as3flobile.controls.picker
 			// Find selected index using compare.
 			var index:int = DisplayPositionSearch.findCellIndexInPosition( list.renderers, center, compareItemPosition, isWithinRange );
 			// Scroll to the position of the index.
-			list.scrollPositionToIndex( index );
+			list.scrollPositionToIndex( index, true );
 			
 			// Verify that the index of the notifying column has changed. If it has notify any clients of change.
 			var hasSelectionChange:Boolean = ( _columnSelectionIndices[list] == null || _columnSelectionIndices[list] == index );
@@ -457,7 +457,7 @@ package com.custardbelly.as3flobile.controls.picker
 			if( columnIndex > _columns.length - 1 ) return false;
 			
 			var columnList:IScrollListContainer = _columns[columnIndex];
-			columnList.scrollPositionToIndex( index );
+			columnList.scrollPositionToIndex( index, true );
 			return true;
 		}
 		

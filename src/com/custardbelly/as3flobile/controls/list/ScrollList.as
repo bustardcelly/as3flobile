@@ -232,7 +232,7 @@ package com.custardbelly.as3flobile.controls.list
 		 * 
 		 * Runs a refresh on the display.
 		 */
-		protected function refresh():void
+		protected function resetToOriginalState():void
 		{
 			// Reset content holder display.
 			_currentScrollPosition = new Point( 0, 0 );
@@ -311,6 +311,11 @@ package com.custardbelly.as3flobile.controls.list
 				// Fills the cell list with factory created item renderers based on data provider.
 				fillRendererQueue( _cells, _dataProvider.length );
 			}
+			// Else if dataProvider has come in as null, clear all.
+			else if( newValue == null )
+			{
+				removeFromRendererQueue( _cells, oldValue.length );
+			}
 			// Else if we had an old value, determine if we need to shrink or grow our pool of cells.
 			else if( oldValue.length != newValue.length )
 			{
@@ -326,7 +331,7 @@ package com.custardbelly.as3flobile.controls.list
 				}
 			}
 			// Run a refresh.
-			refresh();
+			resetToOriginalState();
 			_viewport.reset();
 		}
 		
@@ -337,12 +342,8 @@ package com.custardbelly.as3flobile.controls.list
 		 */
 		protected function invalidateItemRenderer():void
 		{
-			// Remove cells from list.
-			while( _cells.length > 0 )
-				_cells.pop();
-			
-			// Fill cells in list.
-			fillRendererQueue( _cells, ( _dataProvider ) ? _dataProvider.length : 0 );
+			// Clean and refill with new item renderers.
+			cleanRefill();
 			// Refresh.
 			invalidateDisplay();
 		}
@@ -387,7 +388,7 @@ package com.custardbelly.as3flobile.controls.list
 			// Set the target to this instance.
 			_layout.target = this;
 			// Run refresh.
-			refresh();
+			resetToOriginalState();
 		}
 		
 		/**
@@ -452,6 +453,31 @@ package com.custardbelly.as3flobile.controls.list
 		}
 		
 		/**
+		 * @private 
+		 * 
+		 * Cleans display and queues of item renderers and performs a refill of those items based on dataProvider.
+		 * @see #refresh()
+		 * @see #invalidateItemRenderer()
+		 */
+		protected function cleanRefill():void
+		{
+			// null out previous selection.
+			_selectedIndex = -1;
+			invalidateSelection();
+			
+			// Remove all renderers.
+			while( _listHolder.numChildren > 0 )
+				_listHolder.removeChildAt( 0 );
+			
+			// Remove cells from list.
+			while( _cells.length > 0 )
+				_cells.pop();
+			
+			// Fill cells in list.
+			fillRendererQueue( _cells, ( _dataProvider ) ? _dataProvider.length : 0 );
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Factory method to create the IScrollListItemRenderer instance based on the item renderer class. 
@@ -513,6 +539,7 @@ package com.custardbelly.as3flobile.controls.list
 		protected function removeFromRendererQueue( queue:Vector.<IScrollListItemRenderer>, amount:int ):void
 		{
 			var length:int = queue.length - amount;
+			length = ( length < 0 ) ? 0 : length;
 			while( queue.length > length )
 				queue.pop();
 		}
@@ -631,10 +658,12 @@ package com.custardbelly.as3flobile.controls.list
 		/**
 		 * @copy IScrollListContainer#scrollPositionToIndex()
 		 */
-		public function scrollPositionToIndex( index:uint ):void
+		public function scrollPositionToIndex( index:uint, select:Boolean = false ):void
 		{
 			var position:Point = _layout.getPositionFromIndex( index );
 			_viewport.scrollToPosition( position );
+			// Update selection based on flag.
+			if( select ) selectedIndex = index;
 		}
 		
 		/**
@@ -684,6 +713,19 @@ package com.custardbelly.as3flobile.controls.list
 			if( _viewport ) _viewport.refresh();
 			// Show the cells based on display properties.
 			if( _layout ) showCells();
+		}
+		
+		/**
+		 * @copy IScrollListContainer#refresh()
+		 */
+		public function refresh():void
+		{	
+			// Clean and refill with new item renderer data.
+			cleanRefill();
+			// Reset list to original properties (ie. scroll position).
+			resetToOriginalState();
+			// Reset viewport to origin.
+			_viewport.reset();
 		}
 		
 		/**

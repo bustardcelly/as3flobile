@@ -29,6 +29,7 @@ package com.custardbelly.as3flobile.controls.picker
 	import com.custardbelly.as3flobile.controls.list.layout.IScrollListVerticalLayout;
 	import com.custardbelly.as3flobile.controls.list.renderer.DefaultScrollListItemRenderer;
 	import com.custardbelly.as3flobile.controls.picker.layout.PickerColumnVerticalLayout;
+	import com.custardbelly.as3flobile.controls.picker.renderer.PickerColumnItemRenderer;
 	
 	import flash.utils.getQualifiedClassName;
 
@@ -68,7 +69,7 @@ package com.custardbelly.as3flobile.controls.picker
 		{
 			if( _defaultItemRenderer == null ) 
 			{
-				_defaultItemRenderer = getQualifiedClassName( DefaultScrollListItemRenderer );
+				_defaultItemRenderer = getQualifiedClassName( PickerColumnItemRenderer );
 			}
 			return _defaultItemRenderer;
 		}
