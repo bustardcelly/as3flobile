@@ -76,7 +76,13 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		protected var _coordinate:Point;
 		
 		protected var _framerate:int = 24;
+		
 		protected var _damp:Number;
+		protected var _threshold:Number;
+		protected var _minimumVector:Number;
+		protected var _maximumVector:Number;
+		protected var _vectorMultiplier:Number;
+		protected var _returnTime:int;
 		
 		public static const DAMP:Number = 0.8;
 		public static const THRESHOLD:Number = 0.01;
@@ -84,6 +90,10 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		public static const VECTOR_MAX:int = 60;
 		public static const VECTOR_MULTIPLIER:Number = 0.25;
 		public static const RETURN_TIME:int = 85;
+		
+		/**
+		 * Capacity coefficient related to the max length of scroll marks to store in determining flick and kinetic scrolling.  
+		 */
 		public static const CAPACITY:uint = 20;
 		
 		/**
@@ -91,10 +101,26 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		public function BaseScrollViewportStrategy() 
 		{
+			setScrollValues();
 			_targetAdaptor = getDefaultTargetScrollAdaptor();
 			_coordinate = new Point();
 			// Get key for store.
 			_markStoreKey = ScrollMark.generateKey();
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Assigns the default scroll value coefficients used in kinetic scrolling.
+		 */
+		protected function setScrollValues():void
+		{
+			_damp = BaseScrollViewportStrategy.DAMP;
+			_threshold = BaseScrollViewportStrategy.THRESHOLD;
+			_minimumVector = BaseScrollViewportStrategy.VECTOR_MIN;
+			_maximumVector = BaseScrollViewportStrategy.VECTOR_MAX;
+			_vectorMultiplier = BaseScrollViewportStrategy.VECTOR_MULTIPLIER;
+			_returnTime = BaseScrollViewportStrategy.RETURN_TIME;
 		}
 		
 		/**
@@ -131,9 +157,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_scrollBoundsRight =  _isScrollableX ? _scrollAreaWidth - _content.width : _scrollBoundsLeft;
 			_scrollBoundsBottom = _isScrollableY ? _scrollAreaHeight - _content.height : _scrollBoundsTop;
 			
-			_damp = DAMP;
-			_thresholdX = BaseScrollViewportStrategy.THRESHOLD * _bounds.width;
-			_thresholdY = BaseScrollViewportStrategy.THRESHOLD * _bounds.height;
+			_thresholdX = _threshold * _bounds.width;
+			_thresholdY = _threshold * _bounds.height;
 			
 			// Create marks and fill with capacity.
 			if( _marks == null )
@@ -361,7 +386,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_velocityX *= _damp;
 			// If our velocity has gone below the minimum threshold of movement, stop.
 			var velAbs:Number = ( _velocityX > 0.0 ) ? _velocityX : -_velocityX;
-			if( velAbs < BaseScrollViewportStrategy.VECTOR_MIN )
+			if( velAbs < _minimumVector )
 			{
 				_velocityX = 0;
 			}
@@ -369,7 +394,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			_velocityY *= _damp;
 			// If our velocity has gone below the minimum threshold of movement, stop.
 			velAbs = ( _velocityY > 0.0 ) ? _velocityY : -_velocityY;
-			if( velAbs < BaseScrollViewportStrategy.VECTOR_MIN )
+			if( velAbs < _minimumVector )
 			{
 				_velocityY = 0;
 			}
@@ -456,9 +481,6 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		 */
 		public function end(point:Point):void
 		{	
-			const VECTOR_MULTIPLIER:Number = 0.25;
-			const VECTOR_MAX:int = 60;
-			
 			var previousMark:ScrollMark = recentMark();
 			var currentMark:ScrollMark = addMark( point.x, point.y, getTimer() );
 			var currentMarkX:Number = currentMark.x;
@@ -470,7 +492,7 @@ package com.custardbelly.as3flobile.controls.viewport.context
 			limitPosition();
 			
 			// Find the most recent mark related to the crossover.
-			var crossover:Number = currentMark.time - BaseScrollViewportStrategy.RETURN_TIME;
+			var crossover:Number = currentMark.time - _returnTime;
 			var recentIndex:uint;
 			var i:uint;
 			var length:uint = _marks.length;
@@ -515,20 +537,20 @@ package com.custardbelly.as3flobile.controls.viewport.context
 				return;
 			}
 			// Update the velocity.
-			var velocityX:Number = thresholdX * VECTOR_MULTIPLIER;
-			var velocityY:Number = thresholdY * VECTOR_MULTIPLIER;
+			var velocityX:Number = thresholdX * _vectorMultiplier;
+			var velocityY:Number = thresholdY * _vectorMultiplier;
 			var absoluteVelocity:Number = ( velocityX > 0.0 ) ? velocityX : -velocityX;
 			// If we have reached our max velocity, start slowing down.
 			var factor:Number;
-			if( absoluteVelocity >= VECTOR_MAX )
+			if( absoluteVelocity >= _maximumVector )
 			{
-				factor = VECTOR_MAX / absoluteVelocity;
+				factor = _maximumVector / absoluteVelocity;
 				velocityX *= factor;
 			}
 			absoluteVelocity = ( velocityY > 0.0 ) ? velocityY : -velocityY;
-			if( absoluteVelocity >= VECTOR_MAX )
+			if( absoluteVelocity >= _maximumVector )
 			{
-				factor = VECTOR_MAX / absoluteVelocity;
+				factor = _maximumVector / absoluteVelocity;
 				velocityY *= factor;
 			}
 			

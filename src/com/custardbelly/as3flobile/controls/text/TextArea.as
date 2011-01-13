@@ -137,6 +137,7 @@ package com.custardbelly.as3flobile.controls.text
 		protected function invalidateTextDisplay():void
 		{
 			_lineHolder.clear();
+			if( _block.firstLine ) _block.releaseLines( _block.firstLine, _block.lastLine );
 			
 			var horizPadding:int = ( _padding.left + _padding.right );
 			// Use TextBlock factory to create TextLines and add to the display.

@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
- * <p>Class File: TextAreaSkin.as</p>
- * <p>Version: 0.3</p>
+ * <p>Class File: HTMLTextAreaSkin.as</p>
+ * <p>Version: 0.3.2</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,27 +26,27 @@
  */
 package com.custardbelly.as3flobile.skin
 {
-	import com.custardbelly.as3flobile.controls.text.TextArea;
+	import com.custardbelly.as3flobile.controls.text.HTMLTextArea;
 	
 	import flash.display.Shape;
-
+	
 	/**
-	 * TextAreaSkin is the base class for skinning a TextArea control. 
+	 * HTMLTextAreaSkin is the base class for skinning a HTMLTextArea control. 
 	 * @author toddanderson
 	 */
-	public class TextAreaSkin extends Skin
+	public class HTMLTextAreaSkin extends Skin
 	{
 		/**
 		 * Constructor.
 		 */
-		public function TextAreaSkin() { super(); }
+		public function HTMLTextAreaSkin() { super(); }
 		
 		/**
 		 * Clears the skinning operations.
 		 */
 		override protected function clearDisplay():void
 		{
-			var textAreaTarget:TextArea = ( _target as TextArea );
+			var textAreaTarget:HTMLTextArea = ( _target as HTMLTextArea );
 			var background:Shape = textAreaTarget.backgroundDisplay;
 			background.graphics.clear();
 		}
@@ -54,7 +54,7 @@ package com.custardbelly.as3flobile.skin
 		/**
 		 * @private
 		 * 
-		 * updates the look and feel of the background display of the target TextArea. 
+		 * updates the look and feel of the background display of the target HTMLTextArea. 
 		 * @param display Shape
 		 * @param width int
 		 * @param height int
@@ -73,7 +73,7 @@ package com.custardbelly.as3flobile.skin
 		{
 			super.initializeDisplay( width, height );
 			
-			var textAreaTarget:TextArea = ( _target as TextArea );
+			var textAreaTarget:HTMLTextArea = ( _target as HTMLTextArea );
 			updateBackground( textAreaTarget.backgroundDisplay, width, height );
 		}
 		
@@ -84,7 +84,7 @@ package com.custardbelly.as3flobile.skin
 		{
 			super.updateDisplay( width, height );
 			
-			var textAreaTarget:TextArea = ( _target as TextArea );
+			var textAreaTarget:HTMLTextArea = ( _target as HTMLTextArea );
 			updateBackground( textAreaTarget.backgroundDisplay, width, height );
 		}
 	}
