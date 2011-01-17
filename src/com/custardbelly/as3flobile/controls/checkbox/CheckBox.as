@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: CheckBox.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -115,6 +115,19 @@ package com.custardbelly.as3flobile.controls.checkbox
 			_labelDisplay.mouseChildren = false;
 			_labelDisplay.mouseEnabled = false;
 			addChild( _labelDisplay );
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Redraws any display content.
+		 */
+		override protected function updateDisplay():void
+		{
+			super.updateDisplay();
+			// TODO: Verify that we need to inforce invalidation on children.
+			_boxDisplay.draw();
+			_labelDisplay.draw();
 		}
 		
 		/**
@@ -301,7 +314,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			if( _multiline == value ) return;
 			
 			_multiline = value;
-			invalidateMultiline();
+			invalidate( invalidateMultiline );
 		}
 		
 		/**
@@ -317,7 +330,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			if( _autosize == value ) return;
 			
 			_autosize = value;
-			invalidateAutosize();
+			invalidate( invalidateAutosize );
 		}
 		
 		/**
@@ -334,7 +347,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			if( _labelPlacement == value ) return;
 			
 			_labelPlacement = value;
-			invalidateSize();
+			invalidate( invalidateSize );
 		}
 
 		/**
@@ -350,7 +363,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 			if( _label == value ) return;
 			
 			_label = value;
-			invalidateLabel();
+			invalidate( invalidateLabel );
 		}
 		
 		/**
@@ -380,7 +393,7 @@ package com.custardbelly.as3flobile.controls.checkbox
 		{
 			if( isStateEqual( value ) ) return;
 			
-			toggleState( value );
+			invalidate( toggleState, [value] );
 		}
 	}
 }

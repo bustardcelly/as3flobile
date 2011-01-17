@@ -145,7 +145,7 @@ package
 				page.title = "Page " + ( i + 1 );
 				page.body = "The as3flobile Menu component is a composite control of menu panels; considering the first panel as the Main Menu, and any subsequent panels create (as a result of overflow) as SubMenu. A single Menu control is used throughout all the pages and grabs resources from a re-use pool of elements and models as needed.\n\nUse the Page Action buttons below to navigate to pages that have specific content related to their menu options.\n\nUse the Menu Action buttons below to show, hide or move the menu within its history.\n\nLorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat"
 				page.color = ( i == 0 ) ? 0xDDDDDD : Math.random() * 0xFFFFFF;
-				page.menuData = getMenuData( randomRange( 1, 10 ), "pg" + ( i + 1 ) );
+				page.menuData = getMenuData( randomRange( 10, 30 ), "pg" + ( i + 1 ) );
 				_pages.push( page );
 			}
 			

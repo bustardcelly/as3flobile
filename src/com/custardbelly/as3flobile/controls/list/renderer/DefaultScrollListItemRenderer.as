@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: DefaultScrollListItemRenderer.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,15 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		override protected function updateDisplay():void
+		{
+			_label.draw();
+			super.updateDisplay();
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Validates a property and forwards along method invocation based on current state. 
@@ -120,7 +129,7 @@ package com.custardbelly.as3flobile.controls.list.renderer
 		{
 			var isUnlocked:Boolean = _currentState == DefaultScrollListItemRenderer.STATE_UNLOCKED;
 			if( isUnlocked )
-				handler.apply( this, args );
+				invalidate.apply( this, [handler, args] );
 			else
 				_isDirty = true;
 		}
@@ -136,12 +145,12 @@ package com.custardbelly.as3flobile.controls.list.renderer
 			if( _data == null ) return;
 			
 			_label.text = _data[_labelField];
+			_label.draw();
 			
 			if( _useVariableHeight ) _height = _label.height + _padding.top + _padding.bottom;
 			if( _useVariableWidth ) _width = _label.width + _padding.left + _padding.right;
-			
-			_isDirty = false;
 			updateDisplay();
+			_isDirty = false;
 		}
 		
 		/**

@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: BaseScrollViewportStrategy.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -642,8 +642,8 @@ package com.custardbelly.as3flobile.controls.viewport.context
 		}
 		public function set position( value:Point ):void
 		{
-			if( isPositionEqual( value, _coordinate ) ) return;
-			
+			// [TA] 01-15-2010 :: Commented out as selected item position may be 0, and therefore not dispatching position change correctly.
+//			if( isPositionEqual( value, _coordinate ) ) return;
 			invalidatePosition( value );
 		}
 		

@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollList.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -862,7 +862,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _seperatorLength == value ) return;
 			
 			_seperatorLength = ( value < 0 ) ? 0 : value;
-			invalidateDisplay();
+			invalidate( invalidateDisplay );
 		}
 		
 		/**
@@ -880,7 +880,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _layout != null ) _layout.dispose();
 			
 			_layout = value;
-			invalidateLayout();
+			invalidateAt( invalidateLayout, 0, null );
 		}
 		
 		/**
@@ -896,7 +896,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _scrollContext == value ) return;
 			
 			_scrollContext = value;
-			invalidateScrollContext();
+			invalidate( invalidateScrollContext );
 		}
 		
 		/**
@@ -912,7 +912,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _itemRenderer == value ) return;
 			
 			_itemRenderer = value;
-			invalidateItemRenderer();
+			invalidate( invalidateItemRenderer );
 		}
 		
 		/**
@@ -927,7 +927,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _selectionEnabled == value ) return;
 			
 			_selectionEnabled = value;
-			invalidateSelectionEnablement();
+			invalidate( invalidateSelectionEnablement );
 		}
 		
 		/**
@@ -961,7 +961,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _selectedIndex == value ) return;
 			
 			_selectedIndex = value;
-			invalidateSelection(); 
+			invalidate( invalidateSelection ); 
 			selectionChange.dispatch( _signalEvent );
 		}
 		
@@ -977,7 +977,7 @@ package com.custardbelly.as3flobile.controls.list
 			if( _labelField == value ) return;
 			
 			_labelField = value;
-			invalidateLabelField();
+			invalidate( invalidateLabelField );
 		}
 		
 		/**
@@ -994,7 +994,7 @@ package com.custardbelly.as3flobile.controls.list
 			
 			var oldValue:Array = _dataProvider;
 			_dataProvider = value;
-			invalidateDataProvider( oldValue, _dataProvider );
+			invalidate( invalidateDataProvider, [oldValue, _dataProvider] );
 		}
 	}
 }

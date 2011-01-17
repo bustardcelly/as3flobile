@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: TextArea.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -317,8 +317,8 @@ package com.custardbelly.as3flobile.controls.text
 			if( BoxPadding.equals( _padding, value ) ) return;
 			
 			_padding = value;
-			invalidateTextDisplay();
-			invalidateSize();
+			invalidate( invalidateTextDisplay );
+			invalidate( invalidateSize );
 		}
 		
 		/**
@@ -334,7 +334,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _text == value ) return;
 			
 			_text = value;
-			invalidateTextDisplay();
+			invalidate( invalidateTextDisplay );
 			_textChange.dispatch( _text );
 		}
 		
@@ -351,7 +351,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _format == value ) return;
 			
 			_format = value;
-			invalidateTextDisplay();
+			invalidate( invalidateTextDisplay );
 		}
 		
 		/**
@@ -367,7 +367,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _scrollPosition == value ) return;
 			
 			_scrollPosition = value;
-			invalidateScrollPosition();
+			invalidate( invalidateScrollPosition );
 		}
 		
 		/**
@@ -383,7 +383,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _scrollContext == value ) return;
 			
 			_scrollContext = value;
-			invalidateScrollContext();
+			invalidate( invalidateScrollContext );
 		}
 
 		/**

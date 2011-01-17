@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Picker.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,6 +54,7 @@ package com.custardbelly.as3flobile.controls.picker
 		protected var _columnSeperatorLength:int;
 		
 		protected var _columnSelectionIndices:Dictionary;
+		protected var _pendingInvalidColumnIndices:Dictionary;
 		protected var _selectedItemOffsetForCompare:Number;
 		
 		protected var _itemHeight:int;
@@ -68,6 +69,7 @@ package com.custardbelly.as3flobile.controls.picker
 		{ 
 			super();
 			_columnSelectionIndices = new Dictionary( true );
+			_pendingInvalidColumnIndices = new Dictionary( true );
 		}
 		
 		/**
@@ -195,6 +197,27 @@ package com.custardbelly.as3flobile.controls.picker
 		{
 			if( _columns.length < index - 1 ) return;
 			_columns[index].dataProvider = _dataProvider[index].data;
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Validates the pending selected indexes of each column.
+		 */
+		protected function invalidateSelectedColumnIndicies():void
+		{
+			var columnIndex:Object;
+			var columnList:IScrollListContainer;
+			var selectedIndex:int;
+			for( columnIndex in _pendingInvalidColumnIndices )
+			{
+				if( columnIndex >= _columns.length ) continue;
+				columnList = _columns[int(columnIndex)];
+				( columnList as AS3FlobileComponent ).draw();
+				selectedIndex = _pendingInvalidColumnIndices[int(columnIndex)];
+				columnList.scrollPositionToIndex( selectedIndex, true );
+				delete _pendingInvalidColumnIndices[columnIndex];
+			}
 		}
 		
 		/**
@@ -452,13 +475,10 @@ package com.custardbelly.as3flobile.controls.picker
 		 * @param columnIndex The index of the column list within this control.
 		 * @return Boolean Flag of successfully selecting index.
 		 */
-		public function setSelectedIndex( index:int, columnIndex:int ):Boolean
+		public function setSelectedIndex( index:int, columnIndex:int ):void
 		{
-			if( columnIndex > _columns.length - 1 ) return false;
-			
-			var columnList:IScrollListContainer = _columns[columnIndex];
-			columnList.scrollPositionToIndex( index, true );
-			return true;
+			_pendingInvalidColumnIndices[columnIndex] = index;
+			invalidate( invalidateSelectedColumnIndicies );
 		}
 		
 		/**
@@ -494,10 +514,8 @@ package com.custardbelly.as3flobile.controls.picker
 			if( _columnSeperatorLength == value ) return;
 			
 			_columnSeperatorLength = value;
-			updateDisplay();
+			invalidate( updateDisplay );
 		}
-		
-		
 		
 		/**
 		 * Accessor/Modifier for the item height of the layout for each column scroll list. 
@@ -512,7 +530,7 @@ package com.custardbelly.as3flobile.controls.picker
 			if( _itemHeight == value ) return;
 			
 			_itemHeight = value;
-			invalidateItemHeight();
+			invalidate( invalidateItemHeight );
 		}
 		
 		/**
@@ -528,7 +546,7 @@ package com.custardbelly.as3flobile.controls.picker
 			if( _dataProvider == value ) return;
 			
 			_dataProvider = value;
-			invalidateDataProvider();
+			invalidate( invalidateDataProvider );
 		}
 	}
 }

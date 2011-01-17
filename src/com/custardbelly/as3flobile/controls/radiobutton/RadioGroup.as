@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioGroup.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -137,6 +137,19 @@ package com.custardbelly.as3flobile.controls.radiobutton
 				var ypos:int = radio.y;
 				_height = ypos + _padding.top + _padding.bottom;
 			}
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		override protected function updateDisplay():void
+		{
+			if( _dataProvider && _dataProvider.length > 0 )
+			{
+				var radio:RadioButton = _dataProvider[_dataProvider.length - 1];
+				radio.draw();
+			}
+			super.updateDisplay();
 		}
 		
 		/**
@@ -277,7 +290,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _selectedIndex == value ) return;
 			
 			_selectedIndex = value;
-			invalidateSelectedIndex();
+			invalidate( invalidateSelectedIndex );
 		}
 		
 		/**
@@ -293,7 +306,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _dataProvider == value ) return;
 			
 			_dataProvider = value;
-			invalidateDataProvider();
+			invalidate( invalidateDataProvider );
 		}
 	}
 }

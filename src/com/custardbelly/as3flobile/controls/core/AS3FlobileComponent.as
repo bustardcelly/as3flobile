@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: AS3FlobileComponent.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,21 @@
  */
 package com.custardbelly.as3flobile.controls.core
 {
+	import com.custardbelly.as3flobile.core.IPendingRenderRequest;
+	import com.custardbelly.as3flobile.core.PendingRenderRequest;
 	import com.custardbelly.as3flobile.enum.BasicStateEnum;
 	import com.custardbelly.as3flobile.model.BoxPadding;
 	import com.custardbelly.as3flobile.model.IDisposable;
 	import com.custardbelly.as3flobile.skin.ISkin;
 	import com.custardbelly.as3flobile.skin.ISkinnable;
+	import com.custardbelly.as3flobile.util.ObjectPool;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.utils.Dictionary;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
+	import flash.utils.getQualifiedClassName;
 	
 	/**
 	 * AS3FlobileComponent is a base component for all components in the as3flobile package. 
@@ -58,17 +63,27 @@ package com.custardbelly.as3flobile.controls.core
 		protected var _width:Number = 100;
 		protected var _height:Number = 100;
 		
+		protected var _invalidateMap:Dictionary; /* Function, IPendingRenderRequest */
+		protected var _pendingRenderRequests:Vector.<IPendingRenderRequest>;
+		protected var _pendingRenderRequestPool:ObjectPool;
 		/**
 		 * Constructor. 
 		 */
 		public function AS3FlobileComponent() 
 		{
+			// We'll hold a look-up on pending methods so as not to execute one method more than once with the most recent arguments applicable.
+			// This map will not be cleared as it is not used as the pending list (_pendingRenderRequests is) and just a look-up to deter duplicate method calling.
+			// As such it is easier to keep it full as it is unlikely to grow and less expensive than to empty upon each rendering cycle.
+			_invalidateMap = new Dictionary( true );
+			_pendingRenderRequests = new Vector.<IPendingRenderRequest>();
+			_pendingRenderRequestPool = new ObjectPool( getQualifiedClassName( PendingRenderRequest ) );
+			
 			initialize();
 			createChildren();
 			initializeDisplay();
-			updateDisplay();
 			// Add existance handlers for this instance on the display list.
 			addStageHandlers();
+			invalidate( updateDisplay );
 		}
 		
 		/**
@@ -94,6 +109,87 @@ package com.custardbelly.as3flobile.controls.core
 		protected function createChildren():void
 		{
 			// abstract. Meant for override. 
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Request for invalidation of a method and its arguments. Will be pushed to a queue for invocation on the next frame execution. 
+		 * @param method Function
+		 * @param args Array The array of arguments to apply upon invocation of method.
+		 */
+		protected function invalidate( method:Function, args:Array = null ):void
+		{
+			if( !hasEventListener( Event.ENTER_FRAME ) )
+				addEventListener( Event.ENTER_FRAME, render, false, 0, true );
+			
+			// Only update properties if found to already be tagged for invocation.
+			var request:IPendingRenderRequest;
+			if( _invalidateMap.hasOwnProperty( method ) )
+			{
+				request = _invalidateMap[method] as IPendingRenderRequest;
+				request.method = method;
+				request.arguments = args;
+			}
+			// else add to queue.
+			else
+			{
+				request = _pendingRenderRequestPool.getInstance() as IPendingRenderRequest;
+				request.method = method;
+				request.arguments = args;
+				_pendingRenderRequests[_pendingRenderRequests.length] = request;
+				_invalidateMap[method] = request;
+			}
+		}
+		
+		/**
+		 * @private
+		 * 
+		 * Request for invalidattion of a method and its arguments at a specific index within invalidation cycle. 
+		 * @param method Function
+		 * @param args Array The array of arguments to apply upone invocation of method.
+		 * @param atIndex int The index to place the pending render within the queue upon invalidation of frame.
+		 */
+		protected function invalidateAt( method:Function, atIndex:int = -1, args:Array = null ):void
+		{
+			if( atIndex == -1 ) invalidate( method, args );
+			else
+			{
+				if( !hasEventListener( Event.ENTER_FRAME ) )
+					addEventListener( Event.ENTER_FRAME, render, false, 0, true );
+				
+				var request:IPendingRenderRequest;
+				// Only update properties if found to already be tagged for invocation.
+				if( _invalidateMap.hasOwnProperty( method ) )
+				{
+					request = _invalidateMap[method] as IPendingRenderRequest;
+					request.method = method;
+					request.arguments = args;
+				}
+				// else add to queue.
+				else
+				{
+					request = _pendingRenderRequestPool.getInstance() as IPendingRenderRequest;
+					request.method = method;
+					request.arguments = args;
+					var maxIndex:int = _pendingRenderRequests.length;
+					_pendingRenderRequests.splice( ( atIndex < maxIndex ) ? atIndex : maxIndex, 0, request );
+					_invalidateMap[method] = request;
+				}
+			}
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Cycles through pending render requests. Invoked on each frame.
+		 * @param evt Event Possible assignment to enter_frame event.
+		 */
+		protected function render( evt:Event = null ):void
+		{
+			removeEventListener( Event.ENTER_FRAME, render, false );
+			while( _pendingRenderRequests.length > 0 )
+				_pendingRenderRequests.shift().execute();
 		}
 		
 		/**
@@ -277,10 +373,24 @@ package com.custardbelly.as3flobile.controls.core
 		}
 		
 		/**
+		 * Forces refresh on display using pending rendering requests without waiting a frame.
+		 */
+		public function draw():void
+		{
+			render();
+		}
+		
+		/**
 		 * @copy IDisposable#dispose()
 		 */
 		public function dispose():void
 		{
+			_invalidateMap = null;
+			_pendingRenderRequestPool.dispose();
+			_pendingRenderRequestPool = null;
+			_pendingRenderRequests = null;
+			removeEventListener( Event.ENTER_FRAME, render, false );
+			
 			removeStageHandlers();
 			removeDisplayHandlers();
 			
@@ -303,7 +413,7 @@ package com.custardbelly.as3flobile.controls.core
 		{
 			if( _skin == value ) return;
 			
-			invalidateSkin( value );
+			invalidate( invalidateSkin, [value] );
 		}
 		
 		/**
@@ -318,7 +428,7 @@ package com.custardbelly.as3flobile.controls.core
 			if( _skinState == value ) return;
 			
 			_skinState = value;
-			invalidateSkinState();
+			invalidate( invalidateSkinState );
 		}
 		
 		/**
@@ -333,7 +443,7 @@ package com.custardbelly.as3flobile.controls.core
 			if( BoxPadding.equals( _padding, value ) ) return;
 			
 			_padding = value;
-			invalidateSize();
+			invalidate( invalidateSize );
 		}
 		
 		/**
@@ -347,7 +457,7 @@ package com.custardbelly.as3flobile.controls.core
 		{
 			if( _enabled == value ) return;
 			
-			invalidateEnablement( _enabled, value );
+			invalidate( invalidateEnablement, [_enabled, value] );
 		}
 		
 		/**
@@ -363,7 +473,7 @@ package com.custardbelly.as3flobile.controls.core
 			if( _width == value ) return;
 			
 			_width = value;
-			invalidateSize();
+			invalidate( invalidateSize );
 		}
 		
 		/**
@@ -379,7 +489,7 @@ package com.custardbelly.as3flobile.controls.core
 			if( _height == value ) return;
 			
 			_height = value;
-			invalidateSize();
+			invalidate( invalidateSize );
 		}
 	}
 }

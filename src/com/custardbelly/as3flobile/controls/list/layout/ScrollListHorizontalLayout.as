@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollListHorizontalLayout.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -196,7 +196,6 @@ package com.custardbelly.as3flobile.controls.list.layout
 				renderer.height = rect.height;
 				renderer.data = data[i];
 				renderer.unlock();
-				
 				( renderer as DisplayObject ).x = xpos;
 				( renderer as DisplayObject ).y = 0;
 				( _target as IScrollListLayoutTarget ).addRendererToDisplay( renderer );

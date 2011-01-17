@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioGroupSkin.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,7 @@ package com.custardbelly.as3flobile.skin
 		 */
 		protected function updateLayout( width:int, height:int ):void
 		{
-			// *Note: height is disregarded as the content of radio buttons deterines the height of the control.
+			// *Note: height is disregarded as the content of radio buttons determines the height of the control.
 			const itemOffset:int = 10;
 			var padding:BoxPadding = _target.padding;
 			var xpos:int = padding.left;
@@ -83,14 +83,18 @@ package com.custardbelly.as3flobile.skin
 				{
 					radio = items[i];
 					radio.width = width - padding.left - padding.right;
+					// Force refresh.
+					radio.draw();
+					// Position.
 					radio.x = xpos;
 					radio.y = ypos;
-					ypos += radio.height + itemOffset;
+					// Update next position.
+					ypos += radio.height;
+					ypos += ( i < length - 1 ) ? itemOffset : 0;
 				}
-				
 				height = ypos + padding.bottom;
 			}
-			updateBackgroundDisplay( radioGroup.backgroundDisplay, width, ypos );
+			updateBackgroundDisplay( radioGroup.backgroundDisplay, width, height );
 		}
 		
 		/**

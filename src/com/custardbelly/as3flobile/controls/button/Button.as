@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Button.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -123,6 +123,15 @@ package com.custardbelly.as3flobile.controls.button
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		override protected function updateDisplay():void
+		{	
+			_labelDisplay.draw();
+			super.updateDisplay();
+		}
+		
+		/**
 		 * @private
 		 * 
 		 * Validates the ITapMediator instance used in deiscovering a tap gestue on this control. 
@@ -238,7 +247,7 @@ package com.custardbelly.as3flobile.controls.button
 			if( _label == value ) return;
 			
 			_label = value;
-			invalidateLabel();
+			invalidate( invalidateLabel );
 		}
 		
 		/**
@@ -254,7 +263,7 @@ package com.custardbelly.as3flobile.controls.button
 			if( _labelPadding == value ) return;
 			
 			_labelPadding = value;
-			updateDisplay();
+			invalidate( updateDisplay );
 		}
 		
 		/**

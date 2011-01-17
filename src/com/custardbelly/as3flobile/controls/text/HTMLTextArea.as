@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: HTMLTextArea.as</p>
- * <p>Version: 0.3.2</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -261,7 +261,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _text == value ) return;
 			
 			_text = value;
-			invalidateText();
+			invalidate( invalidateText );
 			_textChange.dispatch( _text );
 		}
 		
@@ -278,7 +278,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _format == value ) return;
 			
 			_format = value;
-			invalidateFormat();
+			invalidate( invalidateFormat );
 		}	
 		
 		/**
@@ -310,7 +310,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _scrollPosition == value ) return;
 			
 			_scrollPosition = value;
-			invalidateScrollPosition();
+			invalidate( invalidateScrollPosition );
 		}
 		
 		/**
@@ -326,7 +326,7 @@ package com.custardbelly.as3flobile.controls.text
 			if( _scrollContext == value ) return;
 			
 			_scrollContext = value;
-			invalidateScrollContext();
+			invalidate( invalidateScrollContext );
 		}
 	}
 }

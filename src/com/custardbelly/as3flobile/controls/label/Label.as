@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Label.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ package com.custardbelly.as3flobile.controls.label
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.text.TextFormatAlign;
 	import flash.text.engine.BreakOpportunity;
@@ -69,6 +70,8 @@ package com.custardbelly.as3flobile.controls.label
 		protected var _measuredWidth:int;
 		protected var _measuredHeight:int;
 		
+		protected var _hasRequestForInvalidationOnDisplay:Boolean;
+		
 		/**
 		 * Constructor.
 		 */
@@ -97,6 +100,37 @@ package com.custardbelly.as3flobile.controls.label
 			_renderer = _truncationRenderer;
 			_renderer.truncationText = _truncationText;
 			_renderer.textAlign = _textAlign;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		override protected function invalidate( method:Function, args:Array = null ):void
+		{
+			// Override to limit invalidate of text display to one time per frame as it is requsted to be invoked through many poroperties.
+			var hasArgs:Boolean = ( args && args.length > 0 );
+			var isRequestForInvalidationOnDisplay:Boolean = ( method == invalidateTextDisplay );
+			var addInvalidationToQueue:Boolean = !isRequestForInvalidationOnDisplay;
+			if( isRequestForInvalidationOnDisplay && !_hasRequestForInvalidationOnDisplay )
+			{	
+				_hasRequestForInvalidationOnDisplay = true;
+				addInvalidationToQueue = true;
+			}
+			if( addInvalidationToQueue )
+			{
+				if( hasArgs ) 	super.invalidate( method, args );
+				else			super.invalidate( method );
+			}
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		override protected function render(evt:Event=null):void
+		{
+			// Flip flag for invalidate on text display. Limit is once per frame.
+			_hasRequestForInvalidationOnDisplay = false;
+			super.render( evt );
 		}
 		
 		/**
@@ -215,7 +249,7 @@ package com.custardbelly.as3flobile.controls.label
 			if( _text == value ) return;
 			
 			_text = value;
-			invalidateTextDisplay();
+			invalidate( invalidateTextDisplay );
 		}
 		
 		/**
@@ -231,7 +265,7 @@ package com.custardbelly.as3flobile.controls.label
 			if( _format == value ) return;
 			
 			_format = value;
-			if( _text != null ) invalidateTextDisplay();
+			if( _text != null ) invalidate( invalidateTextDisplay );
 		}
 		
 		/**
@@ -248,7 +282,7 @@ package com.custardbelly.as3flobile.controls.label
 			
 			_truncationText = value;
 			_truncationRenderer.truncationText = _truncationText;
-			if( _truncate ) invalidateTextDisplay();
+			if( _truncate ) invalidate( invalidateTextDisplay );
 		}
 
 		/**
@@ -265,7 +299,7 @@ package com.custardbelly.as3flobile.controls.label
 			
 			_truncate = value;
 			setRendererState( _truncationRenderer );
-			if( _text != null ) invalidateTextDisplay();
+			if( _text != null ) invalidate( invalidateTextDisplay );
 		}
 
 		/**
@@ -281,7 +315,7 @@ package com.custardbelly.as3flobile.controls.label
 			if( _autosize == value ) return;
 			
 			_autosize = value;
-			if( _text != null ) invalidateTextDisplay();
+			if( _text != null ) invalidate( invalidateTextDisplay );
 		}
 
 		/**
@@ -298,7 +332,7 @@ package com.custardbelly.as3flobile.controls.label
 		
 			_multiline = value;
 			setRendererState( ( value ) ? _multilineRenderer : _truncationRenderer );
-			if( _text != null ) invalidateTextDisplay();	
+			if( _text != null ) invalidate( invalidateTextDisplay );	
 		}
 		
 		/**
@@ -316,7 +350,7 @@ package com.custardbelly.as3flobile.controls.label
 			_textAlign = value;
 			_truncationRenderer.textAlign = _textAlign;
 			_multilineRenderer.textAlign = _textAlign;
-			if( _text != null ) invalidateTextDisplay();
+			if( _text != null ) invalidate( invalidateTextDisplay );
 		}		
 	}
 }

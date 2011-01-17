@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: TextInput.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -315,7 +315,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			if( _displayAsPassword == value ) return;
 			
 			_displayAsPassword;
-			invalidateText( _text );
+			invalidate( invalidateText, [_text] );
 		}
 		
 		/**
@@ -357,7 +357,7 @@ package com.custardbelly.as3flobile.controls.textinput
 			if( _defaultText == value ) return;
 			
 			_defaultText = value;
-			invalidateDefaultText();
+			invalidate( invalidateDefaultText );
 		}
 		
 		/**
@@ -370,7 +370,7 @@ package com.custardbelly.as3flobile.controls.textinput
 		}
 		public function set text( value:String ):void
 		{
-			invalidateText( value );
+			invalidate( invalidateText, [value] );
 		}
 		
 		/**
@@ -383,7 +383,7 @@ package com.custardbelly.as3flobile.controls.textinput
 		}
 		public function set multiline( value:Boolean ):void
 		{
-			invalidateMultiline( value );
+			invalidate( invalidateMultiline, [value] );
 		}
 	}
 }

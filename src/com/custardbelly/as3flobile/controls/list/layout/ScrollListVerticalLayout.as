@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollListVerticalLayout.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,6 @@ package com.custardbelly.as3flobile.controls.list.layout
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.utils.getDefinitionByName;
 	
 	/**
 	 * ScrollListVerticalLayout is an IScrollListVerticalLayout implementation to layout children of a target IScrollListContainer along the y axis. 
@@ -198,7 +197,6 @@ package com.custardbelly.as3flobile.controls.list.layout
 				if( !isNaN( _itemHeight ) ) renderer.height = _itemHeight;
 				renderer.data = data[i];
 				renderer.unlock();
-				
 				( renderer as DisplayObject ).y = ypos;
 				( renderer as DisplayObject ).x = 0;
 				( _target as IScrollListLayoutTarget ).addRendererToDisplay( renderer );
@@ -280,7 +278,10 @@ package com.custardbelly.as3flobile.controls.list.layout
 		public function getPositionFromIndex( index:uint ):Point
 		{
 			// Find renderer y position based on index.
-			var cells:Vector.<IScrollListItemRenderer> = _target.renderers;
+			// TODO: Shouldn't need to chek for null references here. This should not be called if that is the case.
+			var cells:Vector.<IScrollListItemRenderer> = ( _target ) ? _target.renderers : null;
+			if( cells == null ) return _indexPositionCache;
+			
 			// Update cache position based on index.
 			if( index > cells.length - 1 )
 			{

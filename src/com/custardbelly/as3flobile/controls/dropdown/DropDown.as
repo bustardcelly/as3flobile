@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: DropDown.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,6 +110,19 @@ package com.custardbelly.as3flobile.controls.dropdown
 			
 			_labelButton.height = _height;
 			_labelButton.width = _width - _arrowButton.width;
+		}
+		
+		/**
+		 * @private 
+		 * 
+		 * Redraws any display content.
+		 */
+		override protected function updateDisplay():void
+		{
+			super.updateDisplay();
+			// TODO: Verify that we need to inforce invalidation on children.
+			_labelButton.draw();
+			_arrowButton.draw();
 		}
 		
 		/**
@@ -369,7 +382,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _defaultLabel == value ) return;
 			
 			_defaultLabel = value;
-			invalidateDefaultLabel();
+			invalidate( invalidateDefaultLabel );
 		}
 		
 		/**
@@ -385,7 +398,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _dropDownWidth == value ) return;
 			
 			_dropDownWidth = value;
-			invalidateDropDownSize();
+			invalidate( invalidateDropDownSize );
 		}
 		
 		/**
@@ -401,7 +414,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _dropDownHeight == value ) return;
 			
 			_dropDownHeight = value;
-			invalidateDropDownSize();
+			invalidate( invalidateDropDownSize );
 		}
 
 		/**
@@ -417,7 +430,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _selectedIndex == value ) return;
 			
 			_selectedIndex = value;
-			invalidateSelectedIndex();
+			invalidate( invalidateSelectedIndex );
 		}
 		
 		/**
@@ -448,7 +461,7 @@ package com.custardbelly.as3flobile.controls.dropdown
 			if( _dataProvider == value ) return;
 			
 			_dataProvider = value;
-			invalidateDataProvider();
+			invalidate( invalidateDataProvider );
 		}
 	}
 }

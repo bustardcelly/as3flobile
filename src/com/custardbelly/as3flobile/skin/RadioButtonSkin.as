@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioButtonSkin.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,7 @@ package com.custardbelly.as3flobile.skin
 			// update label width.
 			var labelWidth:int = width - radioDisplay.width - offset;
 			labelDisplay.width = ( labelWidth < 0 ) ? 0 : labelWidth;
+			labelDisplay.draw();
 			// Update placement along x axis.
 			if( labelPlacement == BoxPositionEnum.LEFT )
 			{

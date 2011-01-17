@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: Slider.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -254,6 +254,7 @@ package com.custardbelly.as3flobile.controls.slider
 			// Override to udpate bounds and validate range.
 			_bounds.width = _width;
 			_bounds.height = _height;
+			_sliderContext.update();
 			invalidateValueRange();
 			super.invalidateSize();
 		}
@@ -376,7 +377,7 @@ package com.custardbelly.as3flobile.controls.slider
 			if( _thumbSize == value ) return;
 			
 			_thumbSize = value;
-			invalidateThumbSize();
+			invalidate( invalidateThumbSize );
 		}
 		
 		/**
@@ -392,7 +393,7 @@ package com.custardbelly.as3flobile.controls.slider
 			if( _orientation == value ) return;
 			
 			_orientation = value;
-			invalidateOrientation();
+			invalidate( invalidateOrientation );
 		}
 		
 		/**
@@ -408,7 +409,7 @@ package com.custardbelly.as3flobile.controls.slider
 			if( _minimumValue == value ) return;
 			
 			_minimumValue = value;
-			invalidateValueRange();
+			invalidate( invalidateValueRange );
 		}
 		
 		/**
@@ -424,7 +425,7 @@ package com.custardbelly.as3flobile.controls.slider
 			if( _maximumValue == value ) return;
 			
 			_maximumValue = value;
-			invalidateValueRange();
+			invalidate( invalidateValueRange );
 		}
 		
 		/**
@@ -439,7 +440,7 @@ package com.custardbelly.as3flobile.controls.slider
 		{
 			if( _value == theValue ) return;
 			
-			invalidateValue( _value, theValue );
+			invalidate( invalidateValue, [_value, theValue] );
 		}
 
 		/**
@@ -454,7 +455,7 @@ package com.custardbelly.as3flobile.controls.slider
 		{
 			if( _sliderContext == value ) return;
 			
-			invalidateSliderContext( _sliderContext, value );
+			invalidate( invalidateSliderContext, [_sliderContext, value] );
 		}
 	}
 }

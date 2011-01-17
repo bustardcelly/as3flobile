@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ScrollViewport.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,11 +30,13 @@ package com.custardbelly.as3flobile.controls.viewport
 	import com.custardbelly.as3flobile.controls.viewport.context.BaseScrollViewportStrategy;
 	import com.custardbelly.as3flobile.controls.viewport.context.IScrollViewportContext;
 	import com.custardbelly.as3flobile.controls.viewport.context.ScrollViewportMouseContext;
+	import com.custardbelly.as3flobile.core.IPendingRenderRequest;
 	import com.custardbelly.as3flobile.model.IPendingInitializationCommand;
 	import com.custardbelly.as3flobile.model.PendingInitializationCommand;
 	
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
+	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -63,10 +65,12 @@ package com.custardbelly.as3flobile.controls.viewport
 		 */
 		public function ScrollViewport()
 		{	
+			_pendingRenderRequests = new Vector.<IPendingRenderRequest>();
 			_enabled = true;
 			context = getDefaultViewportContext();
 			scrollRect = new Rectangle( 0, 0, _width, _height );
 			initialize();
+			invalidate( invalidateSize );
 		}
 		
 		/**
@@ -226,6 +230,17 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		override protected function handleAddedToStage(evt:Event):void
+		{
+			super.handleAddedToStage( evt );
+			// Bug where if viewport added to stage prior to full initialization of SWF, scrollRect not updated properly.
+			// Force refresh.
+			draw();
+		}
+		
+		/**
 		 * @copy IScrollView#scrollToPosition()
 		 */
 		public function scrollToPosition( position:Point ):void
@@ -315,6 +330,19 @@ package com.custardbelly.as3flobile.controls.viewport
 		}
 		
 		/**
+		 * @inheritDoc
+		 */
+		override public function set scrollRect(value:Rectangle):void
+		{
+			_width = value.width;
+			_height = value.height;
+			_bounds.width = value.width;
+			_bounds.height = value.height;
+			super.scrollRect = value;
+			invalidate( invalidateDisplay );
+		}
+		
+		/**
 		 * @copy IScrollViewport#content
 		 */
 		public function get content():InteractiveObject
@@ -327,7 +355,7 @@ package com.custardbelly.as3flobile.controls.viewport
 			
 			_content = value;
 			addContent( value );
-			invalidateDisplay();
+			invalidate( invalidateDisplay );
 		}
 		
 		/**

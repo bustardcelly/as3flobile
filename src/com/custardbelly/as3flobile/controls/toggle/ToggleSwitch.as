@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: ToggleSwitch.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,6 @@ package com.custardbelly.as3flobile.controls.toggle
 		public function ToggleSwitch()
 		{
 			super();
-			invalidateLabels();
 			toggleContext = getDefaultContext();
 		}
 		
@@ -107,12 +106,14 @@ package com.custardbelly.as3flobile.controls.toggle
 			_leftLabel.autosize = true;
 			_leftLabel.mouseEnabled = false;
 			_leftLabel.mouseChildren = false;
+			_leftLabel.text = ( _labels && _labels.length > 0 ) ? _labels[0] : "";
 			addChild( _leftLabel );
 			
 			_rightLabel = new Label();
 			_rightLabel.autosize = true;
 			_rightLabel.mouseEnabled = false;
 			_rightLabel.mouseChildren = false;
+			_rightLabel.text = ( _labels && _labels.length > 0 ) ? _labels[1] : "";
 			addChild( _rightLabel );
 			
 			_thumb = new Sprite();
@@ -150,6 +151,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		{
 			_bounds.width = _width;
 			_bounds.height = _height;
+			_toggleContext.update();
 			super.invalidateSize();
 		}
 		
@@ -230,6 +232,9 @@ package com.custardbelly.as3flobile.controls.toggle
 		 */
 		override protected function updateDisplay():void
 		{
+			_leftLabel.draw();
+			_rightLabel.draw();
+			
 			super.updateDisplay();
 			positionLabels();
 			positionThumb();
@@ -387,7 +392,7 @@ package com.custardbelly.as3flobile.controls.toggle
 			if( _format == value ) return;
 			
 			_format = value;
-			invalidateFormat();
+			invalidate( invalidateFormat );
 		}
 
 		/**
@@ -403,7 +408,7 @@ package com.custardbelly.as3flobile.controls.toggle
 			if( _labels == value ) return;
 			
 			_labels = value.slice( 0, 2 );
-			invalidateLabels();
+			invalidate( invalidateLabels );
 		}
 		
 		/**
@@ -419,7 +424,7 @@ package com.custardbelly.as3flobile.controls.toggle
 			if( _labelPadding == value ) return;
 			
 			_labelPadding = value;
-			invalidateLabelPadding();
+			invalidate( invalidateLabelPadding );
 		}
 
 		/**
@@ -434,7 +439,7 @@ package com.custardbelly.as3flobile.controls.toggle
 			if( _selectedIndex == value ) return;
 			
 			_selectedIndex = ( value > 1 ) ? 1 : value;
-			invalidateSelectedIndex();
+			invalidate( invalidateSelectedIndex );
 		}
 		
 		/**
@@ -448,7 +453,7 @@ package com.custardbelly.as3flobile.controls.toggle
 		{
 			if( _toggleContext == value ) return;
 			
-			invalidateToggleContext( _toggleContext, value );
+			invalidate( invalidateToggleContext, [_toggleContext, value] );
 		}
 	}
 }

@@ -1,7 +1,7 @@
 /**
  * <p>Original Author: toddanderson</p>
  * <p>Class File: RadioButton.as</p>
- * <p>Version: 0.3</p>
+ * <p>Version: 0.4</p>
  *
  * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -171,17 +171,32 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		}
 		
 		/**
-		 * @inherit
+		 * @inheritDoc
 		 */
 		override protected function invalidateSize():void
 		{
 			// The true size of this control is actually based on the size of the label if it.
 			super.invalidateSize();
-			_height = ( _labelDisplay.measuredHeight > _height ) ? _labelDisplay.measuredHeight : _height;
+			if( _autosize )
+			{
+				_height = ( _labelDisplay.measuredHeight > _radioDisplay.height ) ? _labelDisplay.measuredHeight : _radioDisplay.height;
+				// Run another pass on skin as alignment may need a refresh based on autosize capture of new height.
+				invalidateSkinState();
+			}
 		}
 		
 		/**
-		 * @inherit
+		 * @inheritDoc
+		 */
+		override protected function updateDisplay():void
+		{
+			_radioDisplay.draw();
+			_labelDisplay.draw();
+			super.updateDisplay();
+		}
+		
+		/**
+		 * @inheritDoc
 		 */
 		override protected function addDisplayHandlers():void
 		{
@@ -298,7 +313,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _label == value ) return;
 			
 			_label = value;
-			invalidateLabel();
+			invalidate( invalidateLabel );
 		}
 		
 		/**
@@ -314,7 +329,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _multiline == value ) return;
 			
 			_multiline = value;
-			invalidateMultiline();
+			invalidate( invalidateMultiline );
 		}
 		
 		/**
@@ -330,7 +345,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _autosize == value ) return;
 			
 			_autosize = value;
-			invalidateAutosize();
+			invalidate( invalidateAutosize );
 		}
 		
 		/**
@@ -346,7 +361,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 			if( _labelPlacement == value ) return;
 			
 			_labelPlacement = value;
-			invalidateSize();
+			invalidate( invalidateSize );
 		}
 		
 		/**
@@ -376,7 +391,7 @@ package com.custardbelly.as3flobile.controls.radiobutton
 		{
 			if( isStateEqual( value ) ) return;
 			// Toggle.
-			toggleState( value );
+			invalidate( toggleState, [value] );
 		}
 	}
 }
